@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import org.dyn4j.geometry.Geometry;
 
 public class RebuiltSim {
-  private static List<GamePieceTarget> createCoralTargets() {
+  // private static List<GamePieceTarget> createCoralTargets() {
     // List<Translation3d> reefPositions =
     //     Arrays.asList(
     //         new Translation3d(
@@ -58,40 +58,39 @@ public class RebuiltSim {
    * environment.
    */
   }
-}
-  public static class RebuiltSimArena extends SimArena {
-    public static final class RebuiltFieldObstacleMap extends FieldMap {
-      public RebuiltFieldObstacleMap() {
-        super();
+  // public static class RebuiltSimArena extends SimArena {
+  //   public static final class RebuiltFieldObstacleMap extends FieldMap {
+  //     public RebuiltFieldObstacleMap() {
+  //       super();
 
-        // blue wall
-        addBorderLine(new Translation2d(0, 1.270), new Translation2d(0, 6.782));
+  //       // blue wall
+  //       addBorderLine(new Translation2d(0, 1.270), new Translation2d(0, 6.782));
 
-        // red wall
-        addBorderLine(new Translation2d(17.548, 1.270), new Translation2d(17.548, 6.782));
+  //       // red wall
+  //       addBorderLine(new Translation2d(17.548, 1.270), new Translation2d(17.548, 6.782));
 
-        // upper walls
-        addBorderLine(new Translation2d(1.672, 8.052), new Translation2d(17.548 - 1.672, 8.052));
+  //       // upper walls
+  //       addBorderLine(new Translation2d(1.672, 8.052), new Translation2d(17.548 - 1.672, 8.052));
 
-        // lower walls
-        addBorderLine(new Translation2d(1.672, 0), new Translation2d(17.548 - 1.672, 0));
+  //       // lower walls
+  //       addBorderLine(new Translation2d(1.672, 0), new Translation2d(17.548 - 1.672, 0));
 
-      }
+  //     }
 
-    public RebuiltSimArena(Time period, int simulationSubTick) {
-      super(new RebuiltFieldObstacleMap(), period.in(Seconds), simulationSubTick);
-    }
-
+  //   public RebuiltSimArena(Time period, int simulationSubTick) {
+  //     super(new RebuiltFieldObstacleMap(), period.in(Seconds), simulationSubTick);
+  //   }
 
 
-    @Override
-    protected void competitionPeriodic() {
-      if (!DriverStation.isTeleopEnabled()) return;
 
-      if (Timer.getFPGATimestamp() - previousThrowTimeSeconds < 1) return;
+//     @Override
+//     protected void competitionPeriodic() {
+//       if (!DriverStation.isTeleopEnabled()) return;
+
+//       if (Timer.getFPGATimestamp() - previousThrowTimeSeconds < 1) return;
 
     
-      previousThrowTimeSeconds = Timer.getFPGATimestamp();
-    }
-  }
-}
+//       previousThrowTimeSeconds = Timer.getFPGATimestamp();
+//     }
+//   }
+// }
