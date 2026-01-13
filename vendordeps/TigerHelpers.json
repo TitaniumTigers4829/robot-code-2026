@@ -1,20 +1,19 @@
 {
     "fileName": "TigerHelpers.json",
     "name": "TigerHelpers",
-    "version": "v1.1.0",
+    "version": "v1.1.1",
     "uuid": "0dfc742a-d9ca-40e0-b937-48c77a2996c1",
-    "frcYear": "2025",
-    "mavenUrls": [
-        "https://jitpack.io"
-    ],
+    "frcYear": "2026",
+    "mavenUrls": ["https://jitpack.io"],
     "jsonUrl": "https://raw.githubusercontent.com/TitaniumTigers4829/TigerHelpers/refs/heads/main/tigerhelpers.json",
     "javaDependencies": [
-        {
-            "groupId": "com.github.TitaniumTigers4829",
-            "artifactId": "TigerHelpers",
-            "version": "v1.1.0"
-        }
+      {
+        "groupId": "com.github.TitaniumTigers4829",
+        "artifactId": "TigerHelpers",
+        "version": "v1.1.1"
+      }
     ],
     "jniDependencies": [],
     "cppDependencies": []
-}
+  }
+  
