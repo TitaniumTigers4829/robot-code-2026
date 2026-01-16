@@ -13,7 +13,7 @@ import frc.robot.sim.configs.SimMechanismConfig;
 import frc.robot.sim.configs.SimSwerveConfig;
 import frc.robot.sim.configs.SimSwerveModuleConfig;
 import frc.robot.sim.configs.SimSwerveModuleConfig.WheelCof;
-import frc.robot.sim.sim2026.RebuiltSimArena;
+import frc.robot.sim.sim2026.RebuiltSim;
 import frc.robot.sim.simField.SimArena;
 import frc.robot.sim.simMechanism.simSwerve.SimSwerve;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
@@ -78,7 +78,7 @@ public class SimWorld {
 
   /** Constructs a new simulation world. */
   public SimWorld() {
-    arena = new ReefscapeSimArena(Seconds.of(HardwareConstants.LOOP_TIME_SECONDS), 5);
+    arena = new SimArena(Seconds.of(HardwareConstants.LOOP_TIME_SECONDS), 5);
     simRobot = new SimRobot<>(arena, "User", swerveConfig, 1);
 
     aprilTagSim = new VisionSystemSim("AprilTags");

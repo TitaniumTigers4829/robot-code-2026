@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Time;
@@ -11,6 +12,7 @@ import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.util.struct.StructGenerator;
 import edu.wpi.first.util.struct.StructSerializable;
 import edu.wpi.first.wpilibj.IterativeRobotBase;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.extras.logging.RuntimeLog;
 import frc.robot.extras.math.forces.ProjectileUtil;
 import frc.robot.extras.math.mathutils.GeomUtil;
@@ -18,6 +20,7 @@ import frc.robot.extras.util.FrcBody;
 import frc.robot.sim.SimRobot;
 import frc.robot.sim.simField.SimGamePiece.GamePieceVariant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,6 +79,16 @@ public abstract class SimArena {
       this.physicsWorld.addBody(obstacle);
     }
   }
+
+    public static final class ReefscapeFieldObstacleMap extends FieldMap {
+      public ReefscapeFieldObstacleMap() {
+        
+      }
+    }
+
+ public RebuiltSimArena(Time period, int simulationSubTick) {
+      super(new RebuiltFieldObstacleMap(), period.in(Seconds), simulationSubTick);
+    }
 
   public void withWorld(Consumer<World<Body>> worldModifier) {
     try {
