@@ -8,7 +8,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 import frc.robot.Constants.RobotType;
-import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants.AquilaConstants;
+import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants.RobotConstants;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants.CompConstants;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants.DevConstants;
 
@@ -48,26 +48,30 @@ public class SwerveConstants {
 
     public static final int PIGEON_ID = 0;
 
-    public static final class AquilaConstants {
-      public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 22;
-      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 24;
-      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 23;
-      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 21;
 
-      public static final int FRONT_LEFT_TURN_MOTOR_ID = 5;
-      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 6;
-      public static final int REAR_LEFT_TURN_MOTOR_ID = 8;
-      public static final int REAR_RIGHT_TURN_MOTOR_ID = 7;
+    //TODO: Fill in all motor and CANCoder IDs and add robot name
+    public static final class RobotConstants {
+      public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 0-9;
+      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 0-9;
+      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 0-9;
+      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 0-9;
 
-      public static final int FRONT_LEFT_CANCODER_ID = 14;
-      public static final int FRONT_RIGHT_CANCODER_ID = 12;
-      public static final int REAR_LEFT_CANCODER_ID = 11;
-      public static final int REAR_RIGHT_CANCODER_ID = 13;
+      public static final int FRONT_LEFT_TURN_MOTOR_ID = 0-9;
+      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 0-9;
+      public static final int REAR_LEFT_TURN_MOTOR_ID = 0-9;
+      public static final int REAR_RIGHT_TURN_MOTOR_ID = 0-9;
 
-      public static final double FRONT_LEFT_ZERO_ANGLE = 0.137939453125;
-      public static final double FRONT_RIGHT_ZERO_ANGLE = -0.420654296875;
-      public static final double REAR_LEFT_ZERO_ANGLE = -0.475341796875;
-      public static final double REAR_RIGHT_ZERO_ANGLE = -0.05078125;
+      public static final int FRONT_LEFT_CANCODER_ID = 0-9;
+      public static final int FRONT_RIGHT_CANCODER_ID = 0-9;
+      public static final int REAR_LEFT_CANCODER_ID = 0-9;
+      public static final int REAR_RIGHT_CANCODER_ID = 0-9;
+
+
+      //TODO: Test all zero angles
+      public static final double FRONT_LEFT_ZERO_ANGLE = 0;
+      public static final double FRONT_RIGHT_ZERO_ANGLE = 0;
+      public static final double REAR_LEFT_ZERO_ANGLE = 0;
+      public static final double REAR_RIGHT_ZERO_ANGLE = 0;
 
       public static final SensorDirectionValue FRONT_LEFT_CANCODER_REVERSED =
           SensorDirectionValue.CounterClockwise_Positive;
@@ -278,37 +282,37 @@ public class SwerveConstants {
   public static final ModuleConfig[] aquilaModuleConfigs =
       new ModuleConfig[] {
         new ModuleConfig(
-            AquilaConstants.FRONT_LEFT_DRIVE_MOTOR_ID,
-            AquilaConstants.FRONT_LEFT_TURN_MOTOR_ID,
-            AquilaConstants.FRONT_LEFT_CANCODER_ID,
-            AquilaConstants.FRONT_LEFT_ZERO_ANGLE,
-            AquilaConstants.FRONT_LEFT_CANCODER_REVERSED,
-            AquilaConstants.FRONT_LEFT_TURN_MOTOR_REVERSED,
-            AquilaConstants.FRONT_LEFT_DRIVE_ENCODER_REVERSED),
+            RobotConstants.FRONT_LEFT_DRIVE_MOTOR_ID,
+            RobotConstants.FRONT_LEFT_TURN_MOTOR_ID,
+            RobotConstants.FRONT_LEFT_CANCODER_ID,
+            RobotConstants.FRONT_LEFT_ZERO_ANGLE,
+            RobotConstants.FRONT_LEFT_CANCODER_REVERSED,
+            RobotConstants.FRONT_LEFT_TURN_MOTOR_REVERSED,
+            RobotConstants.FRONT_LEFT_DRIVE_ENCODER_REVERSED),
         new ModuleConfig(
-            AquilaConstants.FRONT_RIGHT_DRIVE_MOTOR_ID,
-            AquilaConstants.FRONT_RIGHT_TURN_MOTOR_ID,
-            AquilaConstants.FRONT_RIGHT_CANCODER_ID,
-            AquilaConstants.FRONT_RIGHT_ZERO_ANGLE,
-            AquilaConstants.FRONT_RIGHT_CANCODER_REVERSED,
-            AquilaConstants.FRONT_RIGHT_TURN_MOTOR_REVERSED,
-            AquilaConstants.FRONT_RIGHT_DRIVE_ENCODER_REVERSED),
+            RobotConstants.FRONT_RIGHT_DRIVE_MOTOR_ID,
+            RobotConstants.FRONT_RIGHT_TURN_MOTOR_ID,
+            RobotConstants.FRONT_RIGHT_CANCODER_ID,
+            RobotConstants.FRONT_RIGHT_ZERO_ANGLE,
+            RobotConstants.FRONT_RIGHT_CANCODER_REVERSED,
+            RobotConstants.FRONT_RIGHT_TURN_MOTOR_REVERSED,
+            RobotConstants.FRONT_RIGHT_DRIVE_ENCODER_REVERSED),
         new ModuleConfig(
-            AquilaConstants.REAR_LEFT_DRIVE_MOTOR_ID,
-            AquilaConstants.REAR_LEFT_TURN_MOTOR_ID,
-            AquilaConstants.REAR_LEFT_CANCODER_ID,
-            AquilaConstants.REAR_LEFT_ZERO_ANGLE,
-            AquilaConstants.REAR_LEFT_CANCODER_REVERSED,
-            AquilaConstants.REAR_LEFT_TURN_MOTOR_REVERSED,
-            AquilaConstants.REAR_LEFT_DRIVE_ENCODER_REVERSED),
+            RobotConstants.REAR_LEFT_DRIVE_MOTOR_ID,
+            RobotConstants.REAR_LEFT_TURN_MOTOR_ID,
+            RobotConstants.REAR_LEFT_CANCODER_ID,
+            RobotConstants.REAR_LEFT_ZERO_ANGLE,
+            RobotConstants.REAR_LEFT_CANCODER_REVERSED,
+            RobotConstants.REAR_LEFT_TURN_MOTOR_REVERSED,
+            RobotConstants.REAR_LEFT_DRIVE_ENCODER_REVERSED),
         new ModuleConfig(
-            AquilaConstants.REAR_RIGHT_DRIVE_MOTOR_ID,
-            AquilaConstants.REAR_RIGHT_TURN_MOTOR_ID,
-            AquilaConstants.REAR_RIGHT_CANCODER_ID,
-            AquilaConstants.REAR_RIGHT_ZERO_ANGLE,
-            AquilaConstants.REAR_RIGHT_CANCODER_REVERSED,
-            AquilaConstants.REAR_RIGHT_TURN_MOTOR_REVERSED,
-            AquilaConstants.REAR_RIGHT_DRIVE_ENCODER_REVERSED)
+            RobotConstants.REAR_RIGHT_DRIVE_MOTOR_ID,
+            RobotConstants.REAR_RIGHT_TURN_MOTOR_ID,
+            RobotConstants.REAR_RIGHT_CANCODER_ID,
+            RobotConstants.REAR_RIGHT_ZERO_ANGLE,
+            RobotConstants.REAR_RIGHT_CANCODER_REVERSED,
+            RobotConstants.REAR_RIGHT_TURN_MOTOR_REVERSED,
+            RobotConstants.REAR_RIGHT_DRIVE_ENCODER_REVERSED)
       };
 
   public static final ModuleConfig[] devModuleConfigs =

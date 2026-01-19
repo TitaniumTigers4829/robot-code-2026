@@ -95,8 +95,8 @@ public final class Constants {
     public static final int LOW_THREAD_PRIORITY = 1;
   }
 public static final class FieldConstants {
-    public static final double FIELD_LENGTH_METERS = Units.inchesToMeters(690);
-    public static final double FIELD_WIDTH_METERS = Units.inchesToMeters(317);
+    public static final double FIELD_LENGTH_METERS = Units.inchesToMeters(651.2);
+    public static final double FIELD_WIDTH_METERS = Units.inchesToMeters(317.7);
 
     public static final Translation2d FIELD_CENTER =
         new Translation2d(FIELD_LENGTH_METERS / 2, FIELD_WIDTH_METERS / 2);

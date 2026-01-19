@@ -86,9 +86,9 @@ public abstract class SimArena {
       }
     }
 
- public RebuiltSimArena(Time period, int simulationSubTick) {
-      super(new RebuiltFieldObstacleMap(), period.in(Seconds), simulationSubTick);
-    }
+  public SimArena(Time period, int simulationSubTick) {
+    this(new ReefscapeFieldObstacleMap(), period.in(Seconds), simulationSubTick);
+  }
 
   public void withWorld(Consumer<World<Body>> worldModifier) {
     try {
