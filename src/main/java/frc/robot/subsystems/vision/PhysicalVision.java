@@ -75,8 +75,10 @@ public class PhysicalVision implements VisionInterface {
 
       inputs.limelightCalculatedPoses[limelight.getId()] = getPoseFromAprilTags(limelight);
 
-      inputs.megatag1PoseEstimates[limelight.getId()] = getMegaTag1PoseEstimate(limelight).pose().get();
-      inputs.megatag2PoseEstimates[limelight.getId()] = getMegaTag2PoseEstimate(limelight).pose().get();
+      inputs.megatag1PoseEstimates[limelight.getId()] =
+          getMegaTag1PoseEstimate(limelight).pose().get();
+      inputs.megatag2PoseEstimates[limelight.getId()] =
+          getMegaTag2PoseEstimate(limelight).pose().get();
 
       inputs.isMegaTag2[limelight.getId()] = isMegatag2[limelight.getId()];
     }
@@ -129,7 +131,8 @@ public class PhysicalVision implements VisionInterface {
         ? -1
         : limelightEstimates
             .get(limelight.getId())
-            .rawFiducials().get()[getNumberOfAprilTags(limelight) - 1]
+            .rawFiducials()
+            .get()[getNumberOfAprilTags(limelight) - 1]
             .ambiguity();
   }
 
@@ -253,8 +256,7 @@ public class PhysicalVision implements VisionInterface {
     return NTUtils.getLimelightNetworkTable(limelight.getName()).containsKey("tv");
   }
 
-
- /**
+  /**
    * Checks whether the pose estimate is within the field
    *
    * @param poseEstimate The pose estimate to check
@@ -333,8 +335,8 @@ public class PhysicalVision implements VisionInterface {
   /**
    * Checks whether the pose estimate is within the field
    *
-  //  * @param poseEstimate The pose estimate to check
-  //  */
+   * <p>// * @param poseEstimate The pose estimate to check //
+   */
   // ADJUST FOR 2026 GAME
   // private boolean isWithinFieldBounds(Pose2d poseEstimate) {
   //   double minX = DriveConstants.TRACK_WIDTH / 2.0;

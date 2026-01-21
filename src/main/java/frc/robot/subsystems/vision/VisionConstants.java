@@ -76,7 +76,6 @@ public final class VisionConstants {
   public static final double LL4_FOV_MARGIN_OF_ERROR = 34.5;
   // only have ll4s for this season
 
-
   public static final double MAX_TRANSLATION_DELTA_METERS = 0.8;
   public static final double MAX_ROTATION_DELTA_DEGREES = 50.0;
   public static final double MAX_AMBIGUITY_THRESHOLD = .45;

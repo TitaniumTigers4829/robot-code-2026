@@ -5,10 +5,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
@@ -22,7 +20,6 @@ import frc.robot.subsystems.swerve.gyro.PhysicalGyroPigeon;
 import frc.robot.subsystems.swerve.module.ModuleInterface;
 import frc.robot.subsystems.swerve.module.PhysicalModule;
 import frc.robot.subsystems.vision.PhysicalVision;
-import frc.robot.subsystems.vision.SimulatedVision;
 import frc.robot.subsystems.vision.VisionInterface;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.function.DoubleSupplier;
@@ -46,7 +43,6 @@ public class Robot extends LoggedRobot {
 
   private VisionSubsystem visionSubsystem;
   private SwerveDrive swerveDrive;
-
 
   private Command autoCommand;
 
@@ -156,8 +152,6 @@ public class Robot extends LoggedRobot {
     // Sets the default command for the swerve drive to the drive command
     swerveDrive.setDefaultCommand(driveCommand);
 
-  
-
     // Resets the robot angle in the odometry, factors in which alliance the robot is on
     driverController
         .povRight()
@@ -182,7 +176,7 @@ public class Robot extends LoggedRobot {
   /** Configures the operator controller buttons and axes to control the robot */
   private void configureOperatorController() {
     // OPERATOR COMMANDS
-   
+
   }
 
   /** Checks the git status and records it to the log */
@@ -314,7 +308,6 @@ public class Robot extends LoggedRobot {
         // SYNTAX ^^
       }
     }
-   
   }
 
   /** Sets up the auto commands */
@@ -348,5 +341,4 @@ public class Robot extends LoggedRobot {
   public void simulationInit() {}
 
   /** This function is called periodically whilst in simulation. */
-  
 }

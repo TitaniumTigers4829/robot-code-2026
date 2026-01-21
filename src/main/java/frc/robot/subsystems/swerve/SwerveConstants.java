@@ -8,9 +8,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 import frc.robot.Constants.RobotType;
-import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants.RobotConstants;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants.CompConstants;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants.DevConstants;
+import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants.RobotConstants;
 
 /** Swerve Constants */
 public class SwerveConstants {
@@ -48,26 +48,24 @@ public class SwerveConstants {
 
     public static final int PIGEON_ID = 0;
 
-
-    //TODO: Fill in all motor and CANCoder IDs and add robot name
+    // TODO: Fill in all motor and CANCoder IDs and add robot name
     public static final class RobotConstants {
-      public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 0-9;
-      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 0-9;
-      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 0-9;
-      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 0-9;
+      public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 0 - 9;
+      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 0 - 9;
+      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 0 - 9;
+      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 0 - 9;
 
-      public static final int FRONT_LEFT_TURN_MOTOR_ID = 0-9;
-      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 0-9;
-      public static final int REAR_LEFT_TURN_MOTOR_ID = 0-9;
-      public static final int REAR_RIGHT_TURN_MOTOR_ID = 0-9;
+      public static final int FRONT_LEFT_TURN_MOTOR_ID = 0 - 9;
+      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 0 - 9;
+      public static final int REAR_LEFT_TURN_MOTOR_ID = 0 - 9;
+      public static final int REAR_RIGHT_TURN_MOTOR_ID = 0 - 9;
 
-      public static final int FRONT_LEFT_CANCODER_ID = 0-9;
-      public static final int FRONT_RIGHT_CANCODER_ID = 0-9;
-      public static final int REAR_LEFT_CANCODER_ID = 0-9;
-      public static final int REAR_RIGHT_CANCODER_ID = 0-9;
+      public static final int FRONT_LEFT_CANCODER_ID = 0 - 9;
+      public static final int FRONT_RIGHT_CANCODER_ID = 0 - 9;
+      public static final int REAR_LEFT_CANCODER_ID = 0 - 9;
+      public static final int REAR_RIGHT_CANCODER_ID = 0 - 9;
 
-
-      //TODO: Test all zero angles
+      // TODO: Test all zero angles
       public static final double FRONT_LEFT_ZERO_ANGLE = 0;
       public static final double FRONT_RIGHT_ZERO_ANGLE = 0;
       public static final double REAR_LEFT_ZERO_ANGLE = 0;

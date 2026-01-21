@@ -6,7 +6,6 @@ import frc.robot.extras.logging.Tracer;
 import frc.robot.extras.util.AllianceFlipper;
 import frc.robot.subsystems.vision.VisionConstants.Limelight;
 import org.littletonrobotics.junction.Logger;
-import frc.robot.subsystems.vision.VisionInputsAutoLogged;
 
 /**
  * VisionSubsystem is a subsystem for managing vision-related tasks in the robot, including

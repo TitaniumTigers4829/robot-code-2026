@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -19,7 +17,7 @@ import edu.wpi.first.wpilibj.RobotBase;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-   private static RobotType robotType = RobotType.COMP_ROBOT;
+  private static RobotType robotType = RobotType.COMP_ROBOT;
 
   public static final boolean tuningMode = false;
 
@@ -70,9 +68,11 @@ public final class Constants {
     COMP_ROBOT,
     SWERVE_ROBOT
   }
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
   public static final class HardwareConstants {
     public static final double LOOP_TIME_SECONDS = 0.02;
 
@@ -94,7 +94,8 @@ public final class Constants {
     public static final int HIGH_THREAD_PRIORITY = 99;
     public static final int LOW_THREAD_PRIORITY = 1;
   }
-public static final class FieldConstants {
+
+  public static final class FieldConstants {
     public static final double FIELD_LENGTH_METERS = Units.inchesToMeters(651.2);
     public static final double FIELD_WIDTH_METERS = Units.inchesToMeters(317.7);
 
@@ -117,7 +118,8 @@ public static final class FieldConstants {
 
     
   }
-   public static final class JoystickConstants {
+
+  public static final class JoystickConstants {
     public static final int DRIVER_JOYSTICK_ID = 0;
     public static final int OPERATOR_JOYSTICK_ID = 1;
 
