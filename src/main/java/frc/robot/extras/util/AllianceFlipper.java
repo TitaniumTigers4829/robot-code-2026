@@ -27,7 +27,6 @@ public class AllianceFlipper {
    * @param translation The Translation2d to flip
    * @return Translation2d object with its x coordinate flipped over the y-axis
    */
-
   public static final Translation2d flipTranslation(Translation2d translation) {
     return new Translation2d(
         FieldConstants.FIELD_LENGTH_METERS - translation.getX(), translation.getY());
