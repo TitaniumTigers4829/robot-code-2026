@@ -33,6 +33,6 @@ public class PhysicalShooter implements ShooterInterface {
  
 
   private final TalonFXConfiguration flywheelConfig = new TalonFXConfiguration();
-
+  //TODO: Add configs
   flywheelMotor.getConfigurator().apply(flywheelConfig);
 }
