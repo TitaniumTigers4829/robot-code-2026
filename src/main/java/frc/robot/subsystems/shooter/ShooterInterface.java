@@ -10,14 +10,14 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ShooterInterface {
     @AutoLog
     public static class ShooterInputs { // For values
-        public double topFlywheelRPM = 0.0;
-        public double topMotorVoltage = 0.0;
-        public double topDutyCycle = 0.0;
-        public double topDesiredRPM = 0.0;
-        public double topStatorCurrent = 0.0;
-        public double topMotorVelocity = 0.0;
-        public double topRPMError = 0.0;
-        public double topMotorTemp = 0.0;
+        public double flywheelRPM = 0.0;
+        public double flywheelMotorVoltage = 0.0;
+        public double flywheelDutyCycle = 0.0;
+        public double flywheelDesiredRPM = 0.0;
+        public double flywheelStatorCurrent = 0.0;
+        public double flywheelVelocity = 0.0;
+        public double flywheelRPMError = 0.0;
+        public double flywheelMotorTemp = 0.0;
   }
 
   public default void updateInputs(ShooterInputs inputs) {}

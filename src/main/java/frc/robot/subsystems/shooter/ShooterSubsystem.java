@@ -47,6 +47,7 @@ public class ShooterSubsystem extends SubsystemBase {
         flywheelD.initDefault(ShooterConstants.FLYWHEEL_D);
     }
   }
+  }
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem(ShooterInterface shooterInterface) {
@@ -83,7 +84,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean isTopAtSetpointRPM(double targetRPM) {
-    return Math.abs(targetRPM - inputs.topFlywheelRPM)
+    return Math.abs(targetRPM - inputs.flywheelRPM)
         < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
   }
 
@@ -96,12 +97,13 @@ public class ShooterSubsystem extends SubsystemBase {
     // Update tunable numbers
     if (flywheelS.hasChanged(hashCode())
         || flywheelV.hasChanged(hashCode())
-        || flywheelA.hasChanged(hashCode())
-      shooterInterface.setFF(flywheelS.get(), flywheelV.get(), flywheelA.get()));
+        || flywheelA.hasChanged(hashCode())) {
+      shooterInterface.setFF(flywheelS.get(), flywheelV.get(), flywheelA.get());
     }
     if (flywheelP.hasChanged(hashCode())
         || flywheelI.hasChanged(hashCode())
         || flywheelD.hasChanged(hashCode())) {
       shooterInterface.setPID(flywheelP.get(), flywheelI.get(), flywheelD.get());
     }
+  }
   }
