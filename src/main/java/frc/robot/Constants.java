@@ -108,15 +108,17 @@ public final class Constants {
 
     public static final double HUB_WALL_FROM_ALLIANCE_WALL_METERS = Units.inchesToMeters(158.6);
 
-    public static final Translation2d RED_HUB_CENTER = 
-      new Translation2d(HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2), FIELD_WIDTH_METERS / 2);
-    public static final Translation2d BLUE_HUB_CENTER = 
-      new Translation2d(FIELD_LENGTH_METERS-(HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2)), FIELD_WIDTH_METERS / 2);
+    public static final Translation2d RED_HUB_CENTER =
+        new Translation2d(
+            HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2), FIELD_WIDTH_METERS / 2);
+    public static final Translation2d BLUE_HUB_CENTER =
+        new Translation2d(
+            FIELD_LENGTH_METERS - (HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2)),
+            FIELD_WIDTH_METERS / 2);
 
-    //TODO: In addition to this, coordinates for all relevant game structures must be added (ex: blue outpost)
+    // TODO: In addition to this, coordinates for all relevant game structures must be added (ex:
+    // blue outpost)
 
-
-    
   }
 
   public static final class JoystickConstants {

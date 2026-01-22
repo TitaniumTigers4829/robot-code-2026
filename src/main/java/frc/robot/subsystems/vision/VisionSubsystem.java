@@ -3,7 +3,6 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.extras.logging.Tracer;
-import frc.robot.extras.util.AllianceFlipper;
 import frc.robot.subsystems.vision.VisionConstants.Limelight;
 import org.littletonrobotics.junction.Logger;
 
@@ -106,7 +105,6 @@ public class VisionSubsystem extends SubsystemBase {
   public Pose2d getPoseFromAprilTags(Limelight limelight) {
     return inputs.limelightCalculatedPoses[limelight.getId()];
   }
-
 
   /**
    * Gets the last seen pose of the robot based on the latest data from any Limelight.

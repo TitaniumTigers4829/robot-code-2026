@@ -18,7 +18,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -569,20 +568,22 @@ public class SwerveDrive extends SubsystemBase {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 
-  //For hublocking
+  // For hublocking
 
   public double getDistanceFromAllianceHub() {
     if (AllianceFlipper.isBlue()) {
-      return FieldConstants.BLUE_HUB_CENTER.getDistance(poseEstimator.getEstimatedPosition().getTranslation());
-    }
-    else {
-      return FieldConstants.RED_HUB_CENTER.getDistance(poseEstimator.getEstimatedPosition().getTranslation());
+      return FieldConstants.BLUE_HUB_CENTER.getDistance(
+          poseEstimator.getEstimatedPosition().getTranslation());
+    } else {
+      return FieldConstants.RED_HUB_CENTER.getDistance(
+          poseEstimator.getEstimatedPosition().getTranslation());
     }
   }
 
   public double getShootingAngle() {
     return Math.atan(
-      (FieldConstants.HUB_HEIGHT_METERS-ShooterConstants.SHOOTER_HEIGHT_FROM_GROUND) / getDistanceFromAllianceHub());
+        (FieldConstants.HUB_HEIGHT_METERS - ShooterConstants.SHOOTER_HEIGHT_FROM_GROUND)
+            / getDistanceFromAllianceHub());
   }
 
   /**

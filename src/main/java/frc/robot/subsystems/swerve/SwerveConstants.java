@@ -50,20 +50,20 @@ public class SwerveConstants {
 
     // TODO: Fill in all motor and CANCoder IDs and add robot name
     public static final class RobotConstants {
-      public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 0 - 9;
-      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 0 - 9;
-      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 0 - 9;
-      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 0 - 9;
+      public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 54;
+      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 26;
+      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 1;
+      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 3;
 
-      public static final int FRONT_LEFT_TURN_MOTOR_ID = 0 - 9;
-      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 0 - 9;
-      public static final int REAR_LEFT_TURN_MOTOR_ID = 0 - 9;
-      public static final int REAR_RIGHT_TURN_MOTOR_ID = 0 - 9;
+      public static final int FRONT_LEFT_TURN_MOTOR_ID = 7;
+      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 5;
+      public static final int REAR_LEFT_TURN_MOTOR_ID = 6;
+      public static final int REAR_RIGHT_TURN_MOTOR_ID = 2;
 
-      public static final int FRONT_LEFT_CANCODER_ID = 0 - 9;
-      public static final int FRONT_RIGHT_CANCODER_ID = 0 - 9;
-      public static final int REAR_LEFT_CANCODER_ID = 0 - 9;
-      public static final int REAR_RIGHT_CANCODER_ID = 0 - 9;
+      public static final int FRONT_LEFT_CANCODER_ID = 11;
+      public static final int FRONT_RIGHT_CANCODER_ID = 10;
+      public static final int REAR_LEFT_CANCODER_ID = 12;
+      public static final int REAR_RIGHT_CANCODER_ID = 13;
 
       // TODO: Test all zero angles
       public static final double FRONT_LEFT_ZERO_ANGLE = 0;
@@ -100,20 +100,20 @@ public class SwerveConstants {
     }
 
     public static final class DevConstants {
-      public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 1;
-      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 2;
-      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 3;
-      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 4;
+      public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 54;
+      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 26;
+      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 1;
+      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 3;
 
-      public static final int FRONT_LEFT_TURN_MOTOR_ID = 5;
-      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 6;
-      public static final int REAR_LEFT_TURN_MOTOR_ID = 7;
-      public static final int REAR_RIGHT_TURN_MOTOR_ID = 8;
+      public static final int FRONT_LEFT_TURN_MOTOR_ID = 7;
+      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 5;
+      public static final int REAR_LEFT_TURN_MOTOR_ID = 6;
+      public static final int REAR_RIGHT_TURN_MOTOR_ID = 2;
 
-      public static final int FRONT_LEFT_CANCODER_ID = 9;
+      public static final int FRONT_LEFT_CANCODER_ID = 11;
       public static final int FRONT_RIGHT_CANCODER_ID = 10;
-      public static final int REAR_LEFT_CANCODER_ID = 11;
-      public static final int REAR_RIGHT_CANCODER_ID = 12;
+      public static final int REAR_LEFT_CANCODER_ID = 12;
+      public static final int REAR_RIGHT_CANCODER_ID = 13;
 
       public static final double FRONT_LEFT_ZERO_ANGLE = -0.09521484375;
       public static final double FRONT_RIGHT_ZERO_ANGLE = -0.478271484375;
@@ -159,10 +159,10 @@ public class SwerveConstants {
       public static final int REAR_LEFT_TURN_MOTOR_ID = 6;
       public static final int REAR_RIGHT_TURN_MOTOR_ID = 2;
 
-      public static final int FRONT_LEFT_CANCODER_ID = 5;
-      public static final int FRONT_RIGHT_CANCODER_ID = 2;
-      public static final int REAR_LEFT_CANCODER_ID = 0;
-      public static final int REAR_RIGHT_CANCODER_ID = 1;
+      public static final int FRONT_LEFT_CANCODER_ID = 11;
+      public static final int FRONT_RIGHT_CANCODER_ID = 10;
+      public static final int REAR_LEFT_CANCODER_ID = 12;
+      public static final int REAR_RIGHT_CANCODER_ID = 13;
 
       public static final double FRONT_LEFT_ZERO_ANGLE =
           -0.256103515625 + Units.degreesToRotations(45);

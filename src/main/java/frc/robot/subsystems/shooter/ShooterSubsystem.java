@@ -4,37 +4,24 @@
 
 package frc.robot.subsystems.shooter;
 
-import java.util.function.DoubleSupplier;
-
-import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.swerve.SwerveModule;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
+import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
+
+import org.littletonrobotics.junction.Logger;
 
 public class ShooterSubsystem extends SubsystemBase {
+
   private ShooterInterface shooterInterface;
   private ShooterInputsAutoLogged inputs = new ShooterInputsAutoLogged();
- 
-  private static final LoggedTunableNumber flywheelS =
-      new LoggedTunableNumber("Shooter/ShooterS");
-  private static final LoggedTunableNumber flywheelV =
-      new LoggedTunableNumber("Shooter/ShooterV");
-  private static final LoggedTunableNumber flywheelA =
-      new LoggedTunableNumber("Shooter/ShooterA");
-  private static final LoggedTunableNumber flywheelP =
-      new LoggedTunableNumber("Shooter/ShooterP");
-  private static final LoggedTunableNumber flywheelI =
-      new LoggedTunableNumber("Shooter/ShooterI");
-  private static final LoggedTunableNumber flywheelD =
-      new LoggedTunableNumber("Shooter/ShooterD");
 
+  private static final LoggedTunableNumber flywheelS = new LoggedTunableNumber("Shooter/ShooterS");
+  private static final LoggedTunableNumber flywheelV = new LoggedTunableNumber("Shooter/ShooterV");
+  private static final LoggedTunableNumber flywheelA = new LoggedTunableNumber("Shooter/ShooterA");
+  private static final LoggedTunableNumber flywheelP = new LoggedTunableNumber("Shooter/ShooterP");
+  private static final LoggedTunableNumber flywheelI = new LoggedTunableNumber("Shooter/ShooterI");
+  private static final LoggedTunableNumber flywheelD = new LoggedTunableNumber("Shooter/ShooterD");
 
   static {
     switch (Constants.getRobot()) {
@@ -45,8 +32,8 @@ public class ShooterSubsystem extends SubsystemBase {
         flywheelP.initDefault(ShooterConstants.FLYWHEEL_P);
         flywheelI.initDefault(ShooterConstants.FLYWHEEL_I);
         flywheelD.initDefault(ShooterConstants.FLYWHEEL_D);
+      }
     }
-  }
   }
 
   /** Creates a new ShooterSubsystem. */
@@ -54,10 +41,11 @@ public class ShooterSubsystem extends SubsystemBase {
     this.shooterInterface = shooterInterface;
   }
 
+  
+
   public double getFlywheelRPM() {
     return shooterInterface.getFlywheelRPM();
   }
-
 
   public double getVolts() {
     return shooterInterface.getVolts();
@@ -84,10 +72,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean isTopAtSetpointRPM(double targetRPM) {
-    return Math.abs(targetRPM - inputs.flywheelRPM)
-        < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
+    return Math.abs(targetRPM - inputs.flywheelRPM) < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
   }
-
 
   @Override
   public void periodic() {
@@ -106,4 +92,4 @@ public class ShooterSubsystem extends SubsystemBase {
       shooterInterface.setPID(flywheelP.get(), flywheelI.get(), flywheelD.get());
     }
   }
-  }
+}
