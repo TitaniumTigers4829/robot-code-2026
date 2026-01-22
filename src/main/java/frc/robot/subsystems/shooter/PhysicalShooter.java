@@ -10,7 +10,6 @@ import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
 /** Add your docs here. */
@@ -32,7 +31,7 @@ public class PhysicalShooter implements ShooterInterface {
   public PhysicalShooter() {
     flywheelMotor.getConfigurator().apply(flywheelConfig);
 
-    flywheelRPMLookupValues = new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
-
+    flywheelRPMLookupValues =
+        new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
   }
 }

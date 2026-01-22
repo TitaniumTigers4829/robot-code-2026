@@ -7,8 +7,6 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
-import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
-
 import org.littletonrobotics.junction.Logger;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -40,8 +38,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem(ShooterInterface shooterInterface) {
     this.shooterInterface = shooterInterface;
   }
-
-  
 
   public double getFlywheelRPM() {
     return shooterInterface.getFlywheelRPM();
