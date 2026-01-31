@@ -24,9 +24,6 @@ public class TurretSubsystem extends SubsystemBase {
   static {
     switch (Constants.getRobot()) {
       case COMP_ROBOT, DEV_ROBOT -> {
-        turretS.initDefault(TurretConstants.TURRET_S);
-        turretV.initDefault(TurretConstants.TURRET_V);
-        turretA.initDefault(TurretConstants.TURRET_A);
         turretP.initDefault(TurretConstants.TURRET_P);
         turretI.initDefault(TurretConstants.TURRET_I);
         turretD.initDefault(TurretConstants.TURRET_D);
@@ -39,8 +36,8 @@ public class TurretSubsystem extends SubsystemBase {
     this.turretInterface = turretInterface;
   }
 
-  public double calculateTurretAngle() {
-    return turretInterface.calculateTurretAngle();
+  public double getTurretAngle() {
+    return turretInterface.getTurretAngle();
   }
 
   public double getVolts() {
@@ -73,11 +70,6 @@ public class TurretSubsystem extends SubsystemBase {
     Logger.processInputs("turret/", inputs);
 
     // Update tunable numbers
-    if (turretS.hasChanged(hashCode())
-        || turretV.hasChanged(hashCode())
-        || turretA.hasChanged(hashCode())) {
-      turretInterface.setFF(turretS.get(), turretV.get(), turretA.get());
-    }
     if (turretP.hasChanged(hashCode())
         || turretI.hasChanged(hashCode())
         || turretD.hasChanged(hashCode())) {

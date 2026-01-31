@@ -4,6 +4,10 @@
 
 package frc.robot.subsystems.turret;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+
 /** Add your docs here. */
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -11,27 +15,152 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterInterface;
+import frc.robot.subsystems.turret.TurretInterface.TurretInputs;
 
 /** Add your docs here. */
 public class PhysicalTurret implements ShooterInterface {
 
   private final TalonFX turretMotor = new TalonFX(TurretConstants.TURRET_MOTOR_ID);
+  private final CANcoder turretEncoder = new CANcoder(TurretConstants.TURRET_CANCODER_ID);
 
-  private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
-  private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
+  // Commented out because torqueFOC is in theory easier to tune
+  // private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
+  // private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
 
   private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new MotionMagicTorqueCurrentFOC(0.0);
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
-  private final TalonFXConfiguration turretConfig = new TalonFXConfiguration();
+  private final StatusSignal<Voltage> turretMotorAppliedVoltage;
+  private final StatusSignal<Angle> turretAngle;
+  private final StatusSignal<Double> dutyCycle;
+  private final StatusSignal<Current> statorCurrent;
+  private final StatusSignal<Temperature> motorTemp;
+  private final double angleError;
 
-  // TODO: Add configs
+  private final TalonFXConfiguration turretConfig = new TalonFXConfiguration();
+  private final CANcoderConfiguration turretEncoderConfig = new CANcoderConfiguration();
+  
   public PhysicalTurret() {
+    
+    turretConfig.Feedback.SensorToMechanismRatio = TurretConstants.GEAR_RATIO;
+
+    turretEncoderConfig.MagnetSensor.MagnetOffset = -TurretConstants.ANGLE_ZERO;
+    turretEncoderConfig.MagnetSensor.SensorDirection = TurretConstants.ENCODER_REVERSED;
+
+    turretEncoder.getConfigurator().apply(turretEncoderConfig);
+
+    turretConfig.Slot0.kP = TurretConstants.TURRET_P;
+    turretConfig.Slot0.kI = TurretConstants.TURRET_I;
+    turretConfig.Slot0.kD = TurretConstants.TURRET_D;
+
+     turretConfig.MotionMagic.MotionMagicAcceleration =
+        TurretConstants.MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
+    turretConfig.MotionMagic.MotionMagicCruiseVelocity =
+        TurretConstants.MAX_VELOCITY_ROTATIONS_PER_SECOND;
+
+    turretConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+     // Set current limits
+    turretConfig.CurrentLimits.StatorCurrentLimit = TurretConstants.STATOR_CURRENT_LIMIT;
+    turretConfig.CurrentLimits.SupplyCurrentLimit = TurretConstants.SUPPLY_CURRENT_LIMIT;
+    turretConfig.CurrentLimits.StatorCurrentLimitEnable =
+        TurretConstants.STATOR_CURRENT_LIMIT_ENABLE;
+    turretConfig.CurrentLimits.SupplyCurrentLimitEnable =
+        TurretConstants.SUPPLY_CURRENT_LIMIT_ENABLE;
+
+    turretConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    turretConfig.MotorOutput.DutyCycleNeutralDeadband = 
+    TurretConstants.TURRET_DEADBAND;
+
+    turretConfig.ClosedLoopGeneral.ContinuousWrap = true;
+
+    turretConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    turretConfig.Feedback.FeedbackRemoteSensorID = turretEncoder.getDeviceID();
+
+    //We'll see if we need it i just don't want it to be an annoying error that i forget about :(
+    // turretConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
     turretMotor.getConfigurator().apply(turretConfig);
 
+    turretAngle = turretEncoder.getAbsolutePosition();
+    turretMotorAppliedVoltage = turretMotor.getMotorVoltage();
+    dutyCycle = turretMotor.getDutyCycle();
+    statorCurrent = turretMotor.getStatorCurrent();
+    motorTemp = turretMotor.getDeviceTemp();
+    angleError = turretMotor.getClosedLoopReference().getValueAsDouble()
+            - turretMotor.getPosition().getValueAsDouble();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+      50.0, 
+      turretAngle, 
+      turretMotorAppliedVoltage,
+      dutyCycle,
+      statorCurrent,
+      motorTemp);
+    ParentDevice.optimizeBusUtilizationForAll(
+      turretMotor, 
+      turretEncoder
+      );
+
   }
+
+  public void updateInputs(TurretInputs inputs) {
+    BaseStatusSignal.refreshAll(
+      turretAngle,
+      turretMotorAppliedVoltage,
+      dutyCycle,
+      statorCurrent,
+      motorTemp);
+    inputs.turretAngle = turretAngle.getValueAsDouble();
+    inputs.turretMotorAppliedVoltage = turretMotorAppliedVoltage.getValueAsDouble();
+    inputs.turretDutyCycle = dutyCycle.getValueAsDouble();
+    inputs.turretStatorCurrent = statorCurrent.getValueAsDouble();
+    inputs.turretMotorTemp = motorTemp.getValueAsDouble();
+  }
+  
+  public double getTurretAngle(double angle) {
+    turretAngle.refresh();
+    return turretAngle.getValueAsDouble();
+  }
+
+
+  public void setTurretAngle(double desiredAngle) {
+    turretMotor.setControl(mmTorqueRequest.withPosition(desiredAngle));
+  }
+
+  //For manual in case turret angling fucks up
+  public void openLoop(double output) {
+    turretMotor.setControl(currentOut.withOutput(output));
+  }
+
+  public void setVolts(double volts) {
+    turretMotor.setVoltage(volts);
+  }
+
+  public double getVolts() {
+    return turretMotorAppliedVoltage.getValueAsDouble();
+  }
+  @Override
+  public void setPID(double kP, double kI, double kD) {
+    turretConfig.Slot0.kP = kP;
+    turretConfig.Slot0.kI = kI;
+    turretConfig.Slot0.kD = kD;
+    turretMotor.getConfigurator().apply(turretConfig);
+  }
+
 }

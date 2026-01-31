@@ -11,6 +11,7 @@ public interface TurretInterface {
   @AutoLog
   public static class TurretInputs { // For values
     public double turretAngle = 0.0;
+    public double turretMotorAppliedVoltage = 0.0;
     public double turretDutyCycle = 0.0;
     public double turretDesiredAngle = 0.0;
     public double turretStatorCurrent = 0.0;
@@ -21,7 +22,7 @@ public interface TurretInterface {
   public default void updateInputs(TurretInputs inputs) {}
 
   /*in rotations and in relation to the hub */
-  public default double calculateTurretAngle() {
+  public default double getTurretAngle() {
     return 0.0;
   }
 
@@ -38,6 +39,4 @@ public interface TurretInterface {
   public default void openLoop(double output) {}
 
   public default void setPID(double kP, double kI, double kD) {}
-
-  public default void setFF(double kS, double kV, double kA) {}
 }
