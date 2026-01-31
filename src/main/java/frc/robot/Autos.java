@@ -120,9 +120,9 @@ public class Autos {
   }
 
   public Command getSelectedCommand() {
-    AutoRoutine test = yOneMeterAuto();
-    return test.cmd();
-    // return selectedCommand;
+    // AutoRoutine test = yOneMeterAuto();
+    // return test.cmd();
+    return selectedCommand;
   }
 
   private void addRoutine(String name, Supplier<AutoRoutine> generator) {
