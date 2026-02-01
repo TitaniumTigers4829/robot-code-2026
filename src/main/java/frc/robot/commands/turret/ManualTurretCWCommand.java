@@ -5,16 +5,17 @@
 package frc.robot.commands.turret;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.turret.PhysicalTurret;
+import frc.robot.subsystems.turret.TurretConstants;
+import frc.robot.subsystems.turret.TurretSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ManualTurretCWCommand extends Command {
   /** Creates a new ManualTurretCommand. */
-  PhysicalTurret turretSubsystem;
-  double speed = -0.5;
-  public ManualTurretCWCommand(PhysicalTurret turretSubsystem) {
+  TurretSubsystem turretSubsystem;
+  double speed = TurretConstants.CW_MANUAL_SPEED;
+  public ManualTurretCWCommand(TurretSubsystem turretSubsystem) {
     this.turretSubsystem = turretSubsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(turretSubsystem);
   }
 
   // Called when the command is initially scheduled.

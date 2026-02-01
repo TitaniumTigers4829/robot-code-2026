@@ -95,6 +95,11 @@ public class PhysicalTurret implements TurretInterface {
     turretConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     turretConfig.Feedback.FeedbackRemoteSensorID = turretEncoder.getDeviceID();
 
+    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TurretConstants.MAX_ANGLE;
+    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TurretConstants.MIN_ANGLE;
+    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+
     turretConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     turretMotor.getConfigurator().apply(turretConfig);
@@ -107,9 +112,11 @@ public class PhysicalTurret implements TurretInterface {
     angleError = turretMotor.getClosedLoopReference().getValueAsDouble()
             - turretMotor.getPosition().getValueAsDouble();
 
+
+    // Higher frequency for turret angle because its more important that the other signals
+    turretAngle.setUpdateFrequency(250.0);
     BaseStatusSignal.setUpdateFrequencyForAll(
-      250.0, 
-      turretAngle, 
+      50.0, 
       turretMotorAppliedVoltage,
       dutyCycle,
       statorCurrent,
@@ -142,9 +149,14 @@ public class PhysicalTurret implements TurretInterface {
 
 
   // Assumes facing the front of the robot is 0 rotations
-  // I know there's an easier way to do this
+  // Normalizes angle
   public void setTurretAngle(double desiredAngle) {
-    turretMotor.setControl(mmTorqueRequest.withPosition(desiredAngle));
+    if ((desiredAngle - getTurretAngle()) < 0.5) {
+      turretMotor.setControl(mmTorqueRequest.withPosition(desiredAngle));
+    }
+    else {
+      turretMotor.setControl(mmTorqueRequest.withPosition(desiredAngle - 1));
+    }
   }
 
   //For manual in case turret angling fucks up

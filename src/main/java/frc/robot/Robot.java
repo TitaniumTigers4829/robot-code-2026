@@ -51,7 +51,6 @@ public class Robot extends LoggedRobot {
   private SwerveDrive swerveDrive;
   private ShooterSubsystem shooterSubsystem;
   private TurretSubsystem turretSubsystem;
-  private PhysicalTurret physicalTurret;
 
   private Autos autos;
   private Command autoCommand;
@@ -188,12 +187,12 @@ public class Robot extends LoggedRobot {
       driverController
       .leftBumper()
       .whileTrue(
-        new ManualTurretCCWCommand(physicalTurret));
+        new ManualTurretCCWCommand(turretSubsystem));
 
       driverController
       .rightBumper()
       .whileTrue(
-        new ManualTurretCWCommand(physicalTurret));
+        new ManualTurretCWCommand(turretSubsystem));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */
