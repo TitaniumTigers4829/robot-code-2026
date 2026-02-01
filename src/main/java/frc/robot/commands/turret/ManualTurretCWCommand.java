@@ -2,21 +2,19 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.drive;
+package frc.robot.commands.turret;
 
-import choreo.trajectory.SwerveSample;
-import frc.robot.subsystems.swerve.SwerveDrive;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.turret.PhysicalTurret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class FollowSwerveSampleCommand extends DriveCommandBase {
-  private final SwerveDrive swerveDrive;
-  private final SwerveSample swerveSample;
-
-  public FollowSwerveSampleCommand(SwerveDrive swerveDrive, SwerveSample swerveSample) {
-    super(swerveDrive);
-    this.swerveDrive = swerveDrive;
-    this.swerveSample = swerveSample;
-    addRequirements(swerveDrive);
+public class ManualTurretCWCommand extends Command {
+  /** Creates a new ManualTurretCommand. */
+  PhysicalTurret turretSubsystem;
+  double speed = -0.5;
+  public ManualTurretCWCommand(PhysicalTurret turretSubsystem) {
+    this.turretSubsystem = turretSubsystem;
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
@@ -26,13 +24,14 @@ public class FollowSwerveSampleCommand extends DriveCommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    swerveDrive.followSwerveSample(swerveSample);
-    super.execute();
+    turretSubsystem.setSpeed(speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    turretSubsystem.setSpeed(0);
+  }
 
   // Returns true when the command should end.
   @Override

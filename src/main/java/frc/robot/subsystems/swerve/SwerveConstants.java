@@ -150,27 +150,24 @@ public class SwerveConstants {
 
     public static final class CompConstants {
       public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 54;
-      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 26;
-      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 1;
-      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 3;
+      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 3;
+      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 26;
+      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 1;
 
       public static final int FRONT_LEFT_TURN_MOTOR_ID = 7;
-      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 5;
-      public static final int REAR_LEFT_TURN_MOTOR_ID = 6;
-      public static final int REAR_RIGHT_TURN_MOTOR_ID = 2;
+      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 2;
+      public static final int REAR_LEFT_TURN_MOTOR_ID = 5;
+      public static final int REAR_RIGHT_TURN_MOTOR_ID = 6;
 
       public static final int FRONT_LEFT_CANCODER_ID = 11;
-      public static final int FRONT_RIGHT_CANCODER_ID = 10;
-      public static final int REAR_LEFT_CANCODER_ID = 12;
-      public static final int REAR_RIGHT_CANCODER_ID = 13;
+      public static final int FRONT_RIGHT_CANCODER_ID = 13;
+      public static final int REAR_LEFT_CANCODER_ID = 10;
+      public static final int REAR_RIGHT_CANCODER_ID = 12;
 
-      public static final double FRONT_LEFT_ZERO_ANGLE =
-          -0.256103515625 + Units.degreesToRotations(45);
-      public static final double FRONT_RIGHT_ZERO_ANGLE =
-          0.112548828125 - Units.degreesToRotations(45);
-      public static final double REAR_LEFT_ZERO_ANGLE = 0.4765625 - Units.degreesToRotations(45);
-      public static final double REAR_RIGHT_ZERO_ANGLE =
-          0.136474609375 + Units.degreesToRotations(45);
+      public static final double FRONT_LEFT_ZERO_ANGLE = 0.134765625;
+      public static final double FRONT_RIGHT_ZERO_ANGLE = -0.01220703125;
+      public static final double REAR_LEFT_ZERO_ANGLE = 0.02099609375;
+      public static final double REAR_RIGHT_ZERO_ANGLE = 0.4111328125;
 
       public static final SensorDirectionValue FRONT_LEFT_CANCODER_REVERSED =
           SensorDirectionValue.CounterClockwise_Positive;
@@ -190,7 +187,7 @@ public class SwerveConstants {
       public static final InvertedValue REAR_RIGHT_TURN_MOTOR_REVERSED =
           InvertedValue.CounterClockwise_Positive;
 
-      public static final InvertedValue FRONT_LEFT_DRIVE_ENCODER_REVERSED =
+      public static final InvertedValue FRONT_LEFT_DRIVE_MOTOR_REVERSED =
           InvertedValue.Clockwise_Positive;
       public static final InvertedValue FRONT_RIGHT_DRIVE_ENCODER_REVERSED =
           InvertedValue.CounterClockwise_Positive;
@@ -358,7 +355,7 @@ public class SwerveConstants {
             CompConstants.FRONT_LEFT_ZERO_ANGLE,
             CompConstants.FRONT_LEFT_CANCODER_REVERSED,
             CompConstants.FRONT_LEFT_TURN_MOTOR_REVERSED,
-            CompConstants.FRONT_LEFT_DRIVE_ENCODER_REVERSED),
+            CompConstants.FRONT_LEFT_DRIVE_MOTOR_REVERSED),
         new ModuleConfig(
             CompConstants.FRONT_RIGHT_DRIVE_MOTOR_ID,
             CompConstants.FRONT_RIGHT_TURN_MOTOR_ID,

@@ -11,7 +11,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
+import frc.robot.commands.turret.ManualTurretCCWCommand;
+import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
+import frc.robot.subsystems.shooter.PhysicalShooter;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.swerve.gyro.GyroInterface;
@@ -19,7 +23,9 @@ import frc.robot.subsystems.swerve.gyro.PhysicalGyroNavX;
 import frc.robot.subsystems.swerve.gyro.PhysicalGyroPigeon;
 import frc.robot.subsystems.swerve.module.ModuleInterface;
 import frc.robot.subsystems.swerve.module.PhysicalModule;
-import frc.robot.subsystems.vision.PhysicalVision;
+import frc.robot.subsystems.turret.PhysicalTurret;
+import frc.robot.subsystems.turret.TurretSubsystem;
+// import frc.robot.subsystems.vision.PhysicalVision;
 import frc.robot.subsystems.vision.VisionInterface;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.function.DoubleSupplier;
@@ -43,14 +49,18 @@ public class Robot extends LoggedRobot {
 
   private VisionSubsystem visionSubsystem;
   private SwerveDrive swerveDrive;
+  private ShooterSubsystem shooterSubsystem;
+  private TurretSubsystem turretSubsystem;
+  private PhysicalTurret physicalTurret;
 
+  private Autos autos;
   private Command autoCommand;
 
   public Robot() {
     checkGit();
     setupLogging();
     setupSubsystems();
-    // setupAuto();
+    setupAuto();
   }
 
   /** This function is called periodically during all modes. */
@@ -66,6 +76,9 @@ public class Robot extends LoggedRobot {
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
+    // Updates autos while the robot is enabled
+    autos.update();
+
     // Return to normal thread priority without real time
     Threads.setCurrentThreadPriority(false, HardwareConstants.LOW_THREAD_PRIORITY);
   }
@@ -75,27 +88,27 @@ public class Robot extends LoggedRobot {
   public void disabledInit() {}
 
   /** This function is called periodically when disabled. */
-  // @Override
-  // public void disabledPeriodic() {
-  //   autos.update();
-  // }
+  @Override
+  public void disabledPeriodic() {
+    autos.update();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  // @Override
-  // public void autonomousInit() {
-  //   autoCommand = autos.getSelectedCommand();
-  //   autoCommand.schedule();
-  // }
+  @Override
+  public void autonomousInit() {
+    autoCommand = autos.getSelectedCommand();
+    autoCommand.schedule();
+  }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
 
-  // @Override
-  // public void autonomousExit() {
-  //   autoCommand.cancel();
-  //   autos.clear();
-  // }
+  @Override
+  public void autonomousExit() {
+    autoCommand.cancel();
+    autos.clear();
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -136,7 +149,6 @@ public class Robot extends LoggedRobot {
     Command driveCommand =
         new DriveCommand(
             swerveDrive,
-            visionSubsystem,
             // Translation in the X direction
             driverLeftStick[0],
             // Translation in the Y direction
@@ -166,11 +178,22 @@ public class Robot extends LoggedRobot {
 
     // Reset robot odometry based on the most recent vision pose measurement from april tags
     // This should be pressed when looking at an april tag
-    driverController
-        .povLeft()
-        .onTrue(
-            new InstantCommand(
-                () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
+      driverController
+          .povLeft()
+          .onTrue(
+              new InstantCommand(
+                  () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
+      
+    // Commands for manual turret
+      driverController
+      .leftBumper()
+      .whileTrue(
+        new ManualTurretCCWCommand(physicalTurret));
+
+      driverController
+      .rightBumper()
+      .whileTrue(
+        new ManualTurretCWCommand(physicalTurret));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */
@@ -247,7 +270,9 @@ public class Robot extends LoggedRobot {
                 new PhysicalModule(SwerveConstants.compModuleConfigs[1]),
                 new PhysicalModule(SwerveConstants.compModuleConfigs[2]),
                 new PhysicalModule(SwerveConstants.compModuleConfigs[3]));
-        this.visionSubsystem = new VisionSubsystem(new PhysicalVision());
+        this.visionSubsystem = new VisionSubsystem(new VisionInterface() {}); //PhysicalVision
+        this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
+        this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
       }
       case DEV_ROBOT -> {
         /* Real robot, instantiate hardware IO implementations */
@@ -258,8 +283,9 @@ public class Robot extends LoggedRobot {
                 new PhysicalModule(SwerveConstants.devModuleConfigs[1]),
                 new PhysicalModule(SwerveConstants.devModuleConfigs[2]),
                 new PhysicalModule(SwerveConstants.devModuleConfigs[3]));
-        this.visionSubsystem = new VisionSubsystem(new PhysicalVision());
-        // this.elevatorSubsystem = new ElevatorSubsystem(new PhysicalElevator());
+        this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
+        this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
+        this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
         // THIS IS THE SYNTAX FOR WHATEVER SUBSYSTEMS ARE USED ^^
       }
       case SWERVE_ROBOT -> {
@@ -271,7 +297,9 @@ public class Robot extends LoggedRobot {
                 new PhysicalModule(SwerveConstants.aquilaModuleConfigs[1]),
                 new PhysicalModule(SwerveConstants.aquilaModuleConfigs[2]),
                 new PhysicalModule(SwerveConstants.aquilaModuleConfigs[3]));
-        this.visionSubsystem = new VisionSubsystem(new PhysicalVision());
+        this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
+        this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
+        this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
       }
 
       case SIM_ROBOT -> {
@@ -311,15 +339,9 @@ public class Robot extends LoggedRobot {
   }
 
   /** Sets up the auto commands */
-  // private void setupAuto() {
-  //   this.autos =
-  //       new Autos(
-  //           this.elevatorSubsystem,
-  //           this.coralIntakeSubsystem,
-  //           this.swerveDrive,
-  //           this.visionSubsystem,
-  //           this.funnelSubsystem);
-  // }
+  private void setupAuto() {
+    this.autos = new Autos(this.swerveDrive);
+  }
 
   /** This function is called periodically during operator control. */
   @Override
