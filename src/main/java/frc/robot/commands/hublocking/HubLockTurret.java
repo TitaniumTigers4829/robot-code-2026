@@ -59,6 +59,14 @@ public class HubLockTurret extends Command {
       .getTranslation()
       .plus(
         TurretConstants.TURRET_OFFSET.rotateBy(heading));
+    
+    //Our turret angling math works as follows. Assuming the 0 rotations on the turret is
+    //facing the front of the robot and the turret rotates positively counterclockwise, we can approximate
+    //the angle it needs to turn in rotations from 0 to the target angle. This is the desired heading
+    //as it doesn't factor in the current angle. With our Translation2d of the turret, we can subtract the angle 
+    //that atan makes with the turret and the hub from our zero angle, which is the current heading of the robot.
+    //Since ccw is positive, we subract the angle which is retrieved in degrees from 360. This will get the radians needed
+    //to turn if the turret's 0 angle is the front of the robot.
 
     // Gets y and x distances of the turret to the hub
     turretToHubYDist = hubPos.getY() - turretPos.getY();

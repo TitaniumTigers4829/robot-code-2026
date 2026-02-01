@@ -151,7 +151,7 @@ public class PhysicalTurret implements TurretInterface {
   // Assumes facing the front of the robot is 0 rotations
   // Normalizes angle
   public void setTurretAngle(double desiredAngle) {
-    if ((desiredAngle - getTurretAngle()) < 0.5) {
+    if ((desiredAngle - getTurretAngle()) < 1) {
       turretMotor.setControl(mmTorqueRequest.withPosition(desiredAngle));
     }
     else {
