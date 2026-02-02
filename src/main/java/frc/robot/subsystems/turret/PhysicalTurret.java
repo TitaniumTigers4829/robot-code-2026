@@ -17,6 +17,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
@@ -35,6 +36,7 @@ public class PhysicalTurret implements TurretInterface {
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final StatusSignal<Voltage> turretMotorAppliedVoltage;
+  private final StatusSignal<AngularVelocity> turretAngularVelocity;
   private final StatusSignal<Angle> turretAngle;
   private final StatusSignal<Double> dutyCycle;
   private final StatusSignal<Current> statorCurrent;
@@ -48,7 +50,7 @@ public class PhysicalTurret implements TurretInterface {
 
     turretConfig.Feedback.SensorToMechanismRatio = TurretConstants.GEAR_RATIO;
 
-    turretEncoderConfig.MagnetSensor.MagnetOffset = -TurretConstants.ANGLE_ZERO;
+    turretEncoderConfig.MagnetSensor.MagnetOffset = TurretConstants.ANGLE_ZERO;
     turretEncoderConfig.MagnetSensor.SensorDirection = TurretConstants.ENCODER_REVERSED;
 
     turretEncoder.getConfigurator().apply(turretEncoderConfig);
@@ -93,6 +95,7 @@ public class PhysicalTurret implements TurretInterface {
     turretMotor.getConfigurator().apply(turretConfig);
     turretAngle = turretEncoder.getAbsolutePosition();
     turretMotorAppliedVoltage = turretMotor.getMotorVoltage();
+    turretAngularVelocity = turretMotor.getVelocity();
     dutyCycle = turretMotor.getDutyCycle();
     statorCurrent = turretMotor.getStatorCurrent();
     motorTemp = turretMotor.getDeviceTemp();
@@ -100,8 +103,10 @@ public class PhysicalTurret implements TurretInterface {
         turretMotor.getClosedLoopReference().getValueAsDouble()
             - turretMotor.getPosition().getValueAsDouble();
 
-    // Higher frequency for turret angle because its more important that the other signals
+    // Higher frequency for turret angle and its change over time (angular velocity) because 
+    // its more important that the other signals
     turretAngle.setUpdateFrequency(250.0);
+    turretAngularVelocity.setUpdateFrequency(250.0);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, turretMotorAppliedVoltage, dutyCycle, statorCurrent, motorTemp);
@@ -110,12 +115,18 @@ public class PhysicalTurret implements TurretInterface {
 
   public void updateInputs(TurretInputs inputs) {
     BaseStatusSignal.refreshAll(
-        turretAngle, turretMotorAppliedVoltage, dutyCycle, statorCurrent, motorTemp);
+        turretAngle, 
+        turretAngularVelocity, 
+        turretMotorAppliedVoltage, 
+        dutyCycle, 
+        statorCurrent, 
+        motorTemp);
 
     inputs.turretAngle =
         turretAngle.getValueAsDouble()
             + BaseStatusSignal.getLatencyCompensatedValueAsDouble(
-                turretEncoder.getAbsolutePosition(), turretMotor.getVelocity());
+                turretAngle, turretAngularVelocity);
+    inputs.turretAngularVelocity = turretAngularVelocity.getValueAsDouble();
     inputs.turretMotorAppliedVoltage = turretMotorAppliedVoltage.getValueAsDouble();
     inputs.turretDutyCycle = dutyCycle.getValueAsDouble();
     inputs.turretStatorCurrent = statorCurrent.getValueAsDouble();
