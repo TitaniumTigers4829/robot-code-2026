@@ -48,28 +48,27 @@ public class SwerveConstants {
 
     public static final int PIGEON_ID = 0;
 
-    // TODO: Fill in all motor and CANCoder IDs and add robot name
+    // TODO: Add robot name
     public static final class RobotConstants {
       public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 54;
-      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 26;
-      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 1;
-      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 3;
+      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 3;
+      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 26;
+      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 1;
 
       public static final int FRONT_LEFT_TURN_MOTOR_ID = 7;
-      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 5;
-      public static final int REAR_LEFT_TURN_MOTOR_ID = 6;
-      public static final int REAR_RIGHT_TURN_MOTOR_ID = 2;
+      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 2;
+      public static final int REAR_LEFT_TURN_MOTOR_ID = 5;
+      public static final int REAR_RIGHT_TURN_MOTOR_ID = 6;
 
       public static final int FRONT_LEFT_CANCODER_ID = 11;
-      public static final int FRONT_RIGHT_CANCODER_ID = 10;
-      public static final int REAR_LEFT_CANCODER_ID = 12;
-      public static final int REAR_RIGHT_CANCODER_ID = 13;
+      public static final int FRONT_RIGHT_CANCODER_ID = 13;
+      public static final int REAR_LEFT_CANCODER_ID = 10;
+      public static final int REAR_RIGHT_CANCODER_ID = 12;
 
-      // TODO: Test all zero angles
-      public static final double FRONT_LEFT_ZERO_ANGLE = 0;
-      public static final double FRONT_RIGHT_ZERO_ANGLE = 0;
-      public static final double REAR_LEFT_ZERO_ANGLE = 0;
-      public static final double REAR_RIGHT_ZERO_ANGLE = 0;
+      public static final double FRONT_LEFT_ZERO_ANGLE = 0.134765625;
+      public static final double FRONT_RIGHT_ZERO_ANGLE = -0.01220703125;
+      public static final double REAR_LEFT_ZERO_ANGLE = 0.02099609375;
+      public static final double REAR_RIGHT_ZERO_ANGLE = 0.4111328125;
 
       public static final SensorDirectionValue FRONT_LEFT_CANCODER_REVERSED =
           SensorDirectionValue.CounterClockwise_Positive;
@@ -85,40 +84,40 @@ public class SwerveConstants {
       public static final InvertedValue FRONT_RIGHT_TURN_MOTOR_REVERSED =
           InvertedValue.CounterClockwise_Positive;
       public static final InvertedValue REAR_LEFT_TURN_MOTOR_REVERSED =
-          InvertedValue.Clockwise_Positive;
-      public static final InvertedValue REAR_RIGHT_TURN_MOTOR_REVERSED =
-          InvertedValue.Clockwise_Positive;
-
-      public static final InvertedValue FRONT_LEFT_DRIVE_ENCODER_REVERSED =
           InvertedValue.CounterClockwise_Positive;
-      public static final InvertedValue FRONT_RIGHT_DRIVE_ENCODER_REVERSED =
+      public static final InvertedValue REAR_RIGHT_TURN_MOTOR_REVERSED =
+          InvertedValue.CounterClockwise_Positive;
+
+      public static final InvertedValue FRONT_LEFT_DRIVE_MOTOR_REVERSED =
           InvertedValue.Clockwise_Positive;
-      public static final InvertedValue REAR_LEFT_DRIVE_ENCODER_REVERSED =
+      public static final InvertedValue FRONT_RIGHT_DRIVE_MOTOR_REVERSED =
+          InvertedValue.CounterClockwise_Positive;
+      public static final InvertedValue REAR_LEFT_DRIVE_MOTOR_REVERSED =
           InvertedValue.Clockwise_Positive;
-      public static final InvertedValue REAR_RIGHT_DRIVE_ENCODER_REVERSED =
+      public static final InvertedValue REAR_RIGHT_DRIVE_MOTOR_REVERSED =
           InvertedValue.CounterClockwise_Positive;
     }
 
     public static final class DevConstants {
       public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 54;
-      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 26;
-      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 1;
-      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 3;
+      public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 3;
+      public static final int REAR_LEFT_DRIVE_MOTOR_ID = 26;
+      public static final int REAR_RIGHT_DRIVE_MOTOR_ID = 1;
 
       public static final int FRONT_LEFT_TURN_MOTOR_ID = 7;
-      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 5;
-      public static final int REAR_LEFT_TURN_MOTOR_ID = 6;
-      public static final int REAR_RIGHT_TURN_MOTOR_ID = 2;
+      public static final int FRONT_RIGHT_TURN_MOTOR_ID = 2;
+      public static final int REAR_LEFT_TURN_MOTOR_ID = 5;
+      public static final int REAR_RIGHT_TURN_MOTOR_ID = 6;
 
       public static final int FRONT_LEFT_CANCODER_ID = 11;
-      public static final int FRONT_RIGHT_CANCODER_ID = 10;
-      public static final int REAR_LEFT_CANCODER_ID = 12;
-      public static final int REAR_RIGHT_CANCODER_ID = 13;
+      public static final int FRONT_RIGHT_CANCODER_ID = 13;
+      public static final int REAR_LEFT_CANCODER_ID = 10;
+      public static final int REAR_RIGHT_CANCODER_ID = 12;
 
-      public static final double FRONT_LEFT_ZERO_ANGLE = -0.09521484375;
-      public static final double FRONT_RIGHT_ZERO_ANGLE = -0.478271484375;
-      public static final double REAR_LEFT_ZERO_ANGLE = -0.318115234375;
-      public static final double REAR_RIGHT_ZERO_ANGLE = -0.473388671875;
+      public static final double FRONT_LEFT_ZERO_ANGLE = 0.134765625;
+      public static final double FRONT_RIGHT_ZERO_ANGLE = -0.01220703125;
+      public static final double REAR_LEFT_ZERO_ANGLE = 0.02099609375;
+      public static final double REAR_RIGHT_ZERO_ANGLE = 0.4111328125;
 
       public static final SensorDirectionValue FRONT_LEFT_CANCODER_REVERSED =
           SensorDirectionValue.CounterClockwise_Positive;
@@ -130,21 +129,21 @@ public class SwerveConstants {
           SensorDirectionValue.CounterClockwise_Positive;
 
       public static final InvertedValue FRONT_LEFT_TURN_MOTOR_REVERSED =
-          InvertedValue.Clockwise_Positive;
-      public static final InvertedValue FRONT_RIGHT_TURN_MOTOR_REVERSED =
-          InvertedValue.Clockwise_Positive;
-      public static final InvertedValue REAR_LEFT_TURN_MOTOR_REVERSED =
-          InvertedValue.Clockwise_Positive;
-      public static final InvertedValue REAR_RIGHT_TURN_MOTOR_REVERSED =
-          InvertedValue.Clockwise_Positive;
-
-      public static final InvertedValue FRONT_LEFT_DRIVE_ENCODER_REVERSED =
-          InvertedValue.Clockwise_Positive;
-      public static final InvertedValue FRONT_RIGHT_DRIVE_ENCODER_REVERSED =
           InvertedValue.CounterClockwise_Positive;
-      public static final InvertedValue REAR_LEFT_DRIVE_ENCODER_REVERSED =
+      public static final InvertedValue FRONT_RIGHT_TURN_MOTOR_REVERSED =
+          InvertedValue.CounterClockwise_Positive;
+      public static final InvertedValue REAR_LEFT_TURN_MOTOR_REVERSED =
+          InvertedValue.CounterClockwise_Positive;
+      public static final InvertedValue REAR_RIGHT_TURN_MOTOR_REVERSED =
+          InvertedValue.CounterClockwise_Positive;
+
+      public static final InvertedValue FRONT_LEFT_DRIVE_MOTOR_REVERSED =
           InvertedValue.Clockwise_Positive;
-      public static final InvertedValue REAR_RIGHT_DRIVE_ENCODER_REVERSED =
+      public static final InvertedValue FRONT_RIGHT_DRIVE_MOTOR_REVERSED =
+          InvertedValue.CounterClockwise_Positive;
+      public static final InvertedValue REAR_LEFT_DRIVE_MOTOR_REVERSED =
+          InvertedValue.Clockwise_Positive;
+      public static final InvertedValue REAR_RIGHT_DRIVE_MOTOR_REVERSED =
           InvertedValue.CounterClockwise_Positive;
     }
 
@@ -189,11 +188,11 @@ public class SwerveConstants {
 
       public static final InvertedValue FRONT_LEFT_DRIVE_MOTOR_REVERSED =
           InvertedValue.Clockwise_Positive;
-      public static final InvertedValue FRONT_RIGHT_DRIVE_ENCODER_REVERSED =
+      public static final InvertedValue FRONT_RIGHT_DRIVE_MOTOR_REVERSED =
           InvertedValue.CounterClockwise_Positive;
-      public static final InvertedValue REAR_LEFT_DRIVE_ENCODER_REVERSED =
+      public static final InvertedValue REAR_LEFT_DRIVE_MOTOR_REVERSED =
           InvertedValue.Clockwise_Positive;
-      public static final InvertedValue REAR_RIGHT_DRIVE_ENCODER_REVERSED =
+      public static final InvertedValue REAR_RIGHT_DRIVE_MOTOR_REVERSED =
           InvertedValue.CounterClockwise_Positive;
     }
 
@@ -283,7 +282,7 @@ public class SwerveConstants {
             RobotConstants.FRONT_LEFT_ZERO_ANGLE,
             RobotConstants.FRONT_LEFT_CANCODER_REVERSED,
             RobotConstants.FRONT_LEFT_TURN_MOTOR_REVERSED,
-            RobotConstants.FRONT_LEFT_DRIVE_ENCODER_REVERSED),
+            RobotConstants.FRONT_LEFT_DRIVE_MOTOR_REVERSED),
         new ModuleConfig(
             RobotConstants.FRONT_RIGHT_DRIVE_MOTOR_ID,
             RobotConstants.FRONT_RIGHT_TURN_MOTOR_ID,
@@ -291,7 +290,7 @@ public class SwerveConstants {
             RobotConstants.FRONT_RIGHT_ZERO_ANGLE,
             RobotConstants.FRONT_RIGHT_CANCODER_REVERSED,
             RobotConstants.FRONT_RIGHT_TURN_MOTOR_REVERSED,
-            RobotConstants.FRONT_RIGHT_DRIVE_ENCODER_REVERSED),
+            RobotConstants.FRONT_RIGHT_DRIVE_MOTOR_REVERSED),
         new ModuleConfig(
             RobotConstants.REAR_LEFT_DRIVE_MOTOR_ID,
             RobotConstants.REAR_LEFT_TURN_MOTOR_ID,
@@ -299,7 +298,7 @@ public class SwerveConstants {
             RobotConstants.REAR_LEFT_ZERO_ANGLE,
             RobotConstants.REAR_LEFT_CANCODER_REVERSED,
             RobotConstants.REAR_LEFT_TURN_MOTOR_REVERSED,
-            RobotConstants.REAR_LEFT_DRIVE_ENCODER_REVERSED),
+            RobotConstants.REAR_LEFT_DRIVE_MOTOR_REVERSED),
         new ModuleConfig(
             RobotConstants.REAR_RIGHT_DRIVE_MOTOR_ID,
             RobotConstants.REAR_RIGHT_TURN_MOTOR_ID,
@@ -307,7 +306,7 @@ public class SwerveConstants {
             RobotConstants.REAR_RIGHT_ZERO_ANGLE,
             RobotConstants.REAR_RIGHT_CANCODER_REVERSED,
             RobotConstants.REAR_RIGHT_TURN_MOTOR_REVERSED,
-            RobotConstants.REAR_RIGHT_DRIVE_ENCODER_REVERSED)
+            RobotConstants.REAR_RIGHT_DRIVE_MOTOR_REVERSED)
       };
 
   public static final ModuleConfig[] devModuleConfigs =
@@ -319,7 +318,7 @@ public class SwerveConstants {
             DevConstants.FRONT_LEFT_ZERO_ANGLE,
             DevConstants.FRONT_LEFT_CANCODER_REVERSED,
             DevConstants.FRONT_LEFT_TURN_MOTOR_REVERSED,
-            DevConstants.FRONT_LEFT_DRIVE_ENCODER_REVERSED),
+            DevConstants.FRONT_LEFT_DRIVE_MOTOR_REVERSED),
         new ModuleConfig(
             DevConstants.FRONT_RIGHT_DRIVE_MOTOR_ID,
             DevConstants.FRONT_RIGHT_TURN_MOTOR_ID,
@@ -327,7 +326,7 @@ public class SwerveConstants {
             DevConstants.FRONT_RIGHT_ZERO_ANGLE,
             DevConstants.FRONT_RIGHT_CANCODER_REVERSED,
             DevConstants.FRONT_RIGHT_TURN_MOTOR_REVERSED,
-            DevConstants.FRONT_RIGHT_DRIVE_ENCODER_REVERSED),
+            DevConstants.FRONT_RIGHT_DRIVE_MOTOR_REVERSED),
         new ModuleConfig(
             DevConstants.REAR_LEFT_DRIVE_MOTOR_ID,
             DevConstants.REAR_LEFT_TURN_MOTOR_ID,
@@ -335,7 +334,7 @@ public class SwerveConstants {
             DevConstants.REAR_LEFT_ZERO_ANGLE,
             DevConstants.REAR_LEFT_CANCODER_REVERSED,
             DevConstants.REAR_LEFT_TURN_MOTOR_REVERSED,
-            DevConstants.REAR_LEFT_DRIVE_ENCODER_REVERSED),
+            DevConstants.REAR_LEFT_DRIVE_MOTOR_REVERSED),
         new ModuleConfig(
             DevConstants.REAR_RIGHT_DRIVE_MOTOR_ID,
             DevConstants.REAR_RIGHT_TURN_MOTOR_ID,
@@ -343,7 +342,7 @@ public class SwerveConstants {
             DevConstants.REAR_RIGHT_ZERO_ANGLE,
             DevConstants.REAR_RIGHT_CANCODER_REVERSED,
             DevConstants.REAR_RIGHT_TURN_MOTOR_REVERSED,
-            DevConstants.REAR_RIGHT_DRIVE_ENCODER_REVERSED)
+            DevConstants.REAR_RIGHT_DRIVE_MOTOR_REVERSED)
       };
 
   public static final ModuleConfig[] compModuleConfigs =
@@ -363,7 +362,7 @@ public class SwerveConstants {
             CompConstants.FRONT_RIGHT_ZERO_ANGLE,
             CompConstants.FRONT_RIGHT_CANCODER_REVERSED,
             CompConstants.FRONT_RIGHT_TURN_MOTOR_REVERSED,
-            CompConstants.FRONT_RIGHT_DRIVE_ENCODER_REVERSED),
+            CompConstants.FRONT_RIGHT_DRIVE_MOTOR_REVERSED),
         new ModuleConfig(
             CompConstants.REAR_LEFT_DRIVE_MOTOR_ID,
             CompConstants.REAR_LEFT_TURN_MOTOR_ID,
@@ -371,7 +370,7 @@ public class SwerveConstants {
             CompConstants.REAR_LEFT_ZERO_ANGLE,
             CompConstants.REAR_LEFT_CANCODER_REVERSED,
             CompConstants.REAR_LEFT_TURN_MOTOR_REVERSED,
-            CompConstants.REAR_LEFT_DRIVE_ENCODER_REVERSED),
+            CompConstants.REAR_LEFT_DRIVE_MOTOR_REVERSED),
         new ModuleConfig(
             CompConstants.REAR_RIGHT_DRIVE_MOTOR_ID,
             CompConstants.REAR_RIGHT_TURN_MOTOR_ID,
@@ -379,7 +378,7 @@ public class SwerveConstants {
             CompConstants.REAR_RIGHT_ZERO_ANGLE,
             CompConstants.REAR_RIGHT_CANCODER_REVERSED,
             CompConstants.REAR_RIGHT_TURN_MOTOR_REVERSED,
-            CompConstants.REAR_RIGHT_DRIVE_ENCODER_REVERSED)
+            CompConstants.REAR_RIGHT_DRIVE_MOTOR_REVERSED)
       };
 
   public record ModuleConfig(
