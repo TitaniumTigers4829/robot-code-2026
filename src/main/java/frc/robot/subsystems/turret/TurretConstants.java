@@ -43,8 +43,8 @@ public class TurretConstants {
   // in rotations
   public static double TURRET_ERROR_TOLERANCE = 0.01;
   public static double TURRET_DEADBAND = 0.001;
-  public static double MAX_ANGLE = 1;
-  public static double MIN_ANGLE = -1;
+  public static double MAX_ANGLE = Units.degreesToRadians(360);
+  public static double MIN_ANGLE = Units.degreesToRadians(-360);
 
   public static final SensorDirectionValue ENCODER_REVERSED =
       SensorDirectionValue.Clockwise_Positive;
