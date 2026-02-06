@@ -10,5 +10,19 @@ public class AdjustableHoodSubsystem extends SubsystemBase{
         this.adjustableHoodInterface = adjustableHoodInterface;
     }
 
+    public void updateInputs(){
+        adjustableHoodInterface.updateInputs(inputs);
+    }
 
+    public void setHoodAngle(double angle){
+        adjustableHoodInterface.setHoodAngle(angle);
+    }
+
+    public void setSpeed(double speed){
+        adjustableHoodInterface.setSpeed(speed);
+    }
+
+    public double getHoodAngle(){
+        return adjustableHoodInterface.getHoodAngle();
+    }
 }
