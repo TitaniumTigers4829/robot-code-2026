@@ -6,7 +6,7 @@ public class AdjustableHoodConstants {
 
   public static final double HOOD_MAX_ANGLE = 90.0;
 
-  //Tune G first, increase until hood moves then tune pid and sva
+  // Tune G first, increase until hood moves then tune pid and sva
   public static final double HOOD_P = 0;
   public static final double HOOD_I = 0;
   public static final double HOOD_D = 0;
