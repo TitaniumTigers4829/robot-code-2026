@@ -16,7 +16,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -24,19 +23,18 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants.HardwareConstants;
 
-
 /** Add your docs here. */
 public class PhysicalTurret implements TurretInterface {
 
-  private final TalonFX turretMotor = new TalonFX(TurretConstants.TURRET_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
+  private final TalonFX turretMotor =
+      new TalonFX(TurretConstants.TURRET_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
   private final CANcoder turretEncoder = new CANcoder(TurretConstants.TURRET_CANCODER_ID);
 
   // Commented out because torqueFOC is in theory easier to tune
   // private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
   // private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
 
-  private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new
-    MotionMagicTorqueCurrentFOC(0.0);
+  private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new MotionMagicTorqueCurrentFOC(0.0);
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final StatusSignal<Voltage> turretMotorAppliedVoltage;
@@ -123,23 +121,23 @@ public class PhysicalTurret implements TurretInterface {
 
   public void updateInputs(TurretInputs inputs) {
     BaseStatusSignal.refreshAll(
-            turretAngle,
-            turretAngularVelocity,
-            turretMotorAppliedVoltage,
-            dutyCycle,
-            statorCurrent,
-            motorTemp,
-            desiredAngle);
+        turretAngle,
+        turretAngularVelocity,
+        turretMotorAppliedVoltage,
+        dutyCycle,
+        statorCurrent,
+        motorTemp,
+        desiredAngle);
 
-  inputs.turretAngle =
-      turretAngle.getValueAsDouble()
-          + BaseStatusSignal.getLatencyCompensatedValueAsDouble(
-              turretAngle, turretAngularVelocity);
-  inputs.turretAngularVelocity = turretAngularVelocity.getValueAsDouble();
-  inputs.turretMotorAppliedVoltage = turretMotorAppliedVoltage.getValueAsDouble();
-  inputs.turretDutyCycle = dutyCycle.getValueAsDouble();
-  inputs.turretStatorCurrent = statorCurrent.getValueAsDouble();
-  inputs.turretMotorTemp = motorTemp.getValueAsDouble();
+    inputs.turretAngle =
+        turretAngle.getValueAsDouble()
+            + BaseStatusSignal.getLatencyCompensatedValueAsDouble(
+                turretAngle, turretAngularVelocity);
+    inputs.turretAngularVelocity = turretAngularVelocity.getValueAsDouble();
+    inputs.turretMotorAppliedVoltage = turretMotorAppliedVoltage.getValueAsDouble();
+    inputs.turretDutyCycle = dutyCycle.getValueAsDouble();
+    inputs.turretStatorCurrent = statorCurrent.getValueAsDouble();
+    inputs.turretMotorTemp = motorTemp.getValueAsDouble();
   }
 
   public double getTurretAngle(double angle) {

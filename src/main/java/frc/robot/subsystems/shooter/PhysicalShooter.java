@@ -13,8 +13,6 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
-import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
 /** Add your docs here. */
@@ -25,15 +23,13 @@ public class PhysicalShooter implements ShooterInterface {
   private final TalonFX followerFlywheelMotor =
       new TalonFX(ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID);
   MotorAlignmentValue motorAlignment;
-      
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;
 
   private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
   private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
 
-  private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new
-MotionMagicTorqueCurrentFOC(0.0);
+  private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new MotionMagicTorqueCurrentFOC(0.0);
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final TalonFXConfiguration leaderFlywheelConfig = new TalonFXConfiguration();
@@ -52,6 +48,7 @@ MotionMagicTorqueCurrentFOC(0.0);
 
   public void setSpeed(double speed) {
     leaderFlywheelMotor.set(speed);
-    followerFlywheelMotor.setControl(new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+    followerFlywheelMotor.setControl(
+        new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }
 }
