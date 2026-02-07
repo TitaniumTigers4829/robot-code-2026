@@ -86,5 +86,8 @@ public class TurretSubsystem extends SubsystemBase {
         || turretA.hasChanged(hashCode())) {
       turretInterface.setFF(turretS.get(), turretV.get(), turretA.get());
     }
+
+    // SmartDashboard.putNumber("turret angle", inputs.turretAngle);
+    // SmartDashboard.putNumber("error")
   }
 }

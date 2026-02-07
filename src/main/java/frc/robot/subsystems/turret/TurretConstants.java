@@ -11,15 +11,15 @@ import edu.wpi.first.math.util.Units;
 /** Add your docs here. */
 public class TurretConstants {
 
-  public static final int TURRET_MOTOR_ID = 0 - 9;
+  public static final int TURRET_MOTOR_ID = 22;
   public static final int TURRET_CANCODER_ID = 0 - 9;
-  public static final double GEAR_RATIO = 0;
+  public static final double GEAR_RATIO = 40;
 
   // Distance from center of robot to center of turret in x and y directions, turret is at front
   // left
   public static final double X_OFFSET = Units.inchesToMeters(-7.75);
   public static final double Y_OFFSET = Units.inchesToMeters(4.68);
-//   public static final double Y_DISTANCE_FROM_FRONT = Units.inchesToMeters(7.25);
+  //   public static final double Y_DISTANCE_FROM_FRONT = Units.inchesToMeters(7.25);
 
   // Creates a translation for the turret offset from the center of the robot
   public static final Translation2d TURRET_OFFSET =
@@ -33,7 +33,7 @@ public class TurretConstants {
   public static double CW_MANUAL_SPEED = -0.5;
 
   // TODO: Tune
-  public static double TURRET_P = 0;
+  public static double TURRET_P = 1;
   public static double TURRET_I = 0;
   public static double TURRET_D = 0;
   public static double TURRET_S = 0;
@@ -43,8 +43,8 @@ public class TurretConstants {
   // in rotations
   public static double TURRET_ERROR_TOLERANCE = 0.01;
   public static double TURRET_DEADBAND = 0.001;
-  public static double MAX_ANGLE = Units.degreesToRadians(360);
-  public static double MIN_ANGLE = Units.degreesToRadians(-360);
+  public static double MAX_ANGLE = 1;
+  public static double MIN_ANGLE = 0;
 
   public static final SensorDirectionValue ENCODER_REVERSED =
       SensorDirectionValue.Clockwise_Positive;
