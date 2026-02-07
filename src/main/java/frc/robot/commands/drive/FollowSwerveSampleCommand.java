@@ -6,19 +6,17 @@ package frc.robot.commands.drive;
 
 import choreo.trajectory.SwerveSample;
 import frc.robot.subsystems.swerve.SwerveDrive;
-import frc.robot.subsystems.vision.VisionSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class FollowSwerveSampleCommand extends DriveCommandBase {
   private final SwerveDrive swerveDrive;
   private final SwerveSample swerveSample;
 
-  public FollowSwerveSampleCommand(
-      SwerveDrive swerveDrive, VisionSubsystem visionSubsystem, SwerveSample swerveSample) {
-    super(swerveDrive, visionSubsystem);
+  public FollowSwerveSampleCommand(SwerveDrive swerveDrive, SwerveSample swerveSample) {
+    super(swerveDrive);
     this.swerveDrive = swerveDrive;
     this.swerveSample = swerveSample;
-    addRequirements(swerveDrive, visionSubsystem);
+    addRequirements(swerveDrive);
   }
 
   // Called when the command is initially scheduled.

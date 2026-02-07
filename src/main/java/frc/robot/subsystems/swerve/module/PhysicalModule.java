@@ -62,7 +62,7 @@ public class PhysicalModule implements ModuleInterface {
     turnEncoder =
         new CANcoder(moduleConfig.turnEncoderChannel(), HardwareConstants.CANIVORE_CAN_BUS_STRING);
 
-    turnEncoderConfig.MagnetSensor.MagnetOffset = -moduleConfig.angleZero();
+    turnEncoderConfig.MagnetSensor.MagnetOffset = moduleConfig.angleZero();
     turnEncoderConfig.MagnetSensor.SensorDirection = moduleConfig.encoderReversed();
     turnEncoder.getConfigurator().apply(turnEncoderConfig, HardwareConstants.LOOP_TIME_SECONDS);
 
