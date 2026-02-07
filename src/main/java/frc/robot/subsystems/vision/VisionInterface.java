@@ -145,4 +145,8 @@ public interface VisionInterface {
   default boolean isValidMeasurement(Limelight limelight) {
     return false;
   }
+
+  default Pose2d getLastSeenPose() {
+    return null;
+  }
 }

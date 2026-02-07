@@ -11,9 +11,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
+import frc.robot.commands.turret.ManualTurretCCWCommand;
+import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
+import frc.robot.subsystems.shooter.PhysicalShooter;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.swerve.gyro.GyroInterface;
@@ -21,9 +25,11 @@ import frc.robot.subsystems.swerve.gyro.PhysicalGyroNavX;
 import frc.robot.subsystems.swerve.gyro.PhysicalGyroPigeon;
 import frc.robot.subsystems.swerve.module.ModuleInterface;
 import frc.robot.subsystems.swerve.module.PhysicalModule;
+import frc.robot.subsystems.turret.PhysicalTurret;
+import frc.robot.subsystems.turret.TurretSubsystem;
 // import frc.robot.subsystems.vision.PhysicalVision;
-// import frc.robot.subsystems.vision.VisionInterface;
-// import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.vision.VisionInterface;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -43,8 +49,10 @@ public class Robot extends LoggedRobot {
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
-  // private VisionSubsystem visionSubsystem;
+  private VisionSubsystem visionSubsystem;
   private SwerveDrive swerveDrive;
+  private ShooterSubsystem shooterSubsystem;
+  private TurretSubsystem turretSubsystem;
   private AdjustableHoodSubsystem hoodSubsystem;
 
   // private Autos autos;
@@ -172,11 +180,16 @@ public class Robot extends LoggedRobot {
 
     // Reset robot odometry based on the most recent vision pose measurement from april tags
     // This should be pressed when looking at an april tag
-    //   driverController
-    //       .povLeft()
-    //       .onTrue(
-    //           new InstantCommand(
-    //               () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
+    driverController
+        .povLeft()
+        .onTrue(
+            new InstantCommand(
+                () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
+
+    // Commands for manual turret
+    driverController.leftBumper().whileTrue(new ManualTurretCCWCommand(turretSubsystem));
+
+    driverController.rightBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */
@@ -253,7 +266,9 @@ public class Robot extends LoggedRobot {
                 new PhysicalModule(SwerveConstants.compModuleConfigs[1]),
                 new PhysicalModule(SwerveConstants.compModuleConfigs[2]),
                 new PhysicalModule(SwerveConstants.compModuleConfigs[3]));
-        // this.visionSubsystem = new VisionSubsystem(new PhysicalVision());
+        this.visionSubsystem = new VisionSubsystem(new VisionInterface() {}); // PhysicalVision
+        this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
+        this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
         this.hoodSubsystem = new AdjustableHoodSubsystem(new PhysicalAdjustableHood());
       }
       case DEV_ROBOT -> {
@@ -265,8 +280,9 @@ public class Robot extends LoggedRobot {
                 new PhysicalModule(SwerveConstants.devModuleConfigs[1]),
                 new PhysicalModule(SwerveConstants.devModuleConfigs[2]),
                 new PhysicalModule(SwerveConstants.devModuleConfigs[3]));
-        // this.visionSubsystem = new VisionSubsystem(new PhysicalVision());
-        // this.elevatorSubsystem = new ElevatorSubsystem(new PhysicalElevator());
+        this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
+        this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
+        this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
         // THIS IS THE SYNTAX FOR WHATEVER SUBSYSTEMS ARE USED ^^
       }
       case SWERVE_ROBOT -> {
@@ -278,7 +294,9 @@ public class Robot extends LoggedRobot {
                 new PhysicalModule(SwerveConstants.aquilaModuleConfigs[1]),
                 new PhysicalModule(SwerveConstants.aquilaModuleConfigs[2]),
                 new PhysicalModule(SwerveConstants.aquilaModuleConfigs[3]));
-        // this.visionSubsystem = new VisionSubsystem(new PhysicalVision());
+        this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
+        this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
+        this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
       }
 
       case SIM_ROBOT -> {
@@ -300,7 +318,7 @@ public class Robot extends LoggedRobot {
       }
 
       default -> {
-        // this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
+        this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
         /* Replayed robot, disable IO implementations */
 
         /* physics simulations are also not needed */
