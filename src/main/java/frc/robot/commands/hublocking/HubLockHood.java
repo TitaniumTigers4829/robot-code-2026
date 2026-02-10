@@ -4,12 +4,8 @@
 
 package frc.robot.commands.hublocking;
 
-import java.util.Optional;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
@@ -18,14 +14,13 @@ import frc.robot.subsystems.turret.TurretConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class HubLockHood extends Command {
- 
+
   SwerveDrive swerveDrive;
   AdjustableHoodSubsystem hoodSubsystem;
   public Rotation2d heading;
   public Translation2d hubPos;
   public double distance;
-  public double turretToHubYDist;
-  public double turretToHubXDist;
+  public double turretToHubDist;
 
   public HubLockHood(SwerveDrive swerveDrive, AdjustableHoodSubsystem hoodSubsystem) {
     this.swerveDrive = swerveDrive;
@@ -36,13 +31,8 @@ public class HubLockHood extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    // Sets hub position based on the alliance
-    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-      hubPos = FieldConstants.RED_HUB_CENTER;
-    } else {
-      hubPos = FieldConstants.BLUE_HUB_CENTER;
-    }
+
+    hubPos = FieldConstants.RED_HUB_CENTER;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -50,18 +40,15 @@ public class HubLockHood extends Command {
   public void execute() {
     heading = swerveDrive.getOdometryRotation2d();
 
-    Translation2d turretPos = 
-    swerveDrive
-      .getEstimatedPose()
-      .getTranslation()
-      .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
+    Translation2d turretPos =
+        swerveDrive
+            .getEstimatedPose()
+            .getTranslation()
+            .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
 
-    turretToHubYDist = hubPos.getY() - turretPos.getY();
-    turretToHubXDist = hubPos.getX() - turretPos.getX();
+    turretToHubDist = turretPos.getDistance(hubPos);
 
-    distance = Math.hypot(turretToHubYDist, turretToHubXDist);
-
-    hoodSubsystem.setHoodAngle(distance);
+    hoodSubsystem.setHoodAngle(turretToHubDist);
   }
 
   // Called once the command ends or is interrupted.

@@ -22,7 +22,7 @@ public class PhysicalShooter implements ShooterInterface {
       new TalonFX(ShooterConstants.LEADER_FLYWHEEL_MOTOR_ID);
   private final TalonFX followerFlywheelMotor =
       new TalonFX(ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID);
-  MotorAlignmentValue motorAlignment;
+  MotorAlignmentValue motorAlignment = MotorAlignmentValue.Opposed;
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;
 
@@ -46,8 +46,9 @@ public class PhysicalShooter implements ShooterInterface {
         new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
   }
 
-  public void setSpeed(double speed) {
-    leaderFlywheelMotor.set(speed);
+  public void setSpeed(double distance) {
+    leaderFlywheelMotor.setControl(
+        mmTorqueRequest.withPosition(flywheelRPMLookupValues.getLookupValue(distance)));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }

@@ -22,14 +22,14 @@ public class ShooterConstants {
   // 5 rpm
   public static double FLYWHEEL_ERROR_TOLERANCE = 5;
 
-  public static double MANUAL_SHOOTER_SPEED = 0.9;
+  public static double MANUAL_SHOOTER_SPEED = 1.2;
 
   // Lookup table for rpms needed for certain distances
   // TODO: Add actual tested values
   public static double[][] DISTANCE_TO_FLYWHEEL_RPM = {
     // Distance from hub in meters, needed rpm of flywheel
     {0.5, 0.75},
-    {1, 0.7},
-    {0, 0},
+    {1, 0.7}
+    // {0, 0},
   };
 }
