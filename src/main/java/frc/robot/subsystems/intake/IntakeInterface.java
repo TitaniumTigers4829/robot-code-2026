@@ -27,5 +27,12 @@ public interface IntakeInterface {
 
     public default boolean isIntakeDeployed() { 
         return false; 
+
+
     }
+
+    public default void periodic() {}
+
+    
+    
 }

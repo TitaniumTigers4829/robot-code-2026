@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -7,6 +8,9 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 
 public class PhysicalIntake implements IntakeInterface {
     private TalonFX intakeMotor = new TalonFX(IntakeConstants.INTAKE_MOTOR_ID);
@@ -18,6 +22,11 @@ public class PhysicalIntake implements IntakeInterface {
     private MotorAlignmentValue pivotMotorAlignment = MotorAlignmentValue.Opposed;
     private TalonFXConfiguration intakeConfig;
     private TalonFXConfiguration pivotConfig;
+
+    public StatusSignal<Angle> intakeAngle;
+    public StatusSignal<AngularVelocity> intakeSpeed;
+    public StatusSignal<Boolean> isIntakeDeployed;
+
 
     public PhysicalIntake() {
         intakeConfig = new TalonFXConfiguration();
@@ -56,6 +65,9 @@ public class PhysicalIntake implements IntakeInterface {
         intakeMotor.getConfigurator().apply(intakeConfig);
         intakePivotMotor1.getConfigurator().apply(pivotConfig);
         intakePivotMotor2.getConfigurator().apply(pivotConfig);
+
+        intakeAngle = intakeCanCoder1.getAbsolutePosition();
+        intakeSpeed = intakeCanCoder1.getVelocity();
     }
 
     public void updateInputs(IntakeInputs inputs) {}
@@ -74,5 +86,6 @@ public class PhysicalIntake implements IntakeInterface {
 
     public boolean isIntakeDeployed() { 
         return false; 
+
     }
 }
