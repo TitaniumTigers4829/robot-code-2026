@@ -33,9 +33,9 @@ public class PhysicalShooter implements ShooterInterface {
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final TalonFXConfiguration leaderFlywheelConfig = new TalonFXConfiguration();
-  private final TalonFXConfiguration followerFlywheelConfig = new TalonFXConfiguration();
+  // private final TalonFXConfiguration followerFlywheelConfig = new TalonFXConfiguration();
 
-  // TODO: Add configs
+  // TODO: Add configs, and make slav
   public PhysicalShooter() {
 
     leaderFlywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;

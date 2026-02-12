@@ -50,14 +50,12 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodConfig.ClosedLoopGeneral.ContinuousWrap = true;
     hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1;
-    hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -1;
+    hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1.2;
+    hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
     hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
     hoodConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
-    hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
     hoodEncoderConfig.MagnetSensor.MagnetOffset = AdjustableHoodConstants.HOOD_ZERO_ANGLE;
     hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
@@ -86,11 +84,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   public void setHoodAngle(double distance) {
     lookupTableStuff = adjustableHoodLookupValues.getLookupValue(distance);
     distanceGiven = distance;
-    if (Math.abs(lookupTableStuff - getHoodAngle()) < 0.5) {
-      hoodMotor.setControl(positionRequest.withPosition(lookupTableStuff));
-    } else {
-      hoodMotor.setControl(positionRequest.withPosition(Math.abs(Math.abs(lookupTableStuff) - 1)));
-    }
+    hoodMotor.setControl(positionRequest.withPosition(lookupTableStuff));
   }
 
   public void periodic() {
