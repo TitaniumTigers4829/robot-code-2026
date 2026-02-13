@@ -1,8 +1,10 @@
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -26,7 +28,6 @@ public class PhysicalIntake implements IntakeInterface {
     public StatusSignal<Angle> intakeAngle;
     public StatusSignal<AngularVelocity> intakeSpeed;
     public StatusSignal<Boolean> isIntakeDeployed;
-
 
     public PhysicalIntake() {
         intakeConfig = new TalonFXConfiguration();
@@ -68,11 +69,30 @@ public class PhysicalIntake implements IntakeInterface {
 
         intakeAngle = intakeCanCoder1.getAbsolutePosition();
         intakeSpeed = intakeCanCoder1.getVelocity();
+        BaseStatusSignal.setUpdateFrequencyForAll(
+            0.0,
+            intakeAngle, 
+            intakeSpeed);
+        ParentDevice.optimizeBusUtilizationForAll(
+            intakeMotor, 
+            intakePivotMotor1, 
+            intakePivotMotor2, 
+            intakeCanCoder1, 
+            intakeCanCoder2);
+        
     }
 
-    public void updateInputs(IntakeInputs inputs) {}
+    public void updateInputs(IntakeInputs inputs) {
+        BaseStatusSignal.refreshAll(
+            intakeAngle,
+            intakeSpeed);
 
-    public void setIntakeAngle(double angle) {}
+            inputs.intakeAngle = 
+
+    }
+
+    public void setIntakeAngle(double angle) {
+    }
 
     public void setIntakeSpeed(double speed) {}
 

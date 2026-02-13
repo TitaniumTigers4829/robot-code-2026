@@ -37,6 +37,7 @@ public class PhysicalTurret implements TurretInterface {
   private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new MotionMagicTorqueCurrentFOC(0.0);
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
+
   private final StatusSignal<Voltage> turretMotorAppliedVoltage;
   private final StatusSignal<Double> desiredAngle;
   private final StatusSignal<AngularVelocity> turretAngularVelocity;
