@@ -192,7 +192,7 @@ public class Robot extends LoggedRobot {
 
     driverController.a().whileTrue(new TempManualShooterCommand(swerveDrive, shooterSubsystem));
 
-    driverController.b().whileTrue(new HubLockHood(swerveDrive, hoodSubsystem));
+    driverController.b().whileTrue((new HubLockHood(swerveDrive, hoodSubsystem)).repeatedly());
   }
 
   /** Configures the operator controller buttons and axes to control the robot */

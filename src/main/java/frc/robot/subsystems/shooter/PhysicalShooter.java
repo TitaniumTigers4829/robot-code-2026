@@ -33,6 +33,7 @@ public class PhysicalShooter implements ShooterInterface {
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final TalonFXConfiguration leaderFlywheelConfig = new TalonFXConfiguration();
+
   // private final TalonFXConfiguration followerFlywheelConfig = new TalonFXConfiguration();
 
   // TODO: Add configs, and make slav
@@ -46,9 +47,14 @@ public class PhysicalShooter implements ShooterInterface {
         new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
   }
 
+  public void set(double speed) {
+    leaderFlywheelMotor.set(speed);
+    followerFlywheelMotor.setControl(
+        new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+  }
+
   public void setSpeed(double distance) {
-    leaderFlywheelMotor.setControl(
-        mmTorqueRequest.withPosition(flywheelRPMLookupValues.getLookupValue(distance)));
+    leaderFlywheelMotor.set(flywheelRPMLookupValues.getLookupValue(distance));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }

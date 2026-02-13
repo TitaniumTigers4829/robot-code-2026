@@ -50,8 +50,8 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodConfig.ClosedLoopGeneral.ContinuousWrap = true;
     hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1.2;
-    hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+    hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.99;
+    hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.00001;
     hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
