@@ -55,9 +55,8 @@ public final class VisionConstants {
   public static final Transform3d BACK_TRANSFORM =
       new Transform3d(new Translation3d(0.0, 0.0, 0.1865472012), new Rotation3d(0.0, 35, 180.0));
   // x->0.3119324724
-  public static final PhotonCamera BACK_CAMERA = new PhotonCamera(Limelight.FRONT_LEFT.getName());
-  // public static final PhotonCamera ELEVATOR_CAMERA =
-  //     new PhotonCamera(Limelight.FRONT_RIGHT.getName());
+  public static final PhotonCamera FRONT_LEFT = new PhotonCamera(Limelight.FRONT_LEFT.getName());
+  public static final PhotonCamera FRONT_RIGHT = new PhotonCamera(Limelight.FRONT_RIGHT.getName());
 
   public static final int THREAD_SLEEP_MS = 20;
 

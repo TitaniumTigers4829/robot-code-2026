@@ -3,9 +3,11 @@ package frc.robot.sim;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.HardwareConstants;
+import frc.robot.extras.logging.RuntimeLog;
 import frc.robot.extras.math.mathutils.GearRatio;
 import frc.robot.extras.util.DCMotorExt;
 import frc.robot.sim.configs.SimGyroConfig;
@@ -14,7 +16,6 @@ import frc.robot.sim.configs.SimSwerveConfig;
 import frc.robot.sim.configs.SimSwerveModuleConfig;
 import frc.robot.sim.configs.SimSwerveModuleConfig.WheelCof;
 import frc.robot.sim.sim2026.RebuiltSim.RebuiltSimArena;
-import frc.robot.sim.simField.SimArena;
 import frc.robot.sim.simMechanism.simSwerve.SimSwerve;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
@@ -23,24 +24,7 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.simulation.VisionSystemSim;
 
-/**
- * Represents the simulation world.
- *
- * <p>The simulation world is composed of:
- *
- * <ul>
- *   <li>A {@link SimArena} object that represents the simulation arena.
- *   <li>A {@link SimRobot} object that represents the simulation robot.
- *   <li>A {@link VisionSystemSim} object that represents the simulation vision system.
- *   <li>A {@link SimMechanismConfig} object that represents the simulation mechanism configuration.
- *       These act as the drive and turn motors for the swerve modules.
- *   <li>A {@link SimSwerveModuleConfig} object that represents the simulation swerve module
- *       configuration, using the {@link SimMechanismConfig}.
- *   <li>A {@link SimGyroConfig} object that represents the simulation gyro configuration.
- *   <li>A {@link SimSwerveConfig} object that represents the simulation swerve configuration This
- *       uses the {@link SimSwerveModuleConfig} and {@link SimGyroConfig}.
- * </ul>
- */
+/** Represents the simulation world. */
 public class SimWorld {
 
   private final RebuiltSimArena arena;
@@ -78,12 +62,27 @@ public class SimWorld {
 
   /** Constructs a new simulation world for the 2026 REBUILT game. */
   public SimWorld() {
-    // Use the concrete RebuiltSimArena instead of abstract SimArena
+    // Create the arena first
     arena = new RebuiltSimArena(Seconds.of(HardwareConstants.LOOP_TIME_SECONDS), 5);
+
+    // Create the robot
     simRobot = new SimRobot<>(arena, "User", swerveConfig, 1);
+
+    arena.withWorld(
+        world -> {
+          // Check if the body is already in the world
+          if (!world.containsBody(simRobot.getDriveTrain().chassis)) {
+            world.addBody(simRobot.getDriveTrain().chassis);
+          } else {
+            RuntimeLog.debug("Robot chassis already in physics world, skipping duplicate add");
+          }
+        });
 
     aprilTagSim = new VisionSystemSim("AprilTags");
     aprilTagSim.addAprilTags(VisionConstants.FIELD_LAYOUT);
+
+    // Set initial robot pose
+    simRobot.getDriveTrain().setChassisWorldPose(new Pose2d(7, 4, new Rotation2d()), true);
   }
 
   /**
@@ -119,11 +118,54 @@ public class SimWorld {
    * @param poseSupplier the pose supplier used to update the chassis's pose in the simulation world
    */
   public void update(Supplier<Pose2d> poseSupplier) {
-    robot().getDriveTrain().setChassisWorldPose(poseSupplier.get(), true);
-    arena().simulationPeriodic();
+    // Get the desired pose from the robot's odometry
+    Pose2d desiredPose = poseSupplier.get();
 
-    final Pose2d robotPose = simRobot.getDriveTrain().getChassisWorldPose();
-    aprilTagSim.update(robotPose);
-    Logger.recordOutput("Odometry/ChassisPose", robot().getDriveTrain().getChassisWorldPose());
+    // Get the actual physics simulation pose
+    Pose2d actualPose = simRobot.getDriveTrain().getChassisWorldPose();
+
+    // Log both for comparison
+    Logger.recordOutput("Simulation/DesiredPose", desiredPose);
+    Logger.recordOutput("Simulation/ActualPose", actualPose);
+    Logger.recordOutput(
+        "Simulation/PoseError",
+        desiredPose.getTranslation().getDistance(actualPose.getTranslation()));
+
+    // Update robot simulation (applies motor forces, friction, etc.)
+    arena.simulationPeriodic();
+
+    // Update vision simulation with the ACTUAL physics pose
+    aprilTagSim.update(actualPose);
+
+    // Log chassis pose from drivetrain
+    Logger.recordOutput("Odometry/ChassisPose", actualPose);
+  }
+
+  /**
+   * Resets the simulation robot to a specific pose.
+   *
+   * @param pose The pose to reset to
+   * @param resetVelocity Whether to reset velocity to zero
+   */
+  public void resetRobotPose(Pose2d pose, boolean resetVelocity) {
+    simRobot.getDriveTrain().setChassisWorldPose(pose, resetVelocity);
+  }
+
+  /**
+   * Gets the current collision state of the robot.
+   *
+   * @return True if the robot is colliding with anything
+   */
+  public boolean isRobotColliding() {
+    return simRobot.getDriveTrain().chassis.isColliding();
+  }
+
+  /**
+   * Gets the number of active collisions.
+   *
+   * @return Number of bodies the robot is colliding with
+   */
+  public int getCollisionCount() {
+    return simRobot.getDriveTrain().chassis.getCollisionCount();
   }
 }

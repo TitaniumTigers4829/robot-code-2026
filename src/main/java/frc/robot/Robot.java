@@ -60,7 +60,7 @@ public class Robot extends LoggedRobot {
   private ShooterSubsystem shooterSubsystem;
   private TurretSubsystem turretSubsystem;
   private AdjustableHoodSubsystem hoodSubsystem;
-  
+
   // Simulation world
   private SimWorld simWorld;
 
@@ -321,12 +321,12 @@ public class Robot extends LoggedRobot {
 
         this.visionSubsystem =
             new VisionSubsystem(new SimulatedVision(() -> simWorld.aprilTagSim()));
-        
+
         // Initialize other subsystems with simulation interfaces (create these classes)
         this.shooterSubsystem = new ShooterSubsystem(new ShooterInterface() {});
         this.turretSubsystem = new TurretSubsystem(new TurretInterface() {});
         this.hoodSubsystem = new AdjustableHoodSubsystem(new AdjustableHoodInterface() {});
-        
+
         // Reset robot to a starting position
         this.swerveDrive.resetEstimatedPose(new Pose2d(7, 4, new Rotation2d()));
       }
