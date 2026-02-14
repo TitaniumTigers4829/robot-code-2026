@@ -14,20 +14,26 @@ import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
 import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
+import frc.robot.sim.SimWorld;
+import frc.robot.subsystems.adjustableHood.AdjustableHoodInterface;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
 import frc.robot.subsystems.shooter.PhysicalShooter;
+import frc.robot.subsystems.shooter.ShooterInterface;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.swerve.gyro.GyroInterface;
 import frc.robot.subsystems.swerve.gyro.PhysicalGyroNavX;
 import frc.robot.subsystems.swerve.gyro.PhysicalGyroPigeon;
+import frc.robot.subsystems.swerve.gyro.SimulatedGyro;
 import frc.robot.subsystems.swerve.module.ModuleInterface;
 import frc.robot.subsystems.swerve.module.PhysicalModule;
+import frc.robot.subsystems.swerve.module.SimulatedModule;
 import frc.robot.subsystems.turret.PhysicalTurret;
+import frc.robot.subsystems.turret.TurretInterface;
 import frc.robot.subsystems.turret.TurretSubsystem;
-// import frc.robot.subsystems.vision.PhysicalVision;
+import frc.robot.subsystems.vision.SimulatedVision;
 import frc.robot.subsystems.vision.VisionInterface;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.function.DoubleSupplier;
@@ -54,6 +60,9 @@ public class Robot extends LoggedRobot {
   private ShooterSubsystem shooterSubsystem;
   private TurretSubsystem turretSubsystem;
   private AdjustableHoodSubsystem hoodSubsystem;
+  
+  // Simulation world
+  private SimWorld simWorld;
 
   // private Autos autos;
   private Command autoCommand;
@@ -301,20 +310,25 @@ public class Robot extends LoggedRobot {
 
       case SIM_ROBOT -> {
         /* Sim robot, instantiate physics sim IO implementations */
-        // this.simWorld = new SimWorld();
-        // this.swerveDrive =
-        //     new SwerveDrive(
-        //         new SimulatedGyro(simWorld.robot().getDriveTrain().getGyro()),
-        //         new SimulatedModule(0, simWorld.robot().getDriveTrain()),
-        //         new SimulatedModule(1, simWorld.robot().getDriveTrain()),
-        //         new SimulatedModule(2, simWorld.robot().getDriveTrain()),
-        //         new SimulatedModule(3, simWorld.robot().getDriveTrain()));
+        this.simWorld = new SimWorld();
+        this.swerveDrive =
+            new SwerveDrive(
+                new SimulatedGyro(simWorld.robot().getDriveTrain().getGyro()),
+                new SimulatedModule(0, simWorld.robot().getDriveTrain()),
+                new SimulatedModule(1, simWorld.robot().getDriveTrain()),
+                new SimulatedModule(2, simWorld.robot().getDriveTrain()),
+                new SimulatedModule(3, simWorld.robot().getDriveTrain()));
 
-        // // this.visionSubsystem =
-        // //     new VisionSubsystem(new SimulatedVision(() -> simWorld.aprilTagSim()));
-        // this.swerveDrive.resetEstimatedPose(new Pose2d(7, 4, new Rotation2d()));
-        // this.elevatorSubsystem = new ElevatorSubsystem(new SimulatedElevator());
-        // SYNTAX FOR SIM SUBSYSTEMS ^^
+        this.visionSubsystem =
+            new VisionSubsystem(new SimulatedVision(() -> simWorld.aprilTagSim()));
+        
+        // Initialize other subsystems with simulation interfaces (create these classes)
+        this.shooterSubsystem = new ShooterSubsystem(new ShooterInterface() {});
+        this.turretSubsystem = new TurretSubsystem(new TurretInterface() {});
+        this.hoodSubsystem = new AdjustableHoodSubsystem(new AdjustableHoodInterface() {});
+        
+        // Reset robot to a starting position
+        this.swerveDrive.resetEstimatedPose(new Pose2d(7, 4, new Rotation2d()));
       }
 
       default -> {
@@ -329,8 +343,9 @@ public class Robot extends LoggedRobot {
                 new ModuleInterface() {},
                 new ModuleInterface() {},
                 new ModuleInterface() {});
-        // this.elevatorSubsystem = new ElevatorSubsystem(new ElevatorInterface() {});
-        // SYNTAX ^^
+        this.shooterSubsystem = new ShooterSubsystem(new ShooterInterface() {});
+        this.turretSubsystem = new TurretSubsystem(new TurretInterface() {});
+        this.hoodSubsystem = new AdjustableHoodSubsystem(new AdjustableHoodInterface() {});
       }
     }
   }
@@ -360,4 +375,11 @@ public class Robot extends LoggedRobot {
   public void simulationInit() {}
 
   /** This function is called periodically whilst in simulation. */
+  @Override
+  public void simulationPeriodic() {
+    // Update the simulation world with the current robot pose
+    if (simWorld != null && swerveDrive != null) {
+      simWorld.update(() -> swerveDrive.getEstimatedPose());
+    }
+  }
 }
