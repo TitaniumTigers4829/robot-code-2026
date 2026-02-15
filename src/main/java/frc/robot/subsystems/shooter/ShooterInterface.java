@@ -36,6 +36,8 @@ public interface ShooterInterface {
     return 0.0;
   }
 
+  public default void set(double speed) {}
+
   public default void setSpeed(double speed) {}
 
   public default void openLoop(double output) {}

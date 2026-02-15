@@ -22,7 +22,7 @@ public class PhysicalShooter implements ShooterInterface {
       new TalonFX(ShooterConstants.LEADER_FLYWHEEL_MOTOR_ID);
   private final TalonFX followerFlywheelMotor =
       new TalonFX(ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID);
-  MotorAlignmentValue motorAlignment;
+  MotorAlignmentValue motorAlignment = MotorAlignmentValue.Opposed;
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;
 
@@ -33,9 +33,10 @@ public class PhysicalShooter implements ShooterInterface {
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final TalonFXConfiguration leaderFlywheelConfig = new TalonFXConfiguration();
-  private final TalonFXConfiguration followerFlywheelConfig = new TalonFXConfiguration();
 
-  // TODO: Add configs
+  // private final TalonFXConfiguration followerFlywheelConfig = new TalonFXConfiguration();
+
+  // TODO: Add configs, and make slav
   public PhysicalShooter() {
 
     leaderFlywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -46,8 +47,14 @@ public class PhysicalShooter implements ShooterInterface {
         new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
   }
 
-  public void setSpeed(double speed) {
+  public void set(double speed) {
     leaderFlywheelMotor.set(speed);
+    followerFlywheelMotor.setControl(
+        new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+  }
+
+  public void setSpeed(double distance) {
+    leaderFlywheelMotor.set(flywheelRPMLookupValues.getLookupValue(distance));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }

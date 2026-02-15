@@ -2,47 +2,37 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.shooter;
+package frc.robot.commands.hublocking;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
-import java.util.Optional;
 
-/* You should consider using the more terse Command factories API instead
-https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class TempManualShooterCommand extends Command {
-  /** Creates a new TempManualShooterCommand. */
-  ShooterSubsystem shooter;
+/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+public class HubLockHood extends Command {
 
-  Translation2d hubPos;
+  SwerveDrive swerveDrive;
+  AdjustableHoodSubsystem hoodSubsystem;
+  public Rotation2d heading;
+  public Translation2d hubPos;
   public double distance;
   public double turretToHubDist;
-  SwerveDrive swerveDrive;
-  public Rotation2d heading;
 
-  public TempManualShooterCommand(SwerveDrive swerveDrive, ShooterSubsystem shooter) {
-    this.shooter = shooter;
+  public HubLockHood(SwerveDrive swerveDrive, AdjustableHoodSubsystem hoodSubsystem) {
     this.swerveDrive = swerveDrive;
-    addRequirements(swerveDrive, shooter);
+    this.hoodSubsystem = hoodSubsystem;
+    addRequirements(swerveDrive, hoodSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    // Sets hub position based on the alliance
-    if (alliance.get() == Alliance.Red) {
-      hubPos = FieldConstants.RED_HUB_CENTER;
-    } else {
-      hubPos = FieldConstants.BLUE_HUB_CENTER;
-    }
+
+    hubPos = FieldConstants.RED_HUB_CENTER;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -58,14 +48,12 @@ public class TempManualShooterCommand extends Command {
 
     turretToHubDist = turretPos.getDistance(hubPos);
 
-    shooter.setSpeed(turretToHubDist);
+    hoodSubsystem.setHoodAngle(turretToHubDist);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    shooter.set(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
