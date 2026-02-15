@@ -10,11 +10,11 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 /* You should consider using the more terse Command factories API instead
 https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class TempManualShooterCommand extends Command {
+public class PassFuelCommand extends Command {
   /** Creates a new TempManualShooterCommand. */
   ShooterSubsystem shooter;
 
-  public TempManualShooterCommand(ShooterSubsystem shooter) {
+  public PassFuelCommand(ShooterSubsystem shooter) {
     this.shooter = shooter;
     addRequirements(shooter);
   }
@@ -26,12 +26,14 @@ public class TempManualShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setSpeed(ShooterConstants.MANUAL_SHOOTER_SPEED);
+    shooter.passFuel(ShooterConstants.PASS_SHOOTER_SPEED);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    shooter.passFuel(0);
+  }
 
   // Returns true when the command should end.
   @Override

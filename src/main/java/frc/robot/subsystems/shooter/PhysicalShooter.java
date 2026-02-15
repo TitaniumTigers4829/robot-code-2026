@@ -64,4 +64,11 @@ public class PhysicalShooter implements ShooterInterface {
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }
+
+  public void passFuel(double output) {
+    kickerMotor.set(ShooterConstants.KICKER_PERCENT_OUTPUT);
+    leaderFlywheelMotor.set(output);
+    followerFlywheelMotor.setControl(
+        new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+  }
 }

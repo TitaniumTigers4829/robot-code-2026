@@ -71,8 +71,8 @@ public class ShooterSubsystem extends SubsystemBase {
     return Math.abs(targetRPM - inputs.flywheelRPM) < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
   }
 
-  public void setSpeed(double speed) {
-    shooterInterface.setSpeed(speed);
+  public void passFuel(double output) {
+    shooterInterface.passFuel(output);
   }
 
   @Override
