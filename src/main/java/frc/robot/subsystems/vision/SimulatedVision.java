@@ -31,62 +31,92 @@ import org.photonvision.targeting.PhotonTrackedTarget;
  * @author @Ishan1522
  */
 public class SimulatedVision extends PhysicalVision {
-  PhotonCameraSim shooterCameraSim;
+  private PhotonCameraSim shooterCameraSim;
   private final VisionSystemSim visionSim;
+  private final Supplier<VisionSystemSim> visionSimSupplier;
 
   private final int kResWidth = 1280;
   private final int kResHeight = 800;
 
-  public SimulatedVision(Supplier<VisionSystemSim> visionSim) {
+  public SimulatedVision(Supplier<VisionSystemSim> visionSimSupplier) {
     super();
-    this.visionSim = visionSim.get();
-    // this.robotSimulationPose = robotSimulationPose;
-    // Create the vision system simulation which handles cameras and targets on the
-    // field.
-    // visionSim = new VisionSystemSim("main");
+    this.visionSimSupplier = visionSimSupplier;
+    this.visionSim = visionSimSupplier.get();
 
-    // Add all the AprilTags inside the tag layout as visible targets to this
-    // simulated field.
+    if (this.visionSim == null) {
+      System.err.println("WARNING: VisionSystemSim is null! Vision simulation will be disabled.");
+      return;
+    }
 
-    // Create simulated camera properties. These can be set to mimic your actual
-    // camera.
-    var cameraProperties = new SimCameraProperties();
-    cameraProperties.setCalibration(kResWidth, kResHeight, Rotation2d.fromDegrees(97.7));
-    cameraProperties.setCalibError(0.35, 0.10);
-    cameraProperties.setFPS(15);
-    cameraProperties.setAvgLatencyMs(20);
-    cameraProperties.setLatencyStdDevMs(5);
+    initializeCameraSim();
+  }
 
-    // Create a PhotonCameraSim which will update the linked PhotonCamera's values
-    // with visible
-    // targets.
-    // Instance variables
-    shooterCameraSim =
-        new PhotonCameraSim(getSimulationCamera(Limelight.FRONT_LEFT), cameraProperties);
-    visionSim
-        .get()
-        .addCamera(shooterCameraSim, VisionConstants.BACK_TRANSFORM); // check inverse things
+  /** Initializes the camera simulation */
+  private void initializeCameraSim() {
+    try {
+      // Create simulated camera properties. These can be set to mimic your actual
+      // camera.
+      var cameraProperties = new SimCameraProperties();
+      cameraProperties.setCalibration(kResWidth, kResHeight, Rotation2d.fromDegrees(97.7));
+      cameraProperties.setCalibError(0.35, 0.10);
+      cameraProperties.setFPS(15);
+      cameraProperties.setAvgLatencyMs(20);
+      cameraProperties.setLatencyStdDevMs(5);
 
-    // Enable the raw and processed streams. (http://localhost:1181 / 1182)
-    shooterCameraSim.enableRawStream(true);
-    shooterCameraSim.enableProcessedStream(true);
+      // Create a PhotonCameraSim which will update the linked PhotonCamera's values
+      // with visible targets.
+      PhotonCamera camera = getSimulationCamera(Limelight.FRONT_LEFT);
+      if (camera != null) {
+        shooterCameraSim = new PhotonCameraSim(camera, cameraProperties);
+        visionSim.addCamera(shooterCameraSim, VisionConstants.BACK_TRANSFORM);
 
-    // // Enable drawing a wireframe visualization of the field to the camera streams.
-    // // This is extremely resource-intensive and is disabled by default.
-    shooterCameraSim.enableDrawWireframe(true);
+        // Enable the raw and processed streams. (http://localhost:1181 / 1182)
+        shooterCameraSim.enableRawStream(true);
+        shooterCameraSim.enableProcessedStream(true);
+
+        // Enable drawing a wireframe visualization of the field to the camera streams.
+        // This is extremely resource-intensive and is disabled by default.
+        shooterCameraSim.enableDrawWireframe(true);
+      } else {
+        System.err.println("WARNING: Could not get simulation camera for FRONT_LEFT");
+      }
+    } catch (Exception e) {
+      System.err.println("ERROR initializing camera simulation: " + e.getMessage());
+      e.printStackTrace();
+    }
   }
 
   @Override
   public void updateInputs(VisionInputs inputs) {
-    // Abuse the updateInputs periodic call to update the sim
+    try {
+      // Make sure we have a valid vision sim
+      if (visionSim == null) {
+        inputs.hasResults = false;
+        return;
+      }
 
-    for (Limelight limelight : Limelight.values()) {
-      writeToTable(
-          getSimulationCamera(Limelight.FRONT_LEFT).getAllUnreadResults(),
-          getLimelightTable(Limelight.FRONT_LEFT),
-          Limelight.FRONT_LEFT);
+      // Update the vision simulation with the latest robot pose
+      // This should be called from somewhere that knows the current robot pose
+
+      // Abuse the updateInputs periodic call to update the sim
+      for (Limelight limelight : Limelight.values()) {
+        PhotonCamera camera = getSimulationCamera(limelight);
+        if (camera != null) {
+          List<PhotonPipelineResult> results = camera.getAllUnreadResults();
+          if (!results.isEmpty()) {
+            writeToTable(results, getLimelightTable(limelight), limelight);
+          }
+        }
+      }
+
+      // Call super.updateInputs last
+      super.updateInputs(inputs);
+
+    } catch (Exception e) {
+      System.err.println("ERROR in SimulatedVision.updateInputs: " + e.getMessage());
+      e.printStackTrace();
+      inputs.hasResults = false;
     }
-    super.updateInputs(inputs);
   }
 
   /**
@@ -98,47 +128,109 @@ public class SimulatedVision extends PhysicalVision {
    */
   private void writeToTable(
       List<PhotonPipelineResult> results, NetworkTable table, Limelight limelight) {
-    // write to ll table
+
+    if (table == null || results == null || results.isEmpty()) {
+      return;
+    }
+
     for (PhotonPipelineResult result : results) {
+      if (result == null) continue;
+
+      // Always set target visible flag
+      table.getEntry("tv").setInteger(result.hasTargets() ? 1 : 0);
+
+      // Set latency
+      if (result.metadata != null) {
+        table.getEntry("cl").setDouble(result.metadata.getLatencyMillis());
+      }
+
+      // Handle multitag results if present
       if (result.getMultiTagResult().isPresent()) {
-        Transform3d best = result.getMultiTagResult().get().estimatedPose.best;
-        List<Double> pose_data =
-            new ArrayList<>(
-                Arrays.asList(
-                    best.getX(), // 0: X
-                    best.getY(), // 1: Y
-                    best.getZ(), // 2: Z,
-                    best.getRotation().getX(), // 3: roll
-                    best.getRotation().getY(), // 4: pitch
-                    best.getRotation().getZ(), // 5: yaw
-                    result.metadata.getLatencyMillis(), // 6: latency ms,
-                    (double)
-                        result.getMultiTagResult().get().fiducialIDsUsed.size(), // 7: tag count
-                    0.0, // 8: tag span
-                    0.0, // 9: tag dist
-                    result.getBestTarget().getArea() // 10: tag area
-                    ));
-        // Add RawFiducials
-        // This is super inefficient but it's sim only, who cares.
-        for (PhotonTrackedTarget target : result.targets) {
-          pose_data.add((double) target.getFiducialId()); // 0: id
-          pose_data.add(target.getYaw()); // 1: txnc
-          pose_data.add(target.getPitch()); // 2: tync
-          pose_data.add(target.getArea()); // 3: ta
-          pose_data.add(0.0); // 4: distToCamera
-          pose_data.add(0.0); // 5: distToRobot
-          pose_data.add(target.getPoseAmbiguity()); // 6: ambiguity
+        var multiTagResult = result.getMultiTagResult().get();
+        Transform3d best = multiTagResult.estimatedPose.best;
+
+        List<Double> pose_data = new ArrayList<>();
+
+        if (best != null) {
+          pose_data.addAll(
+              Arrays.asList(
+                  best.getX(), // 0: X
+                  best.getY(), // 1: Y
+                  best.getZ(), // 2: Z,
+                  best.getRotation().getX(), // 3: roll
+                  best.getRotation().getY(), // 4: pitch
+                  best.getRotation().getZ(), // 5: yaw
+                  result.metadata != null
+                      ? result.metadata.getLatencyMillis()
+                      : 0.0, // 6: latency ms,
+                  (double) multiTagResult.fiducialIDsUsed.size(), // 7: tag count
+                  0.0, // 8: tag span
+                  0.0, // 9: tag dist
+                  result.hasTargets() ? result.getBestTarget().getArea() : 0.0 // 10: tag area
+                  ));
         }
 
-        table
-            .getEntry("botpose_wpiblue")
-            .setDoubleArray(pose_data.stream().mapToDouble(Double::doubleValue).toArray());
-        table
-            .getEntry("botpose_orb_wpiblue")
-            .setDoubleArray(pose_data.stream().mapToDouble(Double::doubleValue).toArray());
+        // Add RawFiducials data
+        // This is super inefficient but it's sim only, who cares.
+        for (PhotonTrackedTarget target : result.getTargets()) {
+          if (target != null) {
+            pose_data.add((double) target.getFiducialId()); // 0: id
+            pose_data.add(target.getYaw()); // 1: txnc
+            pose_data.add(target.getPitch()); // 2: tync
+            pose_data.add(target.getArea()); // 3: ta
+            pose_data.add(0.0); // 4: distToCamera
+            pose_data.add(0.0); // 5: distToRobot
+            pose_data.add(target.getPoseAmbiguity()); // 6: ambiguity
+          }
+        }
 
-        table.getEntry("tv").setInteger(result.hasTargets() ? 1 : 0);
-        table.getEntry("cl").setDouble(result.metadata.getLatencyMillis());
+        if (!pose_data.isEmpty()) {
+          table
+              .getEntry("botpose_wpiblue")
+              .setDoubleArray(pose_data.stream().mapToDouble(Double::doubleValue).toArray());
+          table
+              .getEntry("botpose_orb_wpiblue")
+              .setDoubleArray(pose_data.stream().mapToDouble(Double::doubleValue).toArray());
+        }
+      }
+
+      // Handle single tag results as fallback
+      else if (result.hasTargets()) {
+        var bestTarget = result.getBestTarget();
+        if (bestTarget != null) {
+          // Create single tag pose data (simplified)
+          List<Double> pose_data = new ArrayList<>();
+          Transform3d best = bestTarget.getBestCameraToTarget();
+
+          if (best != null) {
+            pose_data.addAll(
+                Arrays.asList(
+                    best.getX(),
+                    best.getY(),
+                    best.getZ(),
+                    best.getRotation().getX(),
+                    best.getRotation().getY(),
+                    best.getRotation().getZ(),
+                    result.metadata != null ? result.metadata.getLatencyMillis() : 0.0,
+                    1.0, // single tag
+                    0.0,
+                    0.0,
+                    bestTarget.getArea()));
+
+            // Add target info
+            pose_data.add((double) bestTarget.getFiducialId());
+            pose_data.add(bestTarget.getYaw());
+            pose_data.add(bestTarget.getPitch());
+            pose_data.add(bestTarget.getArea());
+            pose_data.add(0.0); // distToCamera
+            pose_data.add(0.0); // distToRobot
+            pose_data.add(bestTarget.getPoseAmbiguity());
+
+            table
+                .getEntry("botpose_wpiblue")
+                .setDoubleArray(pose_data.stream().mapToDouble(Double::doubleValue).toArray());
+          }
+        }
       }
     }
   }
@@ -150,10 +242,18 @@ public class SimulatedVision extends PhysicalVision {
    * @return A PhotonCamera object for the given Limelight
    */
   private PhotonCamera getSimulationCamera(Limelight limelight) {
-    return switch (limelight) {
-      case FRONT_LEFT -> VisionConstants.BACK_CAMERA;
-      default -> throw new IllegalArgumentException("Invalid limelight camera " + limelight);
-    };
+    try {
+      return switch (limelight) {
+        case FRONT_LEFT -> VisionConstants.FRONT_LEFT;
+        case FRONT_RIGHT -> VisionConstants.FRONT_RIGHT;
+
+        default -> null;
+      };
+    } catch (Exception e) {
+      System.err.println(
+          "ERROR getting simulation camera for " + limelight + ": " + e.getMessage());
+      return null;
+    }
   }
 
   /**
@@ -163,11 +263,16 @@ public class SimulatedVision extends PhysicalVision {
    * @return The network table of the Limelight
    */
   private NetworkTable getLimelightTable(Limelight limelight) {
-    return switch (limelight) {
-      case FRONT_LEFT -> NTUtils.getLimelightNetworkTable(Limelight.FRONT_LEFT.getName());
-      case FRONT_RIGHT -> NTUtils.getLimelightNetworkTable(Limelight.FRONT_RIGHT.getName());
-      default -> throw new IllegalArgumentException("Invalid limelight " + limelight);
-    };
+    try {
+      return switch (limelight) {
+        case FRONT_LEFT -> NTUtils.getLimelightNetworkTable(Limelight.FRONT_LEFT.getName());
+        case FRONT_RIGHT -> NTUtils.getLimelightNetworkTable(Limelight.FRONT_RIGHT.getName());
+        default -> null;
+      };
+    } catch (Exception e) {
+      System.err.println("ERROR getting limelight table for " + limelight + ": " + e.getMessage());
+      return null;
+    }
   }
 
   @Override

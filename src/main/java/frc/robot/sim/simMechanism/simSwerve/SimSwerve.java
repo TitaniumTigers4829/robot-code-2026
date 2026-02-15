@@ -110,6 +110,7 @@ public class SimSwerve extends SimDriveTrain {
     gyroSimulation.updateSimulationSubTick(
         this.getChassisWorldPose().getRotation().getMeasure(), this.getTickTwist());
     Logger.recordOutput("Odometry/ChassisPose", getChassisWorldPose());
+    logCollisionInfo();
     super.simTick();
   }
 
@@ -252,6 +253,22 @@ public class SimSwerve extends SimDriveTrain {
 
     chassis.applyForce(new Vector2(propulsionForceX.in(Newtons), propulsionForceY.in(Newtons)));
     chassis.applyTorque(propulsionTorque.in(NewtonMeters));
+  }
+
+  /** Logs collision information for debugging. */
+  private void logCollisionInfo() {
+    if (chassis.isColliding()) {
+      Logger.recordOutput("Collisions/IsColliding", true);
+      Logger.recordOutput("Collisions/CollisionCount", chassis.getCollisionCount());
+
+      // Log the robot's current pose when colliding
+      Logger.recordOutput("Collisions/RobotPose", getChassisWorldPose());
+
+      // You could also log which obstacles it's colliding with
+      // This would require accessing the arena's obstacles
+    } else {
+      Logger.recordOutput("Collisions/IsColliding", false);
+    }
   }
 
   /**

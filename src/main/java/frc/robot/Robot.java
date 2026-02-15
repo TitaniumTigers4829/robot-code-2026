@@ -14,20 +14,27 @@ import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
 import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
+import frc.robot.extras.util.ShotCalculator;
+import frc.robot.sim.SimWorld;
+import frc.robot.subsystems.adjustableHood.AdjustableHoodInterface;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
 import frc.robot.subsystems.shooter.PhysicalShooter;
+import frc.robot.subsystems.shooter.ShooterInterface;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.swerve.gyro.GyroInterface;
 import frc.robot.subsystems.swerve.gyro.PhysicalGyroNavX;
 import frc.robot.subsystems.swerve.gyro.PhysicalGyroPigeon;
+import frc.robot.subsystems.swerve.gyro.SimulatedGyro;
 import frc.robot.subsystems.swerve.module.ModuleInterface;
 import frc.robot.subsystems.swerve.module.PhysicalModule;
+import frc.robot.subsystems.swerve.module.SimulatedModule;
 import frc.robot.subsystems.turret.PhysicalTurret;
+import frc.robot.subsystems.turret.TurretInterface;
 import frc.robot.subsystems.turret.TurretSubsystem;
-// import frc.robot.subsystems.vision.PhysicalVision;
+import frc.robot.subsystems.vision.SimulatedVision;
 import frc.robot.subsystems.vision.VisionInterface;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.function.DoubleSupplier;
@@ -55,6 +62,12 @@ public class Robot extends LoggedRobot {
   private TurretSubsystem turretSubsystem;
   private AdjustableHoodSubsystem hoodSubsystem;
 
+  // Mechanism visualizer (not a subsystem)
+  private RobotMechanismVisualizer mechanismViz;
+
+  // Simulation world
+  private SimWorld simWorld;
+
   // private Autos autos;
   private Command autoCommand;
 
@@ -71,12 +84,11 @@ public class Robot extends LoggedRobot {
     // Switch thread to high priority and real time to improve loop timing
     Threads.setCurrentThreadPriority(true, HardwareConstants.HIGH_THREAD_PRIORITY);
 
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled commands, running already-scheduled commands, removing
-    // finished or interrupted commands, and running subsystem periodic() methods.
-    // This must be called from the robot's periodic block in order for anything in
-    // the Command-based framework to work.
+    // Runs the Scheduler
     CommandScheduler.getInstance().run();
+
+    // Update mechanism visualization with current subsystem states
+    updateMechanismVisualization();
 
     // Updates autos while the robot is enabled
     // autos.update();
@@ -195,7 +207,6 @@ public class Robot extends LoggedRobot {
   /** Configures the operator controller buttons and axes to control the robot */
   private void configureOperatorController() {
     // OPERATOR COMMANDS
-
   }
 
   /** Checks the git status and records it to the log */
@@ -270,6 +281,9 @@ public class Robot extends LoggedRobot {
         this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
         this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
         this.hoodSubsystem = new AdjustableHoodSubsystem(new PhysicalAdjustableHood());
+
+        // Initialize visualizer for real robot (simulation mode false)
+        this.mechanismViz = new RobotMechanismVisualizer(false);
       }
       case DEV_ROBOT -> {
         /* Real robot, instantiate hardware IO implementations */
@@ -283,7 +297,9 @@ public class Robot extends LoggedRobot {
         this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
         this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
         this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
-        // THIS IS THE SYNTAX FOR WHATEVER SUBSYSTEMS ARE USED ^^
+
+        // Initialize visualizer for dev robot (simulation mode false)
+        this.mechanismViz = new RobotMechanismVisualizer(false);
       }
       case SWERVE_ROBOT -> {
         /* Real robot, instantiate hardware IO implementations */
@@ -297,24 +313,35 @@ public class Robot extends LoggedRobot {
         this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
         this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
         this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
+
+        // Initialize visualizer for swerve robot (simulation mode false)
+        this.mechanismViz = new RobotMechanismVisualizer(false);
       }
 
       case SIM_ROBOT -> {
         /* Sim robot, instantiate physics sim IO implementations */
-        // this.simWorld = new SimWorld();
-        // this.swerveDrive =
-        //     new SwerveDrive(
-        //         new SimulatedGyro(simWorld.robot().getDriveTrain().getGyro()),
-        //         new SimulatedModule(0, simWorld.robot().getDriveTrain()),
-        //         new SimulatedModule(1, simWorld.robot().getDriveTrain()),
-        //         new SimulatedModule(2, simWorld.robot().getDriveTrain()),
-        //         new SimulatedModule(3, simWorld.robot().getDriveTrain()));
+        this.simWorld = new SimWorld();
+        this.swerveDrive =
+            new SwerveDrive(
+                new SimulatedGyro(simWorld.robot().getDriveTrain().getGyro()),
+                new SimulatedModule(0, simWorld.robot().getDriveTrain()),
+                new SimulatedModule(1, simWorld.robot().getDriveTrain()),
+                new SimulatedModule(2, simWorld.robot().getDriveTrain()),
+                new SimulatedModule(3, simWorld.robot().getDriveTrain()));
 
-        // // this.visionSubsystem =
-        // //     new VisionSubsystem(new SimulatedVision(() -> simWorld.aprilTagSim()));
-        // this.swerveDrive.resetEstimatedPose(new Pose2d(7, 4, new Rotation2d()));
-        // this.elevatorSubsystem = new ElevatorSubsystem(new SimulatedElevator());
-        // SYNTAX FOR SIM SUBSYSTEMS ^^
+        this.visionSubsystem =
+            new VisionSubsystem(new SimulatedVision(() -> simWorld.aprilTagSim()));
+
+        // Initialize other subsystems with simulation interfaces
+        this.shooterSubsystem = new ShooterSubsystem(new ShooterInterface() {});
+        this.turretSubsystem = new TurretSubsystem(new TurretInterface() {});
+        this.hoodSubsystem = new AdjustableHoodSubsystem(new AdjustableHoodInterface() {});
+
+        // Initialize visualizer for simulation (simulation mode true)
+        this.mechanismViz = new RobotMechanismVisualizer(true);
+
+        // Reset robot to a starting position
+        this.swerveDrive.resetEstimatedPose(new Pose2d(7, 4, new Rotation2d()));
       }
 
       default -> {
@@ -329,8 +356,12 @@ public class Robot extends LoggedRobot {
                 new ModuleInterface() {},
                 new ModuleInterface() {},
                 new ModuleInterface() {});
-        // this.elevatorSubsystem = new ElevatorSubsystem(new ElevatorInterface() {});
-        // SYNTAX ^^
+        this.shooterSubsystem = new ShooterSubsystem(new ShooterInterface() {});
+        this.turretSubsystem = new TurretSubsystem(new TurretInterface() {});
+        this.hoodSubsystem = new AdjustableHoodSubsystem(new AdjustableHoodInterface() {});
+
+        // Initialize visualizer for replay (simulation mode false)
+        this.mechanismViz = new RobotMechanismVisualizer(false);
       }
     }
   }
@@ -360,4 +391,44 @@ public class Robot extends LoggedRobot {
   public void simulationInit() {}
 
   /** This function is called periodically whilst in simulation. */
+  @Override
+  public void simulationPeriodic() {
+    // Update the simulation world with the current robot pose
+    if (simWorld != null && swerveDrive != null) {
+      simWorld.update(() -> swerveDrive.getEstimatedPose());
+    }
+  }
+
+  /** Updates the mechanism visualization with current subsystem states */
+  private void updateMechanismVisualization() {
+    if (mechanismViz == null) return;
+
+    // Update turret angle if available (you'll need to add getter methods)
+    if (turretSubsystem != null) {
+      mechanismViz.setTurretAngle(turretSubsystem.getTurretAngle());
+    }
+
+    // Update shooter speed if available
+    if (shooterSubsystem != null) {
+      mechanismViz.setShooterSpeed(shooterSubsystem.getFlywheelVelocity());
+    }
+
+    // Update hood angle if available
+    if (hoodSubsystem != null) {
+      mechanismViz.setHoodAngle(hoodSubsystem.getHoodAngle());
+    }
+
+    // Update enabled state
+    mechanismViz.setEnabled(DriverStation.isEnabled());
+
+    // In simulation, show trajectory prediction using the calculated values
+    if (Constants.getMode() == Constants.Mode.SIM && swerveDrive != null) {
+      Pose2d robotPose = swerveDrive.getEstimatedPose();
+      double distance = ShotCalculator.calculateShotDistance(robotPose);
+      double angle = ShotCalculator.calculateShotAngle(robotPose);
+      mechanismViz.showShotTrajectory(angle, distance);
+    }
+
+    mechanismViz.update();
+  }
 }
