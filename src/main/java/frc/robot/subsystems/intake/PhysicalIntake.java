@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -10,6 +11,7 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.controls.Follower;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -21,6 +23,7 @@ public class PhysicalIntake implements IntakeInterface {
     private CANcoder intakeCanCoder1 = new CANcoder(IntakeConstants.INTAKE_CAN_CODER_1_ID);
     private CANcoder intakeCanCoder2 = new CANcoder(IntakeConstants.INTAKE_CAN_CODER_2_ID);
 
+    private MotionMagicVoltage request = new MotionMagicVoltage(0.0);
     private MotorAlignmentValue pivotMotorAlignment = MotorAlignmentValue.Opposed;
     private TalonFXConfiguration intakeConfig;
     private TalonFXConfiguration pivotConfig;
@@ -52,6 +55,7 @@ public class PhysicalIntake implements IntakeInterface {
         pivotConfig.Slot0.kA = IntakeConstants.PIVOT_A;
         pivotConfig.Slot0.kG = IntakeConstants.PIVOT_G;
         pivotConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+        pivotConfig.Feedback.SensorToMechanismRatio = IntakeConstants.GEAR_RATIO;
 
         intakeConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT;
         intakeConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT;
@@ -87,14 +91,23 @@ public class PhysicalIntake implements IntakeInterface {
             intakeAngle,
             intakeSpeed);
 
-            inputs.intakeAngle = 
+            inputs.intakeAngle = intakeAngle.getValueAsDouble();
+            inputs.intakeSpeed = intakeSpeed.getValueAsDouble();
 
     }
 
     public void setIntakeAngle(double angle) {
+        intakePivotMotor1.setControl(request.withPosition(angle));
+        intakePivotMotor2.setControl(new Follower(intakePivotMotor1.getDeviceID() ,pivotMotorAlignment));
+
     }
 
-    public void setIntakeSpeed(double speed) {}
+    public void intakeFuel(double speed) {
+
+        intakeMotor.set(speed);
+        
+
+    }
 
     public double getIntakeAngle() { 
         return 0.0; 

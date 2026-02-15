@@ -28,4 +28,6 @@ public class IntakeConstants {
     public static final double MAX_ANGLE = 0;
     public static final double MIN_ANGLE = 0;//I HATE THIS SO MUCH
 
+    public static final double GEAR_RATIO = 8;
+
 }

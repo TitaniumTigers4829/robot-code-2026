@@ -46,7 +46,7 @@ public class PhysicalShooter implements ShooterInterface {
         new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
   }
 
-  public void setSpeed(double speed) {
+  public void shootFuel(double speed) {
     leaderFlywheelMotor.set(speed);
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
