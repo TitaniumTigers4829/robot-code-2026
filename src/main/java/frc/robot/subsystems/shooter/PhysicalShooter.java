@@ -13,6 +13,8 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
 /** Add your docs here. */
@@ -22,6 +24,11 @@ public class PhysicalShooter implements ShooterInterface {
       new TalonFX(ShooterConstants.LEADER_FLYWHEEL_MOTOR_ID);
   private final TalonFX followerFlywheelMotor =
       new TalonFX(ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID);
+<<<<<<< HEAD
+=======
+  private final TalonFX kickerMotor =
+      new TalonFX(ShooterConstants.KICKER_MOTOR_ID);
+>>>>>>> kicker
   MotorAlignmentValue motorAlignment = MotorAlignmentValue.Opposed;
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;
@@ -40,6 +47,14 @@ public class PhysicalShooter implements ShooterInterface {
   public PhysicalShooter() {
 
     leaderFlywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    leaderFlywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    leaderFlywheelConfig.Slot0.kP = ShooterConstants.FLYWHEEL_P;
+    leaderFlywheelConfig.Slot0.kI = ShooterConstants.FLYWHEEL_I;
+    leaderFlywheelConfig.Slot0.kD = ShooterConstants.FLYWHEEL_D;
+    leaderFlywheelConfig.Slot0.kS = ShooterConstants.FLYWHEEL_S;
+    leaderFlywheelConfig.Slot0.kV = ShooterConstants.FLYWHEEL_V;
+    leaderFlywheelConfig.Slot0.kA = ShooterConstants.FLYWHEEL_A;
+
     leaderFlywheelMotor.getConfigurator().apply(leaderFlywheelConfig);
     followerFlywheelMotor.getConfigurator().apply(leaderFlywheelConfig);
 
@@ -47,8 +62,21 @@ public class PhysicalShooter implements ShooterInterface {
         new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
   }
 
+<<<<<<< HEAD
   public void set(double speed) {
     leaderFlywheelMotor.set(speed);
+=======
+  public void setPercentOutput(double distance) {
+    kickerMotor.set(ShooterConstants.KICKER_PERCENT_OUTPUT);
+    leaderFlywheelMotor.set(flywheelRPMLookupValues.getLookupValue(distance));
+    followerFlywheelMotor.setControl(
+        new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+  }
+
+  public void passFuel(double output) {
+    kickerMotor.set(ShooterConstants.KICKER_PERCENT_OUTPUT);
+    leaderFlywheelMotor.set(output);
+>>>>>>> kicker
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }

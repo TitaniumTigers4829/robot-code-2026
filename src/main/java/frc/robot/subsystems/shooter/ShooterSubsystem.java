@@ -63,16 +63,16 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterInterface.openLoop(output);
   }
 
-  public void setPercentOutput(double output) {
-    shooterInterface.setPercentOutput(output);
+  public void setPercentOutput(double distance) {
+    shooterInterface.setPercentOutput(distance);
   }
 
   public boolean isTopAtSetpointRPM(double targetRPM) {
     return Math.abs(targetRPM - inputs.flywheelRPM) < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
   }
 
-  public void setSpeed(double speed) {
-    shooterInterface.setSpeed(speed);
+  public void passFuel(double output) {
+    shooterInterface.passFuel(output);
   }
 
   public void set(double speed) {

@@ -9,6 +9,7 @@ public class ShooterConstants {
 
   public static int LEADER_FLYWHEEL_MOTOR_ID = 23;
   public static int FOLLOWER_FLYWHEEL_MOTOR_ID = 62;
+  public static int KICKER_MOTOR_ID = 0-9;
 
   public static double SHOOTER_HEIGHT_FROM_GROUND = 0;
 
@@ -22,7 +23,12 @@ public class ShooterConstants {
   // 5 rpm
   public static double FLYWHEEL_ERROR_TOLERANCE = 5;
 
+<<<<<<< HEAD
   public static double MANUAL_SHOOTER_SPEED = 1.2;
+=======
+  public static double PASS_SHOOTER_SPEED = 0.7;
+  public static double KICKER_PERCENT_OUTPUT = 0.5;
+>>>>>>> kicker
 
   // Lookup table for rpms needed for certain distances
   // TODO: Add actual tested values

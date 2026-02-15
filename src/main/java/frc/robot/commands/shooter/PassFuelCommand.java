@@ -17,10 +17,11 @@ import java.util.Optional;
 
 /* You should consider using the more terse Command factories API instead
 https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class TempManualShooterCommand extends Command {
+public class PassFuelCommand extends Command {
   /** Creates a new TempManualShooterCommand. */
   ShooterSubsystem shooter;
 
+<<<<<<< HEAD:src/main/java/frc/robot/commands/shooter/TempManualShooterCommand.java
   Translation2d hubPos;
   public double distance;
   public double turretToHubDist;
@@ -28,6 +29,9 @@ public class TempManualShooterCommand extends Command {
   public Rotation2d heading;
 
   public TempManualShooterCommand(SwerveDrive swerveDrive, ShooterSubsystem shooter) {
+=======
+  public PassFuelCommand(ShooterSubsystem shooter) {
+>>>>>>> kicker:src/main/java/frc/robot/commands/shooter/PassFuelCommand.java
     this.shooter = shooter;
     this.swerveDrive = swerveDrive;
     addRequirements(swerveDrive, shooter);
@@ -48,6 +52,7 @@ public class TempManualShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+<<<<<<< HEAD:src/main/java/frc/robot/commands/shooter/TempManualShooterCommand.java
     heading = swerveDrive.getOdometryRotation2d();
 
     Translation2d turretPos =
@@ -59,12 +64,19 @@ public class TempManualShooterCommand extends Command {
     turretToHubDist = turretPos.getDistance(hubPos);
 
     shooter.setSpeed(turretToHubDist);
+=======
+    shooter.passFuel(ShooterConstants.PASS_SHOOTER_SPEED);
+>>>>>>> kicker:src/main/java/frc/robot/commands/shooter/PassFuelCommand.java
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+<<<<<<< HEAD:src/main/java/frc/robot/commands/shooter/TempManualShooterCommand.java
     shooter.set(0);
+=======
+    shooter.passFuel(0);
+>>>>>>> kicker:src/main/java/frc/robot/commands/shooter/PassFuelCommand.java
   }
 
   // Returns true when the command should end.
