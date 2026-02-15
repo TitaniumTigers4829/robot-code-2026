@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
+import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.HubLockHood;
+import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.commands.shooter.TempManualShooterCommand;
 import frc.robot.extras.util.JoystickUtil;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
@@ -190,9 +192,11 @@ public class Robot extends LoggedRobot {
 
     // driverController.rightBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
 
-    driverController.a().whileTrue(new TempManualShooterCommand(swerveDrive, shooterSubsystem));
+    driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
 
     driverController.b().whileTrue((new HubLockHood(swerveDrive, hoodSubsystem)).repeatedly());
+
+    driverController.leftTrigger().toggleOnTrue(new HubLockCommand().repeatedly());
   }
 
   /** Configures the operator controller buttons and axes to control the robot */

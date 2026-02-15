@@ -24,11 +24,8 @@ public class PhysicalShooter implements ShooterInterface {
       new TalonFX(ShooterConstants.LEADER_FLYWHEEL_MOTOR_ID);
   private final TalonFX followerFlywheelMotor =
       new TalonFX(ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID);
-<<<<<<< HEAD
-=======
   private final TalonFX kickerMotor =
       new TalonFX(ShooterConstants.KICKER_MOTOR_ID);
->>>>>>> kicker
   MotorAlignmentValue motorAlignment = MotorAlignmentValue.Opposed;
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;
@@ -62,10 +59,6 @@ public class PhysicalShooter implements ShooterInterface {
         new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
   }
 
-<<<<<<< HEAD
-  public void set(double speed) {
-    leaderFlywheelMotor.set(speed);
-=======
   public void setPercentOutput(double distance) {
     kickerMotor.set(ShooterConstants.KICKER_PERCENT_OUTPUT);
     leaderFlywheelMotor.set(flywheelRPMLookupValues.getLookupValue(distance));
@@ -76,7 +69,6 @@ public class PhysicalShooter implements ShooterInterface {
   public void passFuel(double output) {
     kickerMotor.set(ShooterConstants.KICKER_PERCENT_OUTPUT);
     leaderFlywheelMotor.set(output);
->>>>>>> kicker
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }

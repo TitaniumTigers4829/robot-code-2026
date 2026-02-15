@@ -75,10 +75,6 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterInterface.passFuel(output);
   }
 
-  public void set(double speed) {
-    shooterInterface.set(speed);
-  }
-
   @Override
   public void periodic() {
     shooterInterface.updateInputs(inputs);

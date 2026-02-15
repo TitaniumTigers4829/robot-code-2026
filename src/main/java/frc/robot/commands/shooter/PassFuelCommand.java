@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
@@ -19,22 +20,18 @@ import java.util.Optional;
 https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class PassFuelCommand extends Command {
   /** Creates a new TempManualShooterCommand. */
-  ShooterSubsystem shooter;
+  ShooterSubsystem shooterSubsystem;
 
-<<<<<<< HEAD:src/main/java/frc/robot/commands/shooter/TempManualShooterCommand.java
   Translation2d hubPos;
   public double distance;
   public double turretToHubDist;
   SwerveDrive swerveDrive;
   public Rotation2d heading;
 
-  public TempManualShooterCommand(SwerveDrive swerveDrive, ShooterSubsystem shooter) {
-=======
-  public PassFuelCommand(ShooterSubsystem shooter) {
->>>>>>> kicker:src/main/java/frc/robot/commands/shooter/PassFuelCommand.java
-    this.shooter = shooter;
+  public PassFuelCommand(SwerveDrive swerveDrive, ShooterSubsystem shooterSubsystem) {
+    this.shooterSubsystem = shooterSubsystem;
     this.swerveDrive = swerveDrive;
-    addRequirements(swerveDrive, shooter);
+    addRequirements(swerveDrive, shooterSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -52,7 +49,6 @@ public class PassFuelCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-<<<<<<< HEAD:src/main/java/frc/robot/commands/shooter/TempManualShooterCommand.java
     heading = swerveDrive.getOdometryRotation2d();
 
     Translation2d turretPos =
@@ -63,20 +59,13 @@ public class PassFuelCommand extends Command {
 
     turretToHubDist = turretPos.getDistance(hubPos);
 
-    shooter.setSpeed(turretToHubDist);
-=======
-    shooter.passFuel(ShooterConstants.PASS_SHOOTER_SPEED);
->>>>>>> kicker:src/main/java/frc/robot/commands/shooter/PassFuelCommand.java
+    shooterSubsystem.passFuel(ShooterConstants.PASS_SHOOTER_SPEED);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-<<<<<<< HEAD:src/main/java/frc/robot/commands/shooter/TempManualShooterCommand.java
-    shooter.set(0);
-=======
-    shooter.passFuel(0);
->>>>>>> kicker:src/main/java/frc/robot/commands/shooter/PassFuelCommand.java
+    shooterSubsystem.passFuel(0);
   }
 
   // Returns true when the command should end.

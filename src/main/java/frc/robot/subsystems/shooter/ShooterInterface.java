@@ -36,13 +36,7 @@ public interface ShooterInterface {
     return 0.0;
   }
 
-<<<<<<< HEAD
-  public default void set(double speed) {}
-
-  public default void setSpeed(double speed) {}
-=======
   public default void passFuel(double output) {}
->>>>>>> kicker
 
   public default void openLoop(double output) {}
 
