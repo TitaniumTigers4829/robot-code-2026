@@ -14,7 +14,6 @@ import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.HubLockHood;
 import frc.robot.commands.shooter.PassFuelCommand;
-import frc.robot.commands.shooter.TempManualShooterCommand;
 import frc.robot.extras.util.JoystickUtil;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;

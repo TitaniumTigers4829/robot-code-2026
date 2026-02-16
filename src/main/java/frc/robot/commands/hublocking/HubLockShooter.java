@@ -19,7 +19,7 @@ public class HubLockShooter extends Command {
   public Translation2d hubPos;
   public double distance;
   public double turretToHubDist;
- 
+
   public HubLockShooter(SwerveDrive swerveDrive, ShooterSubsystem shooterSubsystem) {
     this.swerveDrive = swerveDrive;
     this.shooterSubsystem = shooterSubsystem;
