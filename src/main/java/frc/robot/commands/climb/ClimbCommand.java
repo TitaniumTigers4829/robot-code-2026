@@ -12,7 +12,6 @@ public class ClimbCommand extends Command {
   /** Creates a new ClimbCommand. */
   ClimbSubsystem climbSubsystem;
   public ClimbCommand(ClimbSubsystem climbSubsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
     this.climbSubsystem = climbSubsystem; 
     addRequirements(climbSubsystem);
   }
