@@ -33,11 +33,6 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
-  /** Creates a new IntakeSubsystem. */
-  public IntakeSubsystem() {
-    // default constructor
-  }
-
   /** Creates a new IntakeSubsystem with hardware interface. */
   public IntakeSubsystem(IntakeInterface intakeInterface) {
     this.intakeInterface = intakeInterface;
@@ -62,14 +57,14 @@ public class IntakeSubsystem extends SubsystemBase {
   public boolean isIntakeDeployed() {
     return this.intakeInterface.isIntakeDeployed();
   }
+
   public void updateInputs() {
     this.intakeInterface.updateInputs(inputs);
   }
 
-  
   @Override
   public void periodic() {
-    
+
     this.intakeInterface.periodic();
   }
 }

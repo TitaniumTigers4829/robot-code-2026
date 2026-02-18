@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
@@ -11,114 +12,108 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.controls.Follower;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import java.util.function.BooleanSupplier;
 
 public class PhysicalIntake implements IntakeInterface {
-    private TalonFX intakeMotor = new TalonFX(IntakeConstants.INTAKE_MOTOR_ID);
-    private TalonFX intakePivotMotor1 = new TalonFX(IntakeConstants.PIVOT_MOTOR_1_ID);
-    private TalonFX intakePivotMotor2 = new TalonFX(IntakeConstants.PIVOT_MOTOR_2_ID);
-    private CANcoder intakeCanCoder1 = new CANcoder(IntakeConstants.INTAKE_CAN_CODER_1_ID);
-    private CANcoder intakeCanCoder2 = new CANcoder(IntakeConstants.INTAKE_CAN_CODER_2_ID);
+  private TalonFX intakeMotor = new TalonFX(IntakeConstants.INTAKE_MOTOR_ID);
+  private TalonFX intakePivotMotor1 = new TalonFX(IntakeConstants.PIVOT_MOTOR_1_ID);
+  private TalonFX intakePivotMotor2 = new TalonFX(IntakeConstants.PIVOT_MOTOR_2_ID);
+  private CANcoder intakeCanCoder1 = new CANcoder(IntakeConstants.INTAKE_CAN_CODER_1_ID);
+  private CANcoder intakeCanCoder2 = new CANcoder(IntakeConstants.INTAKE_CAN_CODER_2_ID);
 
-    private MotionMagicVoltage request = new MotionMagicVoltage(0.0);
-    private MotorAlignmentValue pivotMotorAlignment = MotorAlignmentValue.Opposed;
-    private TalonFXConfiguration intakeConfig;
-    private TalonFXConfiguration pivotConfig;
+  private MotionMagicVoltage request = new MotionMagicVoltage(0.0);
+  private MotorAlignmentValue pivotMotorAlignment = MotorAlignmentValue.Opposed;
+  private TalonFXConfiguration intakeConfig;
+  private TalonFXConfiguration pivotConfig;
 
-    public StatusSignal<Angle> intakeAngle;
-    public StatusSignal<AngularVelocity> intakeSpeed;
-    public StatusSignal<Boolean> isIntakeDeployed;
+  public StatusSignal<Angle> intakeAngle;
+  public StatusSignal<AngularVelocity> intakeSpeed;
 
-    public PhysicalIntake() {
-        intakeConfig = new TalonFXConfiguration();
-        pivotConfig = new TalonFXConfiguration();
-        
-        intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        intakeConfig.Slot0.kP = IntakeConstants.INTAKE_P;
-        intakeConfig.Slot0.kI = IntakeConstants.INTAKE_I;
-        intakeConfig.Slot0.kD = IntakeConstants.INTAKE_D;
-        intakeConfig.Slot0.kS = IntakeConstants.INTAKE_S;
-        intakeConfig.Slot0.kV = IntakeConstants.INTAKE_V;
-        intakeConfig.Slot0.kA = IntakeConstants.INTAKE_A;
+  public PhysicalIntake() {
+    intakeConfig = new TalonFXConfiguration();
+    pivotConfig = new TalonFXConfiguration();
 
-        pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        pivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        pivotConfig.Slot0.kP = IntakeConstants.PIVOT_P;
-        pivotConfig.Slot0.kI = IntakeConstants.PIVOT_I;
-        pivotConfig.Slot0.kD = IntakeConstants.PIVOT_D;
-        pivotConfig.Slot0.kS = IntakeConstants.PIVOT_S;
-        pivotConfig.Slot0.kV = IntakeConstants.PIVOT_V;
-        pivotConfig.Slot0.kA = IntakeConstants.PIVOT_A;
-        pivotConfig.Slot0.kG = IntakeConstants.PIVOT_G;
-        pivotConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        pivotConfig.Feedback.SensorToMechanismRatio = IntakeConstants.GEAR_RATIO;
+    intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    intakeConfig.Slot0.kP = IntakeConstants.INTAKE_P;
+    intakeConfig.Slot0.kI = IntakeConstants.INTAKE_I;
+    intakeConfig.Slot0.kD = IntakeConstants.INTAKE_D;
+    intakeConfig.Slot0.kS = IntakeConstants.INTAKE_S;
+    intakeConfig.Slot0.kV = IntakeConstants.INTAKE_V;
+    intakeConfig.Slot0.kA = IntakeConstants.INTAKE_A;
 
-        intakeConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT;
-        intakeConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT;
-        intakeConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-        intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
+    pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    pivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    pivotConfig.Slot0.kP = IntakeConstants.PIVOT_P;
+    pivotConfig.Slot0.kI = IntakeConstants.PIVOT_I;
+    pivotConfig.Slot0.kD = IntakeConstants.PIVOT_D;
+    pivotConfig.Slot0.kS = IntakeConstants.PIVOT_S;
+    pivotConfig.Slot0.kV = IntakeConstants.PIVOT_V;
+    pivotConfig.Slot0.kA = IntakeConstants.PIVOT_A;
+    pivotConfig.Slot0.kG = IntakeConstants.PIVOT_G;
+    pivotConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    pivotConfig.Feedback.SensorToMechanismRatio = IntakeConstants.GEAR_RATIO;
 
-        pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = IntakeConstants.MAX_ANGLE;
-        pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = IntakeConstants.MIN_ANGLE;
-        pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-        pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+    intakeConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT;
+    intakeConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT;
+    intakeConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+    intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
 
-        intakeMotor.getConfigurator().apply(intakeConfig);
-        intakePivotMotor1.getConfigurator().apply(pivotConfig);
-        intakePivotMotor2.getConfigurator().apply(pivotConfig);
+    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = IntakeConstants.MAX_ANGLE;
+    pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = IntakeConstants.MIN_ANGLE;
+    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+    pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
-        intakeAngle = intakeCanCoder1.getAbsolutePosition();
-        intakeSpeed = intakeCanCoder1.getVelocity();
-        BaseStatusSignal.setUpdateFrequencyForAll(
-            0.0,
-            intakeAngle, 
-            intakeSpeed);
-        ParentDevice.optimizeBusUtilizationForAll(
-            intakeMotor, 
-            intakePivotMotor1, 
-            intakePivotMotor2, 
-            intakeCanCoder1, 
-            intakeCanCoder2);
-        
+    intakeMotor.getConfigurator().apply(intakeConfig);
+    intakePivotMotor1.getConfigurator().apply(pivotConfig);
+    intakePivotMotor2.getConfigurator().apply(pivotConfig);
+
+    intakeAngle = intakeCanCoder1.getAbsolutePosition();
+    intakeSpeed = intakeCanCoder1.getVelocity();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(0.0, intakeAngle, intakeSpeed);
+    ParentDevice.optimizeBusUtilizationForAll(
+        intakeMotor, intakePivotMotor1, intakePivotMotor2, intakeCanCoder1, intakeCanCoder2);
+  }
+
+  public void updateInputs(IntakeInputs inputs) {
+    BaseStatusSignal.refreshAll(intakeAngle, intakeSpeed);
+
+    inputs.intakeAngle = intakeAngle.getValueAsDouble();
+    inputs.intakeSpeed = intakeSpeed.getValueAsDouble();
+    inputs.isIntakeDeployed = isIntakeDeployed();
+  }
+
+  public void setIntakeAngle(double angle) {
+    intakePivotMotor1.setControl(request.withPosition(angle));
+    intakePivotMotor2.setControl(
+        new Follower(intakePivotMotor1.getDeviceID(), pivotMotorAlignment));
+  }
+
+  public void intakeFuel(double speed) {
+    intakeMotor.set(speed);
+  }
+
+  public double getIntakeAngle() {
+    // was shot by king von
+    intakeAngle.refresh();
+    return intakeAngle.getValueAsDouble();
+  }
+
+  public double getIntakeSpeed() {
+    intakeSpeed.refresh();
+    return intakeSpeed.getValueAsDouble();
+  }
+
+  public boolean isIntakeDeployed() {
+    if (intakeAngle.getValueAsDouble()
+            >= (IntakeConstants.MAX_ANGLE - IntakeConstants.ACCEPTABLE_RANGE)
+        && intakeAngle.getValueAsDouble() <= IntakeConstants.MAX_ANGLE) {
+      return true;
+    } else {
+      return false; // this code deport Andrita
     }
-
-    public void updateInputs(IntakeInputs inputs) {
-        BaseStatusSignal.refreshAll(
-            intakeAngle,
-            intakeSpeed);
-
-            inputs.intakeAngle = intakeAngle.getValueAsDouble();
-            inputs.intakeSpeed = intakeSpeed.getValueAsDouble();
-
-    }
-
-    public void setIntakeAngle(double angle) {
-        intakePivotMotor1.setControl(request.withPosition(angle));
-        intakePivotMotor2.setControl(new Follower(intakePivotMotor1.getDeviceID() ,pivotMotorAlignment));
-
-    }
-
-    public void intakeFuel(double speed) {
-
-        intakeMotor.set(speed);
-        
-
-    }
-
-    public double getIntakeAngle() { 
-        return 0.0; 
-    }
-
-    public double getIntakeSpeed() { 
-        return 0.0; 
-    }
-
-    public boolean isIntakeDeployed() { 
-        return false; 
-
-    }
+  }
 }
