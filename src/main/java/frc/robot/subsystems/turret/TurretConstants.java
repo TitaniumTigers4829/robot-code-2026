@@ -14,6 +14,9 @@ public class TurretConstants {
   // public static final int TURRET_MOTOR_ID = 22;
   // public static final int TURRET_CANCODER_ID = 0 - 9;
   public static final double GEAR_RATIO = 40;
+  public static final double TURRET_RADIUS = Units.inchesToMeters(5.05);
+  public static final double TURRET_WEIGHT = Units.lbsToKilograms(20);
+  public static final double TURRET_MOI = TURRET_WEIGHT * (Math.pow(TURRET_RADIUS, 2));
 
   // Distance from center of robot to center of turret in x and y directions, turret is at front
   // left

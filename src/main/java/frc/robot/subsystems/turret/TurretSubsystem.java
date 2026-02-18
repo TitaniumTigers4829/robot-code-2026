@@ -7,6 +7,7 @@ package frc.robot.subsystems.turret;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
+import frc.robot.extras.logging.Tracer;
 import org.littletonrobotics.junction.Logger;
 
 public class TurretSubsystem extends SubsystemBase {
@@ -73,6 +74,7 @@ public class TurretSubsystem extends SubsystemBase {
   public void periodic() {
     turretInterface.updateInputs(inputs);
     Logger.processInputs("turret/", inputs);
+    Tracer.traceFunc("Turret/", () -> turretInterface.updateInputs(inputs));
 
     // Update tunable numbers
     if (turretP.hasChanged(hashCode())
