@@ -11,8 +11,8 @@ import edu.wpi.first.math.util.Units;
 /** Add your docs here. */
 public class TurretConstants {
 
-  public static final int TURRET_MOTOR_ID = 22;
-  public static final int TURRET_CANCODER_ID = 0 - 9;
+  // public static final int TURRET_MOTOR_ID = 22;
+  // public static final int TURRET_CANCODER_ID = 0 - 9;
   public static final double GEAR_RATIO = 40;
 
   // Distance from center of robot to center of turret in x and y directions, turret is at front

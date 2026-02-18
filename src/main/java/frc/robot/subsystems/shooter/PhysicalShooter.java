@@ -38,9 +38,10 @@ public class PhysicalShooter implements ShooterInterface {
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final TalonFXConfiguration leaderFlywheelConfig = new TalonFXConfiguration();
-  private final TalonFXConfiguration followerFlywheelConfig = new TalonFXConfiguration();
 
-  // TODO: Add configs
+  // private final TalonFXConfiguration followerFlywheelConfig = new TalonFXConfiguration();
+
+  // TODO: Add configs, and make slav
   public PhysicalShooter() {
 
     leaderFlywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -71,6 +72,12 @@ public class PhysicalShooter implements ShooterInterface {
     spindexerMotor.set(ShooterConstants.SPINDEXER_PERCENT_OUTPUT);
     kickerMotor.set(ShooterConstants.KICKER_PERCENT_OUTPUT);
     leaderFlywheelMotor.set(output);
+    followerFlywheelMotor.setControl(
+        new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+  }
+
+  public void setSpeed(double distance) {
+    leaderFlywheelMotor.set(flywheelRPMLookupValues.getLookupValue(distance));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }
