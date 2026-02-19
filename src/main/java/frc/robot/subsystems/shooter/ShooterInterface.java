@@ -30,13 +30,13 @@ public interface ShooterInterface {
 
   public default void setVolts(double volts) {}
 
-  public default void setPercentOutput(double output) {}
+  public default void setPercentOutput(double distance) {}
 
   public default double getVolts() {
     return 0.0;
   }
 
-  public default void setSpeed(double speed) {}
+  public default void passFuel(double output) {}
 
   public default void openLoop(double output) {}
 
