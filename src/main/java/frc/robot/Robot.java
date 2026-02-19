@@ -12,11 +12,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
-import frc.robot.commands.hublocking.HubLockHood;
+import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.shooter.PassFuelCommand;
+import frc.robot.commands.turret.ManualTurretCCWCommand;
+import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.PhysicalShooter;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveConstants;
@@ -54,6 +58,7 @@ public class Robot extends LoggedRobot {
   private ShooterSubsystem shooterSubsystem;
   private TurretSubsystem turretSubsystem;
   private AdjustableHoodSubsystem hoodSubsystem;
+  private IntakeSubsystem intakeSubsystem;
 
   // private Autos autos;
   private Command autoCommand;
@@ -187,15 +192,26 @@ public class Robot extends LoggedRobot {
     //             () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
 
     // Commands for manual turret
-    // driverController.leftBumper().whileTrue(new ManualTurretCCWCommand(turretSubsystem));
+    driverController.leftBumper().whileTrue(new ManualTurretCCWCommand(turretSubsystem));
 
-    // driverController.rightBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
+    driverController.leftBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
 
+    // Will have to use manual turret to pass
     driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
 
-    driverController.b().whileTrue((new HubLockHood(swerveDrive, hoodSubsystem)).repeatedly());
+    // Commands for intake and outtake
+    driverController.rightTrigger().whileTrue(new IntakeCommand(intakeSubsystem));
 
-    driverController.leftTrigger().toggleOnTrue(new HubLockCommand().repeatedly());
+    driverController.povLeft().whileTrue(new OuttakeCommand(intakeSubsystem));
+
+    driverController.leftTrigger()
+      .toggleOnTrue(
+        new HubLockCommand(
+          swerveDrive,
+          turretSubsystem,
+          hoodSubsystem,
+          shooterSubsystem)
+          .repeatedly());
   }
 
   /** Configures the operator controller buttons and axes to control the robot */
