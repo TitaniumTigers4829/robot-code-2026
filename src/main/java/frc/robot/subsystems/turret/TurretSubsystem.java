@@ -27,6 +27,9 @@ public class TurretSubsystem extends SubsystemBase {
         turretP.initDefault(TurretConstants.TURRET_P);
         turretI.initDefault(TurretConstants.TURRET_I);
         turretD.initDefault(TurretConstants.TURRET_D);
+        turretS.initDefault(TurretConstants.TURRET_S);
+        turretV.initDefault(TurretConstants.TURRET_V);
+        turretA.initDefault(TurretConstants.TURRET_A);
       }
     }
   }

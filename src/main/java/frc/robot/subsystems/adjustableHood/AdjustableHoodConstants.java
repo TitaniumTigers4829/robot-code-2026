@@ -13,7 +13,7 @@ public class AdjustableHoodConstants {
   public static final double HOOD_S = 1;
   public static final double HOOD_V = 0;
   public static final double HOOD_A = 0;
-  public static final double HOOD_G = 0;
+  public static final double HOOD_G = 0.01;
 
   public static final double HOOD_ZERO_ANGLE = 0.0615234375 - 0.0234375;
 

@@ -21,6 +21,4 @@ public interface AdjustableHoodInterface {
   public default double getHoodAngle() {
     return 0;
   }
-
-  public default void logger() {}
 }

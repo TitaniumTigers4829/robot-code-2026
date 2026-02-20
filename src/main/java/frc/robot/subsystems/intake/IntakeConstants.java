@@ -22,10 +22,11 @@ public class IntakeConstants {
   public static final double PIVOT_V =
       0.0; // GOD FOR LOVE OF ALL WHY SHE KIDNAPS ME IN SPANISH CLASS
   public static final double PIVOT_A = 0.0; // THIS IS WORST THAN  9/11
-  public static final double PIVOT_G = 0.0;
+  public static final double PIVOT_G = 0.02;
 
   public static final double STATOR_CURRENT_LIMIT = 0;
   public static final double SUPPLY_CURRENT_LIMIT = 0;
+  public static final double PIVOT_DOWN_POSITION = 0;
   public static final double MAX_ANGLE = 0;
   public static final double ACCEPTABLE_RANGE = 0.0;
   public static final double MIN_ANGLE = 0; // I HATE THIS SO MUCH

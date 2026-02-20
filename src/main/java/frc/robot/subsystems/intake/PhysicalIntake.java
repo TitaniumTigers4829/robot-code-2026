@@ -61,7 +61,7 @@ public class PhysicalIntake implements IntakeInterface {
     intakeConfig.CurrentLimits.StatorCurrentLimitEnable = false;
     intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
 
-    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = IntakeConstants.MAX_ANGLE;
+    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = IntakeConstants.PIVOT_DOWN_POSITION;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = IntakeConstants.MIN_ANGLE;
     pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
@@ -73,9 +73,16 @@ public class PhysicalIntake implements IntakeInterface {
     intakeAngle = intakeCanCoder1.getAbsolutePosition();
     intakeSpeed = intakeCanCoder1.getVelocity();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(0.0, intakeAngle, intakeSpeed);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+      0.0, 
+      intakeAngle, 
+      intakeSpeed);
     ParentDevice.optimizeBusUtilizationForAll(
-        intakeMotor, intakePivotMotor1, intakePivotMotor2, intakeCanCoder1, intakeCanCoder2);
+        intakeMotor, 
+        intakePivotMotor1, 
+        intakePivotMotor2, 
+        intakeCanCoder1, 
+        intakeCanCoder2);
   }
 
   public void updateInputs(IntakeInputs inputs) {
@@ -109,8 +116,8 @@ public class PhysicalIntake implements IntakeInterface {
 
   public boolean isIntakeDeployed() {
     if (intakeAngle.getValueAsDouble()
-            >= (IntakeConstants.MAX_ANGLE - IntakeConstants.ACCEPTABLE_RANGE)
-        && intakeAngle.getValueAsDouble() <= IntakeConstants.MAX_ANGLE) {
+            >= (IntakeConstants.PIVOT_DOWN_POSITION - IntakeConstants.ACCEPTABLE_RANGE)
+        && intakeAngle.getValueAsDouble() <= IntakeConstants.PIVOT_DOWN_POSITION) {
       return true;
     } else {
       return false; // this code deport Andrita
