@@ -256,20 +256,6 @@ public class PhysicalVision implements VisionInterface {
   }
 
   /**
-   * Checks whether the pose estimate is within the field
-   *
-   * @param poseEstimate The pose estimate to check
-   */
-  private boolean isWithinFieldBounds(Pose2d poseEstimate) {
-    double minX = DriveConstants.TRACK_WIDTH / 2.0;
-    double maxX = FieldConstants.FIELD_LENGTH_METERS - DriveConstants.TRACK_WIDTH / 2.0;
-    double minY = DriveConstants.WHEEL_BASE / 2.0;
-    double maxY = FieldConstants.FIELD_WIDTH_METERS - DriveConstants.WHEEL_BASE / 2.0;
-    return (poseEstimate.getX() > minX && poseEstimate.getX() < maxX)
-        && (poseEstimate.getY() > minY && poseEstimate.getY() < maxY);
-  }
-
-  /**
    * Stops the thread for the specified limelight.
    *
    * @param limelight A limelight (BACK, FRONT_LEFT, FRONT_RIGHT).
@@ -337,14 +323,14 @@ public class PhysicalVision implements VisionInterface {
    * <p>// * @param poseEstimate The pose estimate to check //
    */
   // ADJUST FOR 2026 GAME
-  // private boolean isWithinFieldBounds(Pose2d poseEstimate) {
-  //   double minX = DriveConstants.TRACK_WIDTH / 2.0;
-  //   double maxX = FieldConstants.FIELD_LENGTH_METERS - DriveConstants.TRACK_WIDTH / 2.0;
-  //   double minY = DriveConstants.WHEEL_BASE / 2.0;
-  //   double maxY = FieldConstants.FIELD_WIDTH_METERS - DriveConstants.WHEEL_BASE / 2.0;
-  //   return (poseEstimate.getX() > minX && poseEstimate.getX() < maxX)
-  //       && (poseEstimate.getY() > minY && poseEstimate.getY() < maxY);
-  // }
+  private boolean isWithinFieldBounds(Pose2d poseEstimate) {
+    double minX = DriveConstants.TRACK_WIDTH / 2.0;
+    double maxX = FieldConstants.FIELD_LENGTH_METERS - DriveConstants.TRACK_WIDTH / 2.0;
+    double minY = DriveConstants.WHEEL_BASE / 2.0;
+    double maxY = FieldConstants.FIELD_WIDTH_METERS - DriveConstants.WHEEL_BASE / 2.0;
+    return (poseEstimate.getX() > minX && poseEstimate.getX() < maxX)
+        && (poseEstimate.getY() > minY && poseEstimate.getY() < maxY);
+  }
 
   /**
    * Checks if there is a large discrepancy between two poses. This is used to determine if the
