@@ -17,6 +17,7 @@ public class AdjustableHoodSubsystem extends SubsystemBase {
 
   public void setHoodAngle(double angle) {
     adjustableHoodInterface.setHoodAngle(angle);
+    updateInputs();
   }
 
   public void setSpeed(double speed) {
@@ -29,6 +30,10 @@ public class AdjustableHoodSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    updateInputs();
     SmartDashboard.putNumber("hoodAngle", getHoodAngle());
+    SmartDashboard.putNumber("desired angle", inputs.desiredAngle);
+    SmartDashboard.putNumber("lookup table", inputs.curentLookupTable);
+    SmartDashboard.putNumber("distance given", inputs.abigailiscooking);
   }
 }
