@@ -29,7 +29,7 @@ public class IntakeConstants {
   public static final double PIVOT_DOWN_POSITION = 0;
   public static final double MAX_ANGLE = 0;
   public static final double ACCEPTABLE_RANGE = 0.0;
-  public static final double MIN_ANGLE = 0; // I HATE THIS SO MUCH
+  public static final double MIN_ANGLE = 0.5; // I HATE THIS SO MUCH
   public static final double INTAKE_SPEED = 0;
 
   public static final double GEAR_RATIO = 8;
