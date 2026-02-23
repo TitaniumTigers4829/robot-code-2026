@@ -13,6 +13,8 @@ import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakePivotDownCommand;
+import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
@@ -194,7 +196,7 @@ public class Robot extends LoggedRobot {
     // Commands for manual turret
     driverController.leftBumper().whileTrue(new ManualTurretCCWCommand(turretSubsystem));
 
-    driverController.leftBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
+    driverController.rightBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
 
     // Will have to use manual turret to pass
     driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
@@ -203,6 +205,11 @@ public class Robot extends LoggedRobot {
     driverController.rightTrigger().whileTrue(new IntakeCommand(intakeSubsystem));
 
     driverController.povLeft().whileTrue(new OuttakeCommand(intakeSubsystem));
+
+    while (driverController.leftTrigger().getAsBoolean()) {
+      driverController.leftBumper().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
+      driverController.leftBumper().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
+    }
 
     driverController.leftTrigger()
       .toggleOnTrue(
