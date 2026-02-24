@@ -22,7 +22,7 @@ public class IntakeConstants {
   public static final double PIVOT_V =
       0.0; // GOD FOR LOVE OF ALL WHY SHE KIDNAPS ME IN SPANISH CLASS
   public static final double PIVOT_A = 0.0; // THIS IS WORST THAN  9/11
-  public static final double PIVOT_G = 0.0;
+  public static final double PIVOT_G = 0.02;
 
   public static final double STATOR_CURRENT_LIMIT = 0;
   public static final double SUPPLY_CURRENT_LIMIT = 0;
