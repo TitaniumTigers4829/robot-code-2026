@@ -31,7 +31,7 @@ public class AdjustableHoodSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     updateInputs();
-    SmartDashboard.putNumber("hoodAngle", getHoodAngle());
+    // SmartDashboard.putNumber("hoodAngle", getHoodAngle());
     SmartDashboard.putNumber("desired angle", inputs.desiredAngle);
     SmartDashboard.putNumber("lookup table", inputs.curentLookupTable);
     SmartDashboard.putNumber("distance given", inputs.abigailiscooking);

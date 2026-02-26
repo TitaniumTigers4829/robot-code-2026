@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.shooter;
+package frc.robot.commands.hublocking;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -10,28 +10,27 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
 import java.util.Optional;
 
-/* You should consider using the more terse Command factories API instead
-https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class PassFuelCommand extends Command {
-  /** Creates a new TempManualShooterCommand. */
+/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+public class ShootWhileHublockedCommand extends Command {
+  /** Creates a new ShootWhileHublockedCommand. */
   ShooterSubsystem shooterSubsystem;
 
-  Translation2d hubPos;
-  public double distance;
-  public double turretToHubDist;
   SwerveDrive swerveDrive;
+  public double desiredHeading;
   public Rotation2d heading;
+  public double turretAngleToHub;
+  public Translation2d hubPos;
+  public double turretToHubDist;
 
-  public PassFuelCommand(SwerveDrive swerveDrive, ShooterSubsystem shooterSubsystem) {
+  public ShootWhileHublockedCommand(ShooterSubsystem shooterSubsystem, SwerveDrive swerveDrive) {
     this.shooterSubsystem = shooterSubsystem;
     this.swerveDrive = swerveDrive;
-    // addRequirements(swerveDrive, shooterSubsystem);
+    // addRequirements(shooterSubsystem, swerveDrive);
   }
 
   // Called when the command is initially scheduled.
@@ -39,7 +38,7 @@ public class PassFuelCommand extends Command {
   public void initialize() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
     // Sets hub position based on the alliance
-    if (alliance.get() == Alliance.Red) {
+    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
       hubPos = FieldConstants.RED_HUB_CENTER;
     } else {
       hubPos = FieldConstants.BLUE_HUB_CENTER;
@@ -51,21 +50,24 @@ public class PassFuelCommand extends Command {
   public void execute() {
     heading = swerveDrive.getOdometryRotation2d();
 
+    // Gets the position of the turret
     Translation2d turretPos =
         swerveDrive
             .getEstimatedPose()
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
 
+    // Gets the actual distance from the hub, which becomes the paramenter for the lookup tables
+    // of the hood and shooter
     turretToHubDist = turretPos.getDistance(hubPos);
 
-    shooterSubsystem.passFuel(ShooterConstants.PASS_SHOOTER_SPEED);
+    shooterSubsystem.setPercentOutput(turretAngleToHub);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooterSubsystem.passFuel(0);
+    shooterSubsystem.stopShoot();
   }
 
   // Returns true when the command should end.

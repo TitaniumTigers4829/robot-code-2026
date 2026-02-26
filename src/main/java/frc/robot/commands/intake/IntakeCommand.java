@@ -12,6 +12,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 public class IntakeCommand extends Command {
   /** Creates a new intake. */
   IntakeSubsystem intakeSubsystem;
+
   public IntakeCommand(IntakeSubsystem intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     addRequirements(intakeSubsystem);
@@ -30,7 +31,7 @@ public class IntakeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeSubsystem.intakeFuel(-IntakeConstants.INTAKE_SPEED);
+    intakeSubsystem.intakeFuel(0);
   }
 
   // Returns true when the command should end.

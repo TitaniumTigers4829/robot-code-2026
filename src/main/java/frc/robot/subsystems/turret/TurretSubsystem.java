@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.turret;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
@@ -37,6 +38,14 @@ public class TurretSubsystem extends SubsystemBase {
   /** Creates a new turretSubsystem. */
   public TurretSubsystem(TurretInterface turretInterface) {
     this.turretInterface = turretInterface;
+  }
+
+  public void stopWhenMinLimitReached() {
+    turretInterface.stopWhenMinLimitReached();
+  }
+
+  public void stopWhenMaxLimitReached() {
+    turretInterface.stopWhenMaxLimitReached();
   }
 
   public double getTurretAngle() {

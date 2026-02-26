@@ -27,15 +27,18 @@ import frc.robot.Constants.HardwareConstants;
 public class PhysicalTurret implements TurretInterface {
 
   private final TalonFX turretMotor =
-      new TalonFX(TurretConstants.TURRET_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
+      new TalonFX(TurretConstants.TURRET_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
   private final CANcoder turretEncoder = new CANcoder(TurretConstants.TURRET_CANCODER_ID);
+  //   private final DigitalInput minLimitSwitch = new
+  // DigitalInput(TurretConstants.MIN_LIMIT_SWITCH_PORT);
+  //   private final DigitalInput maxLimitSwitch = new
+  // DigitalInput(TurretConstants.MAX_LIMIT_SWITCH_PORT);
 
   // Commented out because torqueFOC is in theory easier to tune
   // private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
   // private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
 
-  private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new
-MotionMagicTorqueCurrentFOC(0.0);
+  private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new MotionMagicTorqueCurrentFOC(0.0);
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final StatusSignal<Voltage> turretMotorAppliedVoltage;
@@ -92,8 +95,8 @@ MotionMagicTorqueCurrentFOC(0.0);
 
     turretConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TurretConstants.MAX_ANGLE;
     turretConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TurretConstants.MIN_ANGLE;
-    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
     turretConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
@@ -140,6 +143,18 @@ MotionMagicTorqueCurrentFOC(0.0);
     inputs.turretStatorCurrent = statorCurrent.getValueAsDouble();
     inputs.turretMotorTemp = motorTemp.getValueAsDouble();
   }
+
+  //     public void stopWhenMinLimitReached() {
+  //     if (minLimitSwitch.get()) {
+  //         turretMotor.set(0);
+  //     }
+  //   }
+
+  //   public void stopWhenMaxLimitReached() {
+  //     if (maxLimitSwitch.get()) {
+  //         turretMotor.set(0);
+  //     }
+  //   }
 
   public double getTurretAngle(double angle) {
     turretAngle.refresh();

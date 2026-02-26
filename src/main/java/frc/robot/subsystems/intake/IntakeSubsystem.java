@@ -67,5 +67,6 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     updateInputs();
     SmartDashboard.putBoolean("intake deployed", isIntakeDeployed());
+    SmartDashboard.putNumber("angle", getIntakeAngle());
   }
 }

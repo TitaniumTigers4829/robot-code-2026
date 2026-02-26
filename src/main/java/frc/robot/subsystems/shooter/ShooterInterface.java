@@ -38,6 +38,8 @@ public interface ShooterInterface {
 
   public default void passFuel(double output) {}
 
+  public default void stopShoot() {}
+
   public default void openLoop(double output) {}
 
   public default void setPID(double kP, double kI, double kD) {}

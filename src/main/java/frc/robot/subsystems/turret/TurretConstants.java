@@ -12,8 +12,10 @@ import edu.wpi.first.math.util.Units;
 public class TurretConstants {
 
   public static final int TURRET_MOTOR_ID = 22;
-  public static final int TURRET_CANCODER_ID = 0 - 9;
-  public static final double GEAR_RATIO = 40;
+  public static final int TURRET_CANCODER_ID = 0;
+  public static final int MIN_LIMIT_SWITCH_PORT = 0;
+  public static final int MAX_LIMIT_SWITCH_PORT = 0;
+  public static final double GEAR_RATIO = 16.6666666666; // 40
 
   // Distance from center of robot to center of turret in x and y directions, turret is at front
   // left
@@ -29,8 +31,8 @@ public class TurretConstants {
   public static double MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED = 4;
 
   // For manual control
-  public static double CCW_MANUAL_SPEED = 0.5;
-  public static double CW_MANUAL_SPEED = -0.5;
+  public static double CCW_MANUAL_SPEED = 0.1;
+  public static double CW_MANUAL_SPEED = -0.1;
 
   // TODO: Tune
   public static double TURRET_P = 1;

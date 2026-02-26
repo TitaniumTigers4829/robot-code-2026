@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
-import frc.robot.commands.hublocking.HubLockCommand;
+import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
@@ -23,6 +23,7 @@ import frc.robot.extras.util.JoystickUtil;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
 import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.intake.PhysicalIntake;
 import frc.robot.subsystems.shooter.PhysicalShooter;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveConstants;
@@ -32,6 +33,7 @@ import frc.robot.subsystems.swerve.gyro.PhysicalGyroNavX;
 import frc.robot.subsystems.swerve.gyro.PhysicalGyroPigeon;
 import frc.robot.subsystems.swerve.module.ModuleInterface;
 import frc.robot.subsystems.swerve.module.PhysicalModule;
+import frc.robot.subsystems.turret.PhysicalTurret;
 // import frc.robot.subsystems.turret.PhysicalTurret;
 import frc.robot.subsystems.turret.TurretSubsystem;
 // import frc.robot.subsystems.vision.PhysicalVision;
@@ -199,26 +201,29 @@ public class Robot extends LoggedRobot {
     driverController.rightBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
 
     // Will have to use manual turret to pass
-    driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
+    // driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
 
     // Commands for intake and outtake
-    driverController.rightTrigger().whileTrue(new IntakeCommand(intakeSubsystem));
+    driverController.x().whileTrue(new IntakeCommand(intakeSubsystem));
 
     driverController.povLeft().whileTrue(new OuttakeCommand(intakeSubsystem));
 
-    while (driverController.leftTrigger().getAsBoolean()) {
-      driverController.leftBumper().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
-      driverController.leftBumper().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
-    }
+    driverController.povUp().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
 
-    driverController.leftTrigger()
-      .toggleOnTrue(
-        new HubLockCommand(
-          swerveDrive,
-          turretSubsystem,
-          hoodSubsystem,
-          shooterSubsystem)
-          .repeatedly());
+    driverController.povDown().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
+
+    // while (driverController.y().getAsBoolean()) {
+    //   driverController.leftBumper().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
+    //   driverController.leftBumper().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
+    // }
+
+    // driverController
+    //     .leftTrigger()
+    //     .toggleOnTrue(new HubLockCommand(swerveDrive, turretSubsystem).repeatedly());
+
+    driverController
+        .rightTrigger()
+        .whileTrue(new ShootWhileHublockedCommand(shooterSubsystem, swerveDrive));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */
@@ -297,8 +302,9 @@ public class Robot extends LoggedRobot {
                 new PhysicalModule(SwerveConstants.compModuleConfigs[3]));
         // this.visionSubsystem = new VisionSubsystem(new VisionInterface() {}); // PhysicalVision
         this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
-        // this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
+        this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
         this.hoodSubsystem = new AdjustableHoodSubsystem(new PhysicalAdjustableHood());
+        this.intakeSubsystem = new IntakeSubsystem(new PhysicalIntake());
       }
       case DEV_ROBOT -> {
         /* Real robot, instantiate hardware IO implementations */
@@ -310,7 +316,7 @@ public class Robot extends LoggedRobot {
                 new PhysicalModule(SwerveConstants.devModuleConfigs[2]),
                 new PhysicalModule(SwerveConstants.devModuleConfigs[3]));
         // this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
-        this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
+        // this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
         // this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
         // THIS IS THE SYNTAX FOR WHATEVER SUBSYSTEMS ARE USED ^^
       }

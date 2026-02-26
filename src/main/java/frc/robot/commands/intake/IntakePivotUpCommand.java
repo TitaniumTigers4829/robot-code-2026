@@ -12,6 +12,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 public class IntakePivotUpCommand extends Command {
   /** Creates a new IntakePivotUpCommand. */
   IntakeSubsystem intakeSubsystem;
+
   public IntakePivotUpCommand(IntakeSubsystem intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     addRequirements(intakeSubsystem);

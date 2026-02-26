@@ -4,8 +4,6 @@
 
 package frc.robot.commands.hublocking;
 
-import java.util.Optional;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,17 +11,16 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.subsystems.turret.TurretSubsystem;
+import java.util.Optional;
 
 public class HubLockCommand extends Command {
-  
+
   SwerveDrive swerveDrive;
   TurretSubsystem turretSubsystem;
   AdjustableHoodSubsystem hoodSubsystem;
-  ShooterSubsystem shooterSubsystem;
   public double desiredHeading;
   public Rotation2d heading;
   public double turretAngleToHub;
@@ -32,23 +29,13 @@ public class HubLockCommand extends Command {
   public double turretToHubXDist;
   public double turretToHubDist;
 
-  public HubLockCommand(
-    SwerveDrive swerveDrive,
-    TurretSubsystem turretSubsystem,
-    AdjustableHoodSubsystem hoodSubsystem,
-    ShooterSubsystem shooterSubsystem) {
-      this.swerveDrive = swerveDrive;
-      this.turretSubsystem = turretSubsystem;
-      this.hoodSubsystem = hoodSubsystem;
-      this.shooterSubsystem = shooterSubsystem;
-    addRequirements(
-      swerveDrive, 
-      turretSubsystem, 
-      hoodSubsystem, 
-      shooterSubsystem);
+  public HubLockCommand(SwerveDrive swerveDrive, TurretSubsystem turretSubsystem) {
+    this.swerveDrive = swerveDrive;
+    this.turretSubsystem = turretSubsystem;
+    // this.hoodSubsystem = hoodSubsystem;
+    // addRequirements(swerveDrive, turretSubsystem, hoodSubsystem);
   }
 
-  
   @Override
   public void initialize() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
@@ -60,7 +47,6 @@ public class HubLockCommand extends Command {
     }
   }
 
-  
   @Override
   public void execute() {
     // Gets the heading of the robot as a Rotation2d
@@ -75,10 +61,10 @@ public class HubLockCommand extends Command {
 
     // Our turret angling math works as follows. Assuming the 0 rotations on the turret is
     // facing the current heading of the robot and the turret rotates positively counterclockwise,
-    // we can approximate the angle it needs to turn in rotations from 0 to the target angle. This 
-    // is the desired heading. With arctan we can calulate the angle the turret makes with the 
-    // hub relative to the y axis, otherwise known as the field relative angle. The y axis is 
-    // horizontal and the x axis is vertical from the driver station pov. We can subtract the 
+    // we can approximate the angle it needs to turn in rotations from 0 to the target angle. This
+    // is the desired heading. With arctan we can calulate the angle the turret makes with the
+    // hub relative to the y axis, otherwise known as the field relative angle. The y axis is
+    // horizontal and the x axis is vertical from the driver station pov. We can subtract the
     // heading (and therefore the zero angle) of the robot from the field relative angle. This
     // will get the radians needed to turn to face the hub and when converted to rotations becomes
     // the desired heading.
@@ -101,17 +87,12 @@ public class HubLockCommand extends Command {
     turretToHubDist = turretPos.getDistance(hubPos);
 
     // Locks hood angle on hub
-    hoodSubsystem.setHoodAngle(turretToHubDist);
-
-    // Locks shooter to the output needed to reach the hub based on its lookup table
-    shooterSubsystem.setPercentOutput(turretToHubDist);
+    // hoodSubsystem.setHoodAngle(turretToHubDist);
   }
 
-  
   @Override
   public void end(boolean interrupted) {}
 
-  
   @Override
   public boolean isFinished() {
     return false;

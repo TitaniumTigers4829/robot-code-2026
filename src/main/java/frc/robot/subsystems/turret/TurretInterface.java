@@ -27,6 +27,10 @@ public interface TurretInterface {
     return 0.0;
   }
 
+  public default void stopWhenMinLimitReached() {}
+
+  public default void stopWhenMaxLimitReached() {}
+
   public default void setTurretAngle(double desiredAngle) {}
 
   public default void setVolts(double volts) {}

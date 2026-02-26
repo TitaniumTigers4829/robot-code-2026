@@ -14,19 +14,19 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
 /** Add your docs here. */
 public class PhysicalShooter implements ShooterInterface {
 
   private final TalonFX leaderFlywheelMotor =
-      new TalonFX(ShooterConstants.LEADER_FLYWHEEL_MOTOR_ID);
+      new TalonFX(ShooterConstants.LEADER_FLYWHEEL_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
   private final TalonFX followerFlywheelMotor =
-      new TalonFX(ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID);
-  private final TalonFX kickerMotor = 
-      new TalonFX(ShooterConstants.KICKER_MOTOR_ID);
-  private final TalonFX spindexerMotor = 
-      new TalonFX(ShooterConstants.SPINDEXER_MOTOR_ID);
+      new TalonFX(
+          ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
+  private final TalonFX kickerMotor = new TalonFX(ShooterConstants.KICKER_MOTOR_ID);
+  // private final TalonFX spindexerMotor = new TalonFX(ShooterConstants.SPINDEXER_MOTOR_ID);
   MotorAlignmentValue motorAlignment = MotorAlignmentValue.Opposed;
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;
@@ -62,14 +62,14 @@ public class PhysicalShooter implements ShooterInterface {
 
   public void setPercentOutput(double distance) {
     kickerMotor.set(ShooterConstants.KICKER_PERCENT_OUTPUT);
-    spindexerMotor.set(ShooterConstants.SPINDEXER_PERCENT_OUTPUT);
+    // spindexerMotor.set(ShooterConstants.SPINDEXER_PERCENT_OUTPUT);
     leaderFlywheelMotor.set(flywheelRPMLookupValues.getLookupValue(distance));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }
 
   public void passFuel(double output) {
-    spindexerMotor.set(ShooterConstants.SPINDEXER_PERCENT_OUTPUT);
+    // spindexerMotor.set(ShooterConstants.SPINDEXER_PERCENT_OUTPUT);
     kickerMotor.set(ShooterConstants.KICKER_PERCENT_OUTPUT);
     leaderFlywheelMotor.set(output);
     followerFlywheelMotor.setControl(
@@ -80,5 +80,12 @@ public class PhysicalShooter implements ShooterInterface {
     leaderFlywheelMotor.set(flywheelRPMLookupValues.getLookupValue(distance));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+  }
+
+  public void stopShoot() {
+    leaderFlywheelMotor.set(0);
+    followerFlywheelMotor.set(0);
+    kickerMotor.set(0);
+    // spindexerMotor.set(0);
   }
 }
