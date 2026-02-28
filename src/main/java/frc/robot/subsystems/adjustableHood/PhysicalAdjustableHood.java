@@ -73,7 +73,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     BaseStatusSignal.refreshAll(hoodAngle);
     inputs.hoodAngle = hoodAngle.getValueAsDouble();
     inputs.curentLookupTable = lookupTableStuff;
-    inputs.abigailiscooking = distanceGiven;
+    inputs.distanceGiven = distanceGiven;
   }
 
   public double getHoodAngle() {

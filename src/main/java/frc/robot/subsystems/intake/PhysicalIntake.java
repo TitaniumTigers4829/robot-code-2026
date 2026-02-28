@@ -4,7 +4,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -13,14 +13,16 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import frc.robot.Constants.HardwareConstants;
 
 public class PhysicalIntake implements IntakeInterface {
-  private TalonFX intakeMotor1 = new TalonFX(IntakeConstants.INTAKE_MOTOR_1_ID);
-  private TalonFX intakeMotor2 = new TalonFX(IntakeConstants.INTAKE_MOTOR_2_ID);
-  private TalonFX intakePivotMotor1 = new TalonFX(IntakeConstants.PIVOT_MOTOR_1_ID);
+  private TalonFX intakeMotorOuter = new TalonFX(IntakeConstants.INTAKE_MOTOR_1_ID);
+  private TalonFX intakeMotorInside = new TalonFX(IntakeConstants.INTAKE_MOTOR_2_ID);
+  private TalonFX intakePivotMotor1 =
+      new TalonFX(IntakeConstants.PIVOT_MOTOR_1_ID, HardwareConstants.RIO_CAN_BUS_STRING);
   private TalonFX intakePivotMotor2 = new TalonFX(IntakeConstants.PIVOT_MOTOR_2_ID);
 
-  private MotionMagicVoltage request = new MotionMagicVoltage(0.0);
+  private PositionDutyCycle request = new PositionDutyCycle(0.0);
   private MotorAlignmentValue pivotMotorAlignment = MotorAlignmentValue.Opposed;
   private TalonFXConfiguration intakeConfig;
   private TalonFXConfiguration pivotConfig;
@@ -63,16 +65,20 @@ public class PhysicalIntake implements IntakeInterface {
     pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
-    intakeMotor1.getConfigurator().apply(intakeConfig);
+    intakeMotorOuter.getConfigurator().apply(intakeConfig);
+    intakeMotorInside.getConfigurator().apply(intakeConfig);
     intakePivotMotor1.getConfigurator().apply(pivotConfig);
     intakePivotMotor2.getConfigurator().apply(pivotConfig);
 
     intakeAngle = intakePivotMotor1.getPosition();
     intakePivotSpeed = intakePivotMotor1.getVelocity();
 
+    intakePivotMotor1.setPosition(0.0);
+    intakePivotMotor2.setPosition(0.0);
+
     BaseStatusSignal.setUpdateFrequencyForAll(0.0, intakeAngle, intakePivotSpeed);
     ParentDevice.optimizeBusUtilizationForAll(
-        intakeMotor1, intakeMotor2, intakePivotMotor1, intakePivotMotor2);
+        intakeMotorOuter, intakeMotorInside, intakePivotMotor1, intakePivotMotor2);
   }
 
   public void updateInputs(IntakeInputs inputs) {
@@ -89,13 +95,34 @@ public class PhysicalIntake implements IntakeInterface {
         new Follower(intakePivotMotor1.getDeviceID(), pivotMotorAlignment));
   }
 
-  public void intakeFuel(double speed) {
-    intakeMotor1.set(speed);
-    intakeMotor2.setControl(new Follower(intakeMotor1.getDeviceID(), pivotMotorAlignment));
+  public void intakeFuel() {
+    intakeMotorOuter.set(IntakeConstants.INTAKE_SPEED_OUTER);
+    intakeMotorInside.set(IntakeConstants.INTAKE_SPEED_INNER);
+  }
+
+  public void outakeFuel() {
+    intakeMotorOuter.set(-IntakeConstants.INTAKE_SPEED_OUTER);
+    intakeMotorInside.set(-IntakeConstants.INTAKE_SPEED_INNER);
+  }
+
+  public void setSpeed() {
+    intakeMotorOuter.set(0);
+    intakeMotorInside.set(0);
+  }
+
+  public void setPivotSpeedUp() {
+    intakePivotMotor1.setControl(request.withPosition(IntakeConstants.MAX_ANGLE));
+    intakePivotMotor2.setControl(
+        new Follower(intakePivotMotor2.getDeviceID(), pivotMotorAlignment));
+  }
+
+  public void setPivotSpeedDown() {
+    intakePivotMotor1.setControl(request.withPosition(IntakeConstants.PIVOT_DOWN_POSITION));
+    intakePivotMotor2.setControl(
+        new Follower(intakePivotMotor2.getDeviceID(), pivotMotorAlignment));
   }
 
   public double getIntakeAngle() {
-    // was shot by king von
     intakeAngle.refresh();
     return intakeAngle.getValueAsDouble();
   }

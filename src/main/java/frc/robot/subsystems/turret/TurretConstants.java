@@ -15,7 +15,7 @@ public class TurretConstants {
   public static final int TURRET_CANCODER_ID = 0;
   public static final int MIN_LIMIT_SWITCH_PORT = 0;
   public static final int MAX_LIMIT_SWITCH_PORT = 0;
-  public static final double GEAR_RATIO = 16.6666666666; // 40
+  public static final double GEAR_RATIO = 16.66666666; // 40
 
   // Distance from center of robot to center of turret in x and y directions, turret is at front
   // left
@@ -45,8 +45,8 @@ public class TurretConstants {
   // in rotations
   public static double TURRET_ERROR_TOLERANCE = 0.01;
   public static double TURRET_DEADBAND = 0.001;
-  public static double MAX_ANGLE = 1;
-  public static double MIN_ANGLE = 0;
+  public static double MAX_ANGLE = 0.1;
+  public static double MIN_ANGLE = -0.1;
 
   public static final SensorDirectionValue ENCODER_REVERSED =
       SensorDirectionValue.Clockwise_Positive;

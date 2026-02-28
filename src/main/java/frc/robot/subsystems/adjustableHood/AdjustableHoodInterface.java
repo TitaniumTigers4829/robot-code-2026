@@ -9,7 +9,7 @@ public interface AdjustableHoodInterface {
     public double hoodSpeed = 0.0;
     public double desiredAngle;
     public double curentLookupTable = 0.0;
-    public double abigailiscooking = 0.0;
+    public double distanceGiven = 0.0;
   }
 
   public default void updateInputs(AdjustableHoodInputs inputs) {}

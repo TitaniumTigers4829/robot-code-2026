@@ -29,11 +29,11 @@ public class HubLockCommand extends Command {
   public double turretToHubXDist;
   public double turretToHubDist;
 
-  public HubLockCommand(SwerveDrive swerveDrive, TurretSubsystem turretSubsystem) {
+  public HubLockCommand(SwerveDrive swerveDrive, AdjustableHoodSubsystem hoodSubsystem) {
     this.swerveDrive = swerveDrive;
-    this.turretSubsystem = turretSubsystem;
-    // this.hoodSubsystem = hoodSubsystem;
-    // addRequirements(swerveDrive, turretSubsystem, hoodSubsystem);
+    // this.turretSubsystem = turretSubsystem;
+    this.hoodSubsystem = hoodSubsystem;
+    addRequirements(swerveDrive, hoodSubsystem);
   }
 
   @Override
@@ -59,15 +59,16 @@ public class HubLockCommand extends Command {
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
 
-    // Our turret angling math works as follows. Assuming the 0 rotations on the turret is
-    // facing the current heading of the robot and the turret rotates positively counterclockwise,
-    // we can approximate the angle it needs to turn in rotations from 0 to the target angle. This
-    // is the desired heading. With arctan we can calulate the angle the turret makes with the
-    // hub relative to the y axis, otherwise known as the field relative angle. The y axis is
-    // horizontal and the x axis is vertical from the driver station pov. We can subtract the
-    // heading (and therefore the zero angle) of the robot from the field relative angle. This
-    // will get the radians needed to turn to face the hub and when converted to rotations becomes
-    // the desired heading.
+    /**
+     * Our turret angling math works as follows. Assuming the 0 rotations on the turret is facing
+     * the current heading of the robot and the turret rotates positively counterclockwise, we can
+     * approximate the angle it needs to turn in rotations from 0 to the target angle. This is the
+     * desired heading. With arctan we can calulate the angle the turret makes with the hub relative
+     * to the y axis, otherwise known as the field relative angle. The y axis is horizontal and the
+     * x axis is vertical from the driver station pov. We can subtract the heading (and therefore
+     * the zero angle) of the robot from the field relative angle. This will get the radians needed
+     * to turn to face the hub and when converted to rotations becomes the desired heading. *
+     */
 
     // Gets y and x distances of the turret to the hub
     turretToHubYDist = hubPos.getY() - turretPos.getY();
@@ -84,10 +85,10 @@ public class HubLockCommand extends Command {
 
     // Gets the actual distance from the hub, which becomes the paramenter for the lookup tables
     // of the hood and shooter
-    turretToHubDist = turretPos.getDistance(hubPos);
+    // turretToHubDist = turretPos.getDistance(hubPos);
 
     // Locks hood angle on hub
-    // hoodSubsystem.setHoodAngle(turretToHubDist);
+    hoodSubsystem.setHoodAngle(turretToHubDist);
   }
 
   @Override

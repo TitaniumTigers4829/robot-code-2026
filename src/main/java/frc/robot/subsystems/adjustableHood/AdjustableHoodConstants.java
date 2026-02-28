@@ -15,7 +15,7 @@ public class AdjustableHoodConstants {
   public static final double HOOD_A = 0;
   public static final double HOOD_G = 0.01;
 
-  public static final double HOOD_ZERO_ANGLE = 0.0615234375 - 0.0234375;
+  public static final double HOOD_ZERO_ANGLE = -0.65380859375;
 
   // Distance from hub {Distance, angle}
   public static double[][] hoodLookUpTable = {

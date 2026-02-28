@@ -43,8 +43,16 @@ public class IntakeSubsystem extends SubsystemBase {
     this.intakeInterface.setIntakeAngle(angle);
   }
 
-  public void intakeFuel(double speed) {
-    this.intakeInterface.intakeFuel(speed);
+  public void intakeFuel() {
+    this.intakeInterface.intakeFuel();
+  }
+
+  public void outakeFuel() {
+    this.intakeInterface.outakeFuel();
+  }
+
+  public void setSpeed() {
+    this.intakeInterface.setSpeed();
   }
 
   public double getIntakeAngle() {
@@ -53,6 +61,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public double getIntakeSpeed() {
     return this.intakeInterface.getIntakeSpeed();
+  }
+
+  public void setPivotSpeedUp() {
+    this.intakeInterface.setPivotSpeedUp();
+  }
+
+  public void setPivotSpeedDown() {
+    this.intakeInterface.setPivotSpeedDown();
   }
 
   public boolean isIntakeDeployed() {
@@ -66,7 +82,7 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     updateInputs();
-    SmartDashboard.putBoolean("intake deployed", isIntakeDeployed());
-    SmartDashboard.putNumber("angle", getIntakeAngle());
+    SmartDashboard.putBoolean("intake deployed", inputs.isIntakeDeployed);
+    SmartDashboard.putNumber("intake angle", inputs.intakeAngle);
   }
 }

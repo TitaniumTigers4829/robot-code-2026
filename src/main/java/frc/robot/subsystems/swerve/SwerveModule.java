@@ -181,6 +181,10 @@ public class SwerveModule {
     return moduleInterface.getDrivePositionRadians();
   }
 
+  public double getDistanceFromAllianceHub() {
+    return moduleInterface.getDistanceFromAllianceHub();
+  }
+
   /**
    * Gets the measured state of the module, which includes the drive velocity and turn rotation.
    *
@@ -217,5 +221,6 @@ public class SwerveModule {
       moduleInterface.setTurnPID(turnP.get(), 0, turnD.get());
     }
     SmartDashboard.putNumber(moduleName + "offset", getPosition().angle.getRotations());
+    SmartDashboard.putNumber("dist to hub", getDistanceFromAllianceHub());
   }
 }

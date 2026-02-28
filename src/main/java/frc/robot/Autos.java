@@ -10,11 +10,20 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.drive.FollowSwerveSampleCommand;
+import frc.robot.commands.hublocking.HubLockCommand;
+import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
+import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.extras.util.AllianceFlipper;
+import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.HashMap;
 import java.util.function.Supplier;
@@ -27,6 +36,10 @@ public class Autos {
   private final AutoFactory autoFactory;
   private SwerveDrive swerveDrive;
   private VisionSubsystem visionSubsystem;
+  private IntakeSubsystem intakeSubsystem;
+  private TurretSubsystem turretSubsystem;
+  private ShooterSubsystem shooterSubsystem;
+  private AdjustableHoodSubsystem hoodSubsystem;
   private final String NONE_NAME = "Do Nothing";
 
   private final HashMap<String, Supplier<Command>> routines = new HashMap<>();
@@ -59,14 +72,20 @@ public class Autos {
             swerveDrive::resetEstimatedPose, // A function that resets the current robot pose to the
             (SwerveSample sample) -> {
               FollowSwerveSampleCommand followSwerveSampleCommand =
-                  new FollowSwerveSampleCommand(this.swerveDrive, sample);
+                  new FollowSwerveSampleCommand(this.swerveDrive, this.visionSubsystem, sample);
               followSwerveSampleCommand.execute();
               Logger.recordOutput("Trajectory/sample", sample.getPose());
             }, // A function that follows a choreo trajectory
             false, // If alliance flipping should be enabled
-            this.swerveDrive); // The drive subsystem
+            this.swerveDrive);
 
     addRoutine("y one meter", () -> yOneMeterAuto());
+
+    addRoutine("left_neutral_auto", () -> leftNeutralAuto());
+
+    addRoutine("right_neutral_auto", () -> rightNeutralAuto());
+
+    addRoutine("middle_depot_auto", () -> middleDepotAuto());
 
     addRoutine("fancy things", () -> createRoutine(autoFactory, swerveDrive, Source.L));
   }
@@ -80,7 +99,72 @@ public class Autos {
             Commands.sequence(
                 autoFactory.resetOdometry(AutoConstants.Y_ONE_METER_TRAJECTORY),
                 yOneMeterTrajectory.cmd()));
+    return routine;
+  }
 
+  public AutoRoutine rightNeutralAuto() {
+    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.RIGHT_NEUTRAL_AUTO);
+    AutoTrajectory rightNeutralTrajectory =
+        routine.trajectory(AutoConstants.RIGHT_NEUTRAL_TRAJECTORY);
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                autoFactory.resetOdometry(AutoConstants.RIGHT_NEUTRAL_TRAJECTORY),
+                rightNeutralTrajectory.cmd(),
+                Commands.runOnce(() -> new IntakePivotDownCommand(intakeSubsystem)),
+                new WaitCommand(2.0),
+                Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),
+                new WaitCommand(5.0),
+                Commands.run(() -> new HubLockCommand(swerveDrive, hoodSubsystem)),
+                Commands.run(
+                    () ->
+                        new ShootWhileHublockedCommand(
+                            shooterSubsystem, swerveDrive, hoodSubsystem))));
+    return routine;
+  }
+
+  public AutoRoutine middleDepotAuto() {
+    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.MIDDLE_DEPOT_AUTO);
+    AutoTrajectory middleDepotTrajectory =
+        routine.trajectory(AutoConstants.MIDDLE_DEPOT_TRAJECTORY);
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                autoFactory.resetOdometry(AutoConstants.MIDDLE_DEPOT_TRAJECTORY),
+                middleDepotTrajectory.cmd(),
+                Commands.run(() -> new HubLockCommand(swerveDrive, hoodSubsystem)),
+                Commands.run(
+                    () ->
+                        new ShootWhileHublockedCommand(
+                            shooterSubsystem, swerveDrive, hoodSubsystem)),
+                Commands.runOnce(() -> new IntakePivotDownCommand(intakeSubsystem)),
+                new WaitCommand(2.0),
+                Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),
+                new WaitCommand(5.0)));
+    return routine;
+  }
+
+  public AutoRoutine leftNeutralAuto() {
+    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.LEFT_NEUTRAL_AUTO);
+    AutoTrajectory leftNeutralTrajectory =
+        routine.trajectory(AutoConstants.LEFT_NEUTRAL_TRAJECTORY);
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
+                leftNeutralTrajectory.cmd(),
+                Commands.runOnce(() -> new IntakePivotDownCommand(intakeSubsystem)),
+                new WaitCommand(2.0),
+                Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),
+                new WaitCommand(5.0),
+                Commands.run(() -> new HubLockCommand(swerveDrive, hoodSubsystem)),
+                Commands.run(
+                    () ->
+                        new ShootWhileHublockedCommand(
+                            shooterSubsystem, swerveDrive, hoodSubsystem))));
     return routine;
   }
 

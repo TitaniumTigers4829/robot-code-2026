@@ -16,7 +16,15 @@ public interface IntakeInterface {
 
   public default void setIntakeAngle(double angle) {}
 
-  public default void intakeFuel(double speed) {}
+  public default void intakeFuel() {}
+
+  public default void outakeFuel() {}
+
+  public default void setSpeed() {}
+
+  public default void setPivotSpeedUp() {}
+
+  public default void setPivotSpeedDown() {}
 
   public default double getIntakeAngle() {
     return 0.0;

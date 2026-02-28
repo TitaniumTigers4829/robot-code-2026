@@ -8,7 +8,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
@@ -38,7 +38,7 @@ public class PhysicalTurret implements TurretInterface {
   // private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
   // private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
 
-  private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new MotionMagicTorqueCurrentFOC(0.0);
+  private final PositionDutyCycle mmTorqueRequest = new PositionDutyCycle(0.0);
   private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final StatusSignal<Voltage> turretMotorAppliedVoltage;
@@ -112,6 +112,8 @@ public class PhysicalTurret implements TurretInterface {
         turretMotor.getClosedLoopReference().getValueAsDouble()
             - turretMotor.getPosition().getValueAsDouble();
 
+    turretEncoder.setPosition(0.0);
+
     // Higher frequency for turret angle and its change over time (angular velocity) because
     // its more important that the other signals
     turretAngle.setUpdateFrequency(250.0);
@@ -142,6 +144,7 @@ public class PhysicalTurret implements TurretInterface {
     inputs.turretDutyCycle = dutyCycle.getValueAsDouble();
     inputs.turretStatorCurrent = statorCurrent.getValueAsDouble();
     inputs.turretMotorTemp = motorTemp.getValueAsDouble();
+    inputs.turretDesiredAngle = desiredAngle.getValueAsDouble();
   }
 
   //     public void stopWhenMinLimitReached() {

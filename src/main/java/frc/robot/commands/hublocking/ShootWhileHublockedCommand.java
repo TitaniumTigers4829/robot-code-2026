@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
@@ -20,6 +21,7 @@ public class ShootWhileHublockedCommand extends Command {
   /** Creates a new ShootWhileHublockedCommand. */
   ShooterSubsystem shooterSubsystem;
 
+  AdjustableHoodSubsystem hoodSubsystem;
   SwerveDrive swerveDrive;
   public double desiredHeading;
   public Rotation2d heading;
@@ -27,9 +29,13 @@ public class ShootWhileHublockedCommand extends Command {
   public Translation2d hubPos;
   public double turretToHubDist;
 
-  public ShootWhileHublockedCommand(ShooterSubsystem shooterSubsystem, SwerveDrive swerveDrive) {
+  public ShootWhileHublockedCommand(
+      ShooterSubsystem shooterSubsystem,
+      SwerveDrive swerveDrive,
+      AdjustableHoodSubsystem hoodSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
     this.swerveDrive = swerveDrive;
+    this.hoodSubsystem = hoodSubsystem;
     // addRequirements(shooterSubsystem, swerveDrive);
   }
 
@@ -62,6 +68,8 @@ public class ShootWhileHublockedCommand extends Command {
     turretToHubDist = turretPos.getDistance(hubPos);
 
     shooterSubsystem.setPercentOutput(turretAngleToHub);
+
+    hoodSubsystem.setHoodAngle(turretAngleToHub);
   }
 
   // Called once the command ends or is interrupted.
