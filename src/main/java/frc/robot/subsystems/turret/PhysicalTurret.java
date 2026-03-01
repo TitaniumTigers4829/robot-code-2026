@@ -7,9 +7,10 @@ package frc.robot.subsystems.turret;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -35,11 +36,12 @@ public class PhysicalTurret implements TurretInterface {
   // DigitalInput(TurretConstants.MAX_LIMIT_SWITCH_PORT);
 
   // Commented out because torqueFOC is in theory easier to tune
-  // private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
-  // private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
+  private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
+  private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
+  private final MotionMagicConfigs mmConfig = new MotionMagicConfigs();
 
-  private final PositionDutyCycle mmTorqueRequest = new PositionDutyCycle(0.0);
-  private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
+  // private final PositionDutyCycle mmTorqueRequest = new PositionDutyCycle(0.0);
+  // private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final StatusSignal<Voltage> turretMotorAppliedVoltage;
   private final StatusSignal<Double> desiredAngle;
@@ -98,7 +100,12 @@ public class PhysicalTurret implements TurretInterface {
     turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
-    turretConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    turretConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    mmConfig.MotionMagicAcceleration =
+        TurretConstants.MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
+    mmConfig.MotionMagicCruiseVelocity = TurretConstants.MAX_VELOCITY_ROTATIONS_PER_SECOND;
+    mmConfig.MotionMagicJerk = 0;
 
     turretMotor.getConfigurator().apply(turretConfig);
     turretAngle = turretEncoder.getAbsolutePosition();
@@ -168,9 +175,9 @@ public class PhysicalTurret implements TurretInterface {
   // Normalizes angle
   public void setTurretAngle(double desiredAngle) {
     if (Math.abs(desiredAngle - getTurretAngle()) < 0.5) {
-      turretMotor.setControl(mmTorqueRequest.withPosition(desiredAngle));
+      turretMotor.setControl(mmPositionRequest.withPosition(desiredAngle));
     } else {
-      turretMotor.setControl(mmTorqueRequest.withPosition(Math.abs(Math.abs(desiredAngle) - 1)));
+      turretMotor.setControl(mmPositionRequest.withPosition(Math.abs(Math.abs(desiredAngle) - 1)));
     }
   }
 
@@ -180,7 +187,7 @@ public class PhysicalTurret implements TurretInterface {
   }
 
   public void openLoop(double output) {
-    turretMotor.setControl(currentOut.withOutput(output));
+    turretMotor.setControl(dutyCyleOut.withOutput(output));
   }
 
   public void setVolts(double volts) {

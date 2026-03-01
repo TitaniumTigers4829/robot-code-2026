@@ -100,6 +100,7 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     SmartDashboard.putNumber("turret angle", inputs.turretAngle);
+    Logger.recordOutput("Red Hub", Constants.FieldConstants.RED_HUB_CENTER);
     SmartDashboard.putNumber("error", Math.abs(inputs.turretDesiredAngle - inputs.turretAngle));
   }
 }

@@ -116,11 +116,14 @@ public class Autos {
                 new WaitCommand(2.0),
                 Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),
                 new WaitCommand(5.0),
-                Commands.run(() -> new HubLockCommand(swerveDrive, hoodSubsystem)),
+                Commands.run(
+                    () ->
+                        new HubLockCommand(
+                            swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem)),
                 Commands.run(
                     () ->
                         new ShootWhileHublockedCommand(
-                            shooterSubsystem, swerveDrive, hoodSubsystem))));
+                            shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem))));
     return routine;
   }
 
@@ -134,11 +137,14 @@ public class Autos {
             Commands.sequence(
                 autoFactory.resetOdometry(AutoConstants.MIDDLE_DEPOT_TRAJECTORY),
                 middleDepotTrajectory.cmd(),
-                Commands.run(() -> new HubLockCommand(swerveDrive, hoodSubsystem)),
+                Commands.run(
+                    () ->
+                        new HubLockCommand(
+                            swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem)),
                 Commands.run(
                     () ->
                         new ShootWhileHublockedCommand(
-                            shooterSubsystem, swerveDrive, hoodSubsystem)),
+                            shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem)),
                 Commands.runOnce(() -> new IntakePivotDownCommand(intakeSubsystem)),
                 new WaitCommand(2.0),
                 Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),
@@ -160,11 +166,14 @@ public class Autos {
                 new WaitCommand(2.0),
                 Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),
                 new WaitCommand(5.0),
-                Commands.run(() -> new HubLockCommand(swerveDrive, hoodSubsystem)),
+                Commands.run(
+                    () ->
+                        new HubLockCommand(
+                            swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem)),
                 Commands.run(
                     () ->
                         new ShootWhileHublockedCommand(
-                            shooterSubsystem, swerveDrive, hoodSubsystem))));
+                            shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem))));
     return routine;
   }
 

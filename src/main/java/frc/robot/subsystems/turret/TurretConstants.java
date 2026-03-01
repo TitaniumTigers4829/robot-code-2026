@@ -19,7 +19,7 @@ public class TurretConstants {
 
   // Distance from center of robot to center of turret in x and y directions, turret is at front
   // left
-  public static final double X_OFFSET = Units.inchesToMeters(-7.75);
+  public static final double X_OFFSET = Units.inchesToMeters(7.75);
   public static final double Y_OFFSET = Units.inchesToMeters(4.68);
   //   public static final double Y_DISTANCE_FROM_FRONT = Units.inchesToMeters(7.25);
 
@@ -35,11 +35,11 @@ public class TurretConstants {
   public static double CW_MANUAL_SPEED = -0.1;
 
   // TODO: Tune
-  public static double TURRET_P = 1;
+  public static double TURRET_P = 0.4829;
   public static double TURRET_I = 0;
   public static double TURRET_D = 0;
   public static double TURRET_S = 0;
-  public static double TURRET_V = 0;
+  public static double TURRET_V = 0.5;
   public static double TURRET_A = 0;
 
   // in rotations
@@ -52,7 +52,7 @@ public class TurretConstants {
       SensorDirectionValue.Clockwise_Positive;
 
   // TODO: Find zero angle from phoenix tuner, should by facing front of robot
-  public static final double ANGLE_ZERO = 0;
+  public static final double ANGLE_ZERO = 0.355224609375;
 
   // TODO: Find limits, currently both are disabled
   public static final double STATOR_CURRENT_LIMIT = 100;

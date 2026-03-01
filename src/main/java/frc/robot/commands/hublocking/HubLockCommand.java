@@ -14,11 +14,14 @@ import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.subsystems.turret.TurretSubsystem;
+import frc.robot.subsystems.vision.VisionConstants.Limelight;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.Optional;
 
 public class HubLockCommand extends Command {
 
   SwerveDrive swerveDrive;
+  VisionSubsystem visionSubsystem;
   TurretSubsystem turretSubsystem;
   AdjustableHoodSubsystem hoodSubsystem;
   public double desiredHeading;
@@ -29,11 +32,16 @@ public class HubLockCommand extends Command {
   public double turretToHubXDist;
   public double turretToHubDist;
 
-  public HubLockCommand(SwerveDrive swerveDrive, AdjustableHoodSubsystem hoodSubsystem) {
+  public HubLockCommand(
+      SwerveDrive swerveDrive,
+      VisionSubsystem visionSubsystem,
+      AdjustableHoodSubsystem hoodSubsystem,
+      TurretSubsystem turretSubsystem) {
     this.swerveDrive = swerveDrive;
-    // this.turretSubsystem = turretSubsystem;
+    this.visionSubsystem = visionSubsystem;
+    this.turretSubsystem = turretSubsystem;
     this.hoodSubsystem = hoodSubsystem;
-    addRequirements(swerveDrive, hoodSubsystem);
+    addRequirements(hoodSubsystem);
   }
 
   @Override
@@ -54,8 +62,7 @@ public class HubLockCommand extends Command {
 
     // Gets the position of the turret
     Translation2d turretPos =
-        swerveDrive
-            .getEstimatedPose()
+    swerveDrive.getEstimatedPose()
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
 
@@ -85,7 +92,7 @@ public class HubLockCommand extends Command {
 
     // Gets the actual distance from the hub, which becomes the paramenter for the lookup tables
     // of the hood and shooter
-    // turretToHubDist = turretPos.getDistance(hubPos);
+    turretToHubDist = turretPos.getDistance(hubPos);
 
     // Locks hood angle on hub
     hoodSubsystem.setHoodAngle(turretToHubDist);

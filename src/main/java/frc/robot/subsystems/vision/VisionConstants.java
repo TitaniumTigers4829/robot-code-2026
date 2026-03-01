@@ -63,7 +63,7 @@ public final class VisionConstants {
   public static final int POSE_MOVING_AVERAGE_WINDOW_SIZE = 50;
 
   public static final AprilTagFieldLayout FIELD_LAYOUT =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
   public static final double VISION_X_POS_TRUST = 0.5; // meters
   public static final double VISION_Y_POS_TRUST = 0.5; // meters

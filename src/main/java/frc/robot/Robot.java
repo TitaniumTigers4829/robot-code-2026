@@ -18,6 +18,8 @@ import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.shooter.HoodDownCommand;
+import frc.robot.commands.shooter.ManualHoodDown;
+import frc.robot.commands.shooter.ManualHoodUp;
 import frc.robot.commands.shooter.ManualShootCommand;
 import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
@@ -208,6 +210,9 @@ public class Robot extends LoggedRobot {
 
     driverController.rightBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
 
+    driverController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
+    driverController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
+
     // Will have to use manual turret to pass
     driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
 
@@ -215,11 +220,16 @@ public class Robot extends LoggedRobot {
 
     driverController.x().whileTrue(new HoodDownCommand(hoodSubsystem));
 
-    driverController.leftTrigger().toggleOnTrue(new HubLockCommand(swerveDrive, hoodSubsystem));
+    driverController
+        .leftTrigger()
+        .toggleOnTrue(
+            new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
 
     driverController
         .rightTrigger()
-        .whileTrue(new ShootWhileHublockedCommand(shooterSubsystem, swerveDrive, hoodSubsystem));
+        .whileTrue(
+            new ShootWhileHublockedCommand(
+                shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */

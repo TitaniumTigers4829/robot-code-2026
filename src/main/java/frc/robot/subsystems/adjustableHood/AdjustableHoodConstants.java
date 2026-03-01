@@ -4,7 +4,7 @@ public class AdjustableHoodConstants {
   public static final int HOOD_MOTOR_ID = 30;
   public static final int CANCODER_ID = 9;
 
-  public static final double HOOD_MAX_ANGLE = 90.0;
+  public static final double HOOD_MAX_ANGLE = 0.5;
 
   // Tune G first, increase until hood moves then tune pid and sva
   public static final double HOOD_P = 1;
@@ -20,8 +20,8 @@ public class AdjustableHoodConstants {
   // Distance from hub {Distance, angle}
   public static double[][] hoodLookUpTable = {
     {0.5, 0},
-    {1, 0.490479},
-    {1.5, 0.6}
+    {1, 0.2},
+    {1.5, 0.4}
     // {2, 0},
     // {2.5, 0},
     // {3, 0},

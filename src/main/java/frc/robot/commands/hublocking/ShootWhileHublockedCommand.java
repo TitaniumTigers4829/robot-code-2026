@@ -14,6 +14,8 @@ import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
+import frc.robot.subsystems.vision.VisionConstants.Limelight;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.Optional;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -21,6 +23,7 @@ public class ShootWhileHublockedCommand extends Command {
   /** Creates a new ShootWhileHublockedCommand. */
   ShooterSubsystem shooterSubsystem;
 
+  VisionSubsystem visionSubsystem;
   AdjustableHoodSubsystem hoodSubsystem;
   SwerveDrive swerveDrive;
   public double desiredHeading;
@@ -32,10 +35,12 @@ public class ShootWhileHublockedCommand extends Command {
   public ShootWhileHublockedCommand(
       ShooterSubsystem shooterSubsystem,
       SwerveDrive swerveDrive,
+      VisionSubsystem visionSubsystem,
       AdjustableHoodSubsystem hoodSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
     this.swerveDrive = swerveDrive;
     this.hoodSubsystem = hoodSubsystem;
+    this.visionSubsystem = visionSubsystem;
     // addRequirements(shooterSubsystem, swerveDrive);
   }
 
@@ -58,8 +63,8 @@ public class ShootWhileHublockedCommand extends Command {
 
     // Gets the position of the turret
     Translation2d turretPos =
-        swerveDrive
-            .getEstimatedPose()
+        visionSubsystem
+            .getPoseFromAprilTags(Limelight.FRONT)
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
 
@@ -69,7 +74,7 @@ public class ShootWhileHublockedCommand extends Command {
 
     shooterSubsystem.setPercentOutput(turretAngleToHub);
 
-    hoodSubsystem.setHoodAngle(turretAngleToHub);
+    // hoodSubsystem.setHoodAngle(turretAngleToHub);
   }
 
   // Called once the command ends or is interrupted.

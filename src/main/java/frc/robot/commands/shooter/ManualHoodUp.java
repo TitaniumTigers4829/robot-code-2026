@@ -6,19 +6,14 @@ package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ManualShootCommand extends Command {
-  /** Creates a new ManualShootCommand. */
-  ShooterSubsystem shooterSubsystem;
-
+public class ManualHoodUp extends Command {
   AdjustableHoodSubsystem hoodSubsystem;
 
-  public ManualShootCommand(
-      ShooterSubsystem shooterSubsystem, AdjustableHoodSubsystem hoodSubsystem) {
+  /** Creates a new ManualHoodDown. */
+  public ManualHoodUp(AdjustableHoodSubsystem hoodSubsystem) {
     this.hoodSubsystem = hoodSubsystem;
-    this.shooterSubsystem = shooterSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -29,14 +24,13 @@ public class ManualShootCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hoodSubsystem.setHoodAngle(3);
-    shooterSubsystem.passFuel(1);
+    hoodSubsystem.setSpeed(0.05);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooterSubsystem.stopShoot();
+    hoodSubsystem.setSpeed(0);
   }
 
   // Returns true when the command should end.

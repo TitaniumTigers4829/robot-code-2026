@@ -96,28 +96,28 @@ public class PhysicalVision implements VisionInterface {
 
   @Override
   public Pose2d getPoseFromAprilTags(Limelight limelight) {
-    return limelightEstimates.get(limelight.getId()).pose().get();
+    return limelightEstimates.get(Limelight.FRONT.getId()).pose().get();
   }
 
   @Override
   public int getNumberOfAprilTags(Limelight limelight) {
-    return limelightEstimates.get(limelight.getId()).tagCount();
+    return limelightEstimates.get(Limelight.FRONT.getId()).tagCount();
   }
 
   @Override
   public double getTimestampSeconds(Limelight limelight) {
-    return limelightEstimates.get(limelight.getId()).timestampSeconds();
+    return limelightEstimates.get(Limelight.FRONT.getId()).timestampSeconds();
   }
 
   @Override
   public double getLatencySeconds(Limelight limelight) {
-    return limelightEstimates.get(limelight.getId()).latency() / 1000.0;
+    return limelightEstimates.get(Limelight.FRONT.getId()).latency() / 1000.0;
   }
 
   @Override
   public double getLimelightAprilTagDistance(Limelight limelight) {
     if (canSeeAprilTags(limelight)) {
-      return limelightEstimates.get(limelight.getId()).avgTagDist();
+      return limelightEstimates.get(Limelight.FRONT.getId()).avgTagDist();
     }
     // To be safe returns a big distance from the april tags if it can't see any
     return Double.MAX_VALUE;

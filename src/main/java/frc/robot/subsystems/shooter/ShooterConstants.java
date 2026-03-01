@@ -13,6 +13,7 @@ public class ShooterConstants {
   public static int SPINDEXER_MOTOR_ID = 61;
 
   public static double SHOOTER_HEIGHT_FROM_GROUND = 0;
+  public static double GEAR_RATIO = 24 / 36;
 
   public static double FLYWHEEL_S = 0;
   public static double FLYWHEEL_V = 0;
@@ -26,7 +27,7 @@ public class ShooterConstants {
 
   public static double PASS_SHOOTER_SPEED = -1;
   public static double KICKER_PERCENT_OUTPUT = 0.95;
-  public static double SPINDEXER_PERCENT_OUTPUT = 0.675;
+  public static double SPINDEXER_PERCENT_OUTPUT = 0.9; // 0.675
 
   // Lookup table for rpms needed for certain distances
   public static double[][] DISTANCE_TO_FLYWHEEL_RPM = {

@@ -50,12 +50,15 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodConfig.ClosedLoopGeneral.ContinuousWrap = true;
     hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.99;
-    hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.00001;
+    hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.5;
+    hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
     hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    hoodConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    hoodConfig.CurrentLimits.StatorCurrentLimit = 80;
+    hoodConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     hoodEncoderConfig.MagnetSensor.MagnetOffset = AdjustableHoodConstants.HOOD_ZERO_ANGLE;
     hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
@@ -64,6 +67,8 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodEncoder.getConfigurator().apply(hoodEncoderConfig);
 
     hoodAngle = hoodEncoder.getAbsolutePosition();
+
+    hoodEncoder.setPosition(0.0);
 
     hoodAngle.setUpdateFrequency(100.0);
     ParentDevice.optimizeBusUtilizationForAll(hoodMotor, hoodEncoder);
@@ -85,6 +90,10 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     lookupTableStuff = adjustableHoodLookupValues.getLookupValue(distance);
     distanceGiven = distance;
     hoodMotor.setControl(positionRequest.withPosition(lookupTableStuff));
+  }
+
+  public void setSpeed(double speed) {
+    hoodMotor.set(speed);
   }
 
   public void periodic() {

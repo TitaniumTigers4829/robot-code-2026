@@ -46,6 +46,7 @@ public class PhysicalShooter implements ShooterInterface {
 
     leaderFlywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     leaderFlywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    leaderFlywheelConfig.Feedback.SensorToMechanismRatio = ShooterConstants.GEAR_RATIO;
     leaderFlywheelConfig.Slot0.kP = ShooterConstants.FLYWHEEL_P;
     leaderFlywheelConfig.Slot0.kI = ShooterConstants.FLYWHEEL_I;
     leaderFlywheelConfig.Slot0.kD = ShooterConstants.FLYWHEEL_D;
