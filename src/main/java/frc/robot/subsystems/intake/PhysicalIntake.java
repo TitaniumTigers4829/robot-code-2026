@@ -1,14 +1,18 @@
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Constants.HardwareConstants;
 
 public class PhysicalIntake implements IntakeInterface {
@@ -18,13 +22,13 @@ public class PhysicalIntake implements IntakeInterface {
       new TalonFX(IntakeConstants.PIVOT_MOTOR_1_ID, HardwareConstants.RIO_CAN_BUS_STRING);
   private TalonFX intakePivotMotor2 = new TalonFX(IntakeConstants.PIVOT_MOTOR_2_ID);
 
-  private PositionDutyCycle request = new PositionDutyCycle(0.0);
+  private MotionMagicVoltage request = new MotionMagicVoltage(0.0);
   private MotorAlignmentValue pivotMotorAlignment = MotorAlignmentValue.Opposed;
   private TalonFXConfiguration intakeConfig;
   private TalonFXConfiguration pivotConfig;
 
-  // public StatusSignal<Angle> intakeAngle;
-  // public StatusSignal<AngularVelocity> intakePivotSpeed;
+  public StatusSignal<Angle> intakeAngle;
+  public StatusSignal<AngularVelocity> intakePivotSpeed;
 
   public PhysicalIntake() {
     intakeConfig = new TalonFXConfiguration();
@@ -58,7 +62,7 @@ public class PhysicalIntake implements IntakeInterface {
 
     pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = IntakeConstants.PIVOT_DOWN_POSITION;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = IntakeConstants.MIN_ANGLE;
-    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
     intakeMotorOuter.getConfigurator().apply(intakeConfig);
@@ -66,24 +70,28 @@ public class PhysicalIntake implements IntakeInterface {
     intakePivotMotor1.getConfigurator().apply(pivotConfig);
     intakePivotMotor2.getConfigurator().apply(pivotConfig);
 
-    // intakeAngle = intakePivotMotor1.getPosition();
-    // intakePivotSpeed = intakePivotMotor1.getVelocity();
+    pivotConfig.MotionMagic.MotionMagicAcceleration = 4;
+    pivotConfig.MotionMagic.MotionMagicCruiseVelocity = 10;
+
+    intakeAngle = intakePivotMotor1.getPosition();
+    intakePivotSpeed = intakePivotMotor1.getVelocity();
 
     intakePivotMotor1.setPosition(0.0);
     intakePivotMotor2.setPosition(0.0);
 
-    // BaseStatusSignal.setUpdateFrequencyForAll(0.0, intakeAngle, intakePivotSpeed);
+    BaseStatusSignal.setUpdateFrequencyForAll(0.0, intakeAngle, intakePivotSpeed);
     ParentDevice.optimizeBusUtilizationForAll(
         intakeMotorOuter, intakeMotorInside, intakePivotMotor1, intakePivotMotor2);
   }
 
-  // public void updateInputs(IntakeInputs inputs) {
-  //   BaseStatusSignal.refreshAll(intakeAngle, intakePivotSpeed);
-
-  // inputs.intakeAngle = intakeAngle.getValueAsDouble();
-  // inputs.intakePivotSpeed = intakePivotSpeed.getValueAsDouble();
-  // inputs.isIntakeDeployed = isIntakeDeployed();
-  // }
+  public void updateInputs(IntakeInputs inputs) {
+    // BaseStatusSignal.refreshAll(intakeAngle, intakePivotSpeed);
+    intakeAngle.refresh();
+    intakePivotSpeed.refresh();
+    inputs.intakeAngle = intakeAngle.getValueAsDouble();
+    inputs.intakePivotSpeed = intakePivotSpeed.getValueAsDouble();
+    inputs.isIntakeDeployed = isIntakeDeployed();
+  }
 
   public void setIntakeAngle(double angle) {
     intakePivotMotor1.setControl(request.withPosition(angle));

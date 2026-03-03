@@ -8,8 +8,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -31,7 +31,7 @@ public class PhysicalShooter implements ShooterInterface {
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;
 
-  private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
+  private final VelocityVoltage rpsRequest = new VelocityVoltage(0.0);
   private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
 
   private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new MotionMagicTorqueCurrentFOC(0.0);
@@ -62,26 +62,27 @@ public class PhysicalShooter implements ShooterInterface {
   }
 
   public void setPercentOutput(double distance) {
-    kickerMotor.set(ShooterConstants.KICKER_PERCENT_OUTPUT);
-    spindexerMotor.set(ShooterConstants.SPINDEXER_PERCENT_OUTPUT);
-    leaderFlywheelMotor.set(flywheelRPMLookupValues.getLookupValue(distance));
+    spindexerMotor.setControl(rpsRequest.withVelocity(50));
+    kickerMotor.setControl(rpsRequest.withVelocity(50));
+    leaderFlywheelMotor.setControl(
+        rpsRequest.withVelocity(flywheelRPMLookupValues.getLookupValue(distance)));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }
 
-  public void passFuel(double output) {
-    spindexerMotor.set(ShooterConstants.SPINDEXER_PERCENT_OUTPUT);
-    kickerMotor.set(ShooterConstants.KICKER_PERCENT_OUTPUT);
-    leaderFlywheelMotor.set(output);
+  public void passFuel(double rps) {
+    spindexerMotor.setControl(rpsRequest.withVelocity(50));
+    kickerMotor.setControl(rpsRequest.withVelocity(50));
+    leaderFlywheelMotor.setControl(rpsRequest.withVelocity(rps));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }
 
-  public void setSpeed(double distance) {
-    leaderFlywheelMotor.set(flywheelRPMLookupValues.getLookupValue(distance));
-    followerFlywheelMotor.setControl(
-        new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
-  }
+  // public void setSpeed(double distance) {
+  //   leaderFlywheelMotor.set(flywheelRPMLookupValues.getLookupValue(distance));
+  //   followerFlywheelMotor.setControl(
+  //       new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+  // }
 
   public void stopShoot() {
     leaderFlywheelMotor.set(0);

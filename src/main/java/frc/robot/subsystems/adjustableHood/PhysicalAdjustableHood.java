@@ -1,10 +1,9 @@
 package frc.robot.subsystems.adjustableHood;
 
-import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
@@ -25,7 +24,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   private final SingleLinearInterpolator adjustableHoodLookupValues =
       new SingleLinearInterpolator(AdjustableHoodConstants.hoodLookUpTable);
 
-  private final PositionDutyCycle positionRequest = new PositionDutyCycle(0.0);
+  private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0.0);
   private final TorqueCurrentFOC current = new TorqueCurrentFOC(0.0);
   public StatusSignal<Angle> hoodAngle;
   public double desiredAngle;
@@ -63,6 +62,9 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodEncoderConfig.MagnetSensor.MagnetOffset = AdjustableHoodConstants.HOOD_ZERO_ANGLE;
     hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
 
+    hoodConfig.MotionMagic.MotionMagicAcceleration = 1;
+    hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 2;
+
     hoodMotor.getConfigurator().apply(hoodConfig);
     hoodEncoder.getConfigurator().apply(hoodEncoderConfig);
 
@@ -75,7 +77,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   }
 
   public void updateInputs(AdjustableHoodInputs inputs) {
-    BaseStatusSignal.refreshAll(hoodAngle);
+    hoodAngle.refresh();
     inputs.hoodAngle = hoodAngle.getValueAsDouble();
     inputs.curentLookupTable = lookupTableStuff;
     inputs.distanceGiven = distanceGiven;

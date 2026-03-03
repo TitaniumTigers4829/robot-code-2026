@@ -10,9 +10,8 @@ import org.photonvision.PhotonCamera;
 
 public final class VisionConstants {
   public enum Limelight {
-    FRONT(FRONT_LEFT_LIMELIGHT_NUMBER, FRONT_LIMELIGHT_NAME, LL4_FOV_MARGIN_OF_ERROR, true);
-    // SIDE(FRONT_RIGHT_LIMELIGHT_NUMBER, FRONT_RIGHT_LIMELIGHT_NAME, LL4_FOV_MARGIN_OF_ERROR,
-    // true);
+    FRONT(FRONT_LEFT_LIMELIGHT_NUMBER, FRONT_LIMELIGHT_NAME, LL4_FOV_MARGIN_OF_ERROR, true),
+    SIDE(SIDE_LIMELIGHT_NUMBER, SIDE_LIMELIGHT_NAME, LL4_FOV_MARGIN_OF_ERROR, true);
 
     private final int id;
     private final String name;
@@ -45,7 +44,7 @@ public final class VisionConstants {
     public static Limelight fromId(int id) {
       return switch (id) {
         case 0 -> FRONT;
-          // case 1 -> SIDE;
+        case 1 -> SIDE;
         default -> throw new IllegalArgumentException("Invalid Limelight ID: " + id);
       };
     }
@@ -87,8 +86,8 @@ public final class VisionConstants {
 
   public static final String FRONT_LIMELIGHT_NAME = "limelight-front";
   public static final int FRONT_LEFT_LIMELIGHT_NUMBER = 0;
-  // public static final String FRONT_RIGHT_LIMELIGHT_NAME = "limelight-side";
-  // public static final int FRONT_RIGHT_LIMELIGHT_NUMBER = 1;
+  public static final String SIDE_LIMELIGHT_NAME = "limelight-side";
+  public static final int SIDE_LIMELIGHT_NUMBER = 1;
 
   // TODO: these need to be changed, maybe to 10 and 0?
   public static final int DISABLED_THROTTLE = 175;

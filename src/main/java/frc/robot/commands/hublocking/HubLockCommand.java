@@ -14,7 +14,6 @@ import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.subsystems.turret.TurretSubsystem;
-import frc.robot.subsystems.vision.VisionConstants.Limelight;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.Optional;
 
@@ -62,7 +61,8 @@ public class HubLockCommand extends Command {
 
     // Gets the position of the turret
     Translation2d turretPos =
-    swerveDrive.getEstimatedPose()
+        swerveDrive
+            .getEstimatedPose()
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
 

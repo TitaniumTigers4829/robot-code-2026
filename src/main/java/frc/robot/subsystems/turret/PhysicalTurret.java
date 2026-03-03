@@ -7,7 +7,6 @@ package frc.robot.subsystems.turret;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -38,7 +37,6 @@ public class PhysicalTurret implements TurretInterface {
   // Commented out because torqueFOC is in theory easier to tune
   private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
   private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
-  private final MotionMagicConfigs mmConfig = new MotionMagicConfigs();
 
   // private final PositionDutyCycle mmTorqueRequest = new PositionDutyCycle(0.0);
   // private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
@@ -102,10 +100,11 @@ public class PhysicalTurret implements TurretInterface {
 
     turretConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    mmConfig.MotionMagicAcceleration =
+    turretConfig.MotionMagic.MotionMagicAcceleration =
         TurretConstants.MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
-    mmConfig.MotionMagicCruiseVelocity = TurretConstants.MAX_VELOCITY_ROTATIONS_PER_SECOND;
-    mmConfig.MotionMagicJerk = 0;
+    turretConfig.MotionMagic.MotionMagicCruiseVelocity =
+        TurretConstants.MAX_VELOCITY_ROTATIONS_PER_SECOND;
+    turretConfig.MotionMagic.MotionMagicJerk = 0;
 
     turretMotor.getConfigurator().apply(turretConfig);
     turretAngle = turretEncoder.getAbsolutePosition();
@@ -133,14 +132,15 @@ public class PhysicalTurret implements TurretInterface {
   }
 
   public void updateInputs(TurretInputs inputs) {
-    BaseStatusSignal.refreshAll(
-        turretAngle,
-        turretAngularVelocity,
-        turretMotorAppliedVoltage,
-        dutyCycle,
-        statorCurrent,
-        motorTemp,
-        desiredAngle);
+    // BaseStatusSignal.refreshAll(
+    turretAngle.refresh();
+    turretAngularVelocity.refresh();
+    turretMotorAppliedVoltage.refresh();
+    dutyCycle.refresh();
+    statorCurrent.refresh();
+    motorTemp.refresh();
+    desiredAngle.refresh();
+    // );
 
     inputs.turretAngle =
         turretAngle.getValueAsDouble()
