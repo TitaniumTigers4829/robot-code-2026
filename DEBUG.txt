@@ -1,0 +1,101 @@
+GOAL:
+Determine why loop overruns occur during turning.
+
+
+STEP 1 — Confirm It’s Rotation-Specific
+
+Drive straight only.
+
+Rotate in place.
+
+Disable vision threads.
+
+If overruns stop → vision interaction issue.
+
+If not → drivetrain / logging / CAN issue.
+
+STEP 2 — Disable Vision Threads
+
+Comment out:
+
+threadManager.startTask(...)
+
+Test rotation.
+
+If overruns stop:
+
+Thread contention
+
+NetworkTables pressure
+
+synchronized blocking
+
+STEP 3 — Check Gyro Calls
+
+Ensure:
+
+gyroIO.updateInputs() is called only once per loop.
+
+No duplicate CAN refresh calls.
+
+STEP 4 — Remove synchronized Temporarily
+
+Temporarily remove synchronized from:
+
+isTeleporting(...)
+
+If overruns stop → lock contention.
+
+STEP 5 — Reduce NT Traffic
+
+Temporarily comment:
+
+TigerHelpers.setRobotOrientation(...)
+TigerHelpers.setIMUMode(...)
+TigerHelpers.setLimelightThrottle(...)
+
+If overruns stop → NT write pressure.
+
+STEP 6 — Disable Logging
+
+Disable:
+
+AdvantageKit logging
+
+Vision pose logs
+
+Module state logs
+
+If overruns stop → CPU serialization overload.
+
+STEP 7 — Add Loop Timing Print
+
+Inside robotPeriodic():
+
+double now = Timer.getFPGATimestamp();
+System.out.println(now - lastTime);
+lastTime = now;
+
+Watch for spikes > 0.02s.
+
+STEP 8 — Increase Thread Sleep
+
+Increase:
+
+VisionConstants.THREAD_SLEEP_MS
+
+Try 30ms or 40ms.
+
+STEP 9 — Final Diagnosis Tree
+
+If disabling vision fixes it:
+→ Thread or NT pressure.
+
+If removing synchronized fixes it:
+→ Lock contention.
+
+If removing logging fixes it:
+→ CPU saturation.
+
+If nothing fixes it:
+→ Combined system load exceeds Rio capacity.

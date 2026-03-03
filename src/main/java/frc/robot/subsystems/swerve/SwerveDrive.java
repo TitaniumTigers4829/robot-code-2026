@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.HardwareConstants;
-import frc.robot.extras.logging.Tracer;
 import frc.robot.extras.swerve.RepulsorFieldPlanner;
 import frc.robot.extras.swerve.setpointGen.SwerveSetpoint;
 import frc.robot.extras.swerve.setpointGen.SwerveSetpointGenerator;
@@ -296,7 +295,7 @@ public class SwerveDrive extends SubsystemBase {
 
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
-    Tracer.traceFunc("Gyro", () -> gyroIO.updateInputs(gyroInputs));
+    // Tracer.traceFunc("Gyro", () -> gyroIO.updateInputs(gyroInputs));
     gyroDisconnectedAlert.set(!gyroInputs.isConnected);
   }
 
