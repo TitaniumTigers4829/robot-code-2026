@@ -42,7 +42,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodConfig.Slot0.kS = AdjustableHoodConstants.HOOD_S;
     hoodConfig.Slot0.kV = AdjustableHoodConstants.HOOD_V;
     hoodConfig.Slot0.kA = AdjustableHoodConstants.HOOD_A;
-    hoodConfig.Slot0.kG = AdjustableHoodConstants.HOOD_G;
+    // hoodConfig.Slot0.kG = AdjustableHoodConstants.HOOD_G;
 
     hoodConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
@@ -54,7 +54,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    hoodConfig.CurrentLimits.StatorCurrentLimit = 80;
+    hoodConfig.CurrentLimits.StatorCurrentLimit = 40;
     hoodConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;

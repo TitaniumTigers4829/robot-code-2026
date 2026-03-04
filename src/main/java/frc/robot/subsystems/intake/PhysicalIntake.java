@@ -4,7 +4,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -22,7 +22,7 @@ public class PhysicalIntake implements IntakeInterface {
       new TalonFX(IntakeConstants.PIVOT_MOTOR_1_ID, HardwareConstants.RIO_CAN_BUS_STRING);
   private TalonFX intakePivotMotor2 = new TalonFX(IntakeConstants.PIVOT_MOTOR_2_ID);
 
-  private MotionMagicVoltage request = new MotionMagicVoltage(0.0);
+  private PositionDutyCycle request = new PositionDutyCycle(0.0);
   private MotorAlignmentValue pivotMotorAlignment = MotorAlignmentValue.Opposed;
   private TalonFXConfiguration intakeConfig;
   private TalonFXConfiguration pivotConfig;
@@ -62,16 +62,13 @@ public class PhysicalIntake implements IntakeInterface {
 
     pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = IntakeConstants.PIVOT_DOWN_POSITION;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = IntakeConstants.MIN_ANGLE;
-    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
     intakeMotorOuter.getConfigurator().apply(intakeConfig);
     intakeMotorInside.getConfigurator().apply(intakeConfig);
     intakePivotMotor1.getConfigurator().apply(pivotConfig);
     intakePivotMotor2.getConfigurator().apply(pivotConfig);
-
-    pivotConfig.MotionMagic.MotionMagicAcceleration = 4;
-    pivotConfig.MotionMagic.MotionMagicCruiseVelocity = 10;
 
     intakeAngle = intakePivotMotor1.getPosition();
     intakePivotSpeed = intakePivotMotor1.getVelocity();
@@ -85,9 +82,8 @@ public class PhysicalIntake implements IntakeInterface {
   }
 
   public void updateInputs(IntakeInputs inputs) {
-    // BaseStatusSignal.refreshAll(intakeAngle, intakePivotSpeed);
-    intakeAngle.refresh();
-    intakePivotSpeed.refresh();
+    BaseStatusSignal.refreshAll(intakeAngle, intakePivotSpeed);
+
     inputs.intakeAngle = intakeAngle.getValueAsDouble();
     inputs.intakePivotSpeed = intakePivotSpeed.getValueAsDouble();
     inputs.isIntakeDeployed = isIntakeDeployed();
@@ -126,23 +122,23 @@ public class PhysicalIntake implements IntakeInterface {
         new Follower(intakePivotMotor2.getDeviceID(), pivotMotorAlignment));
   }
 
-  // public double getIntakeAngle() {
-  //   intakeAngle.refresh();
-  //   return intakeAngle.getValueAsDouble();
-  // }
+  public double getIntakeAngle() {
+    intakeAngle.refresh();
+    return intakeAngle.getValueAsDouble();
+  }
 
-  // public double getIntakeSpeed() {
-  //   intakePivotSpeed.refresh();
-  //   return intakePivotSpeed.getValueAsDouble();
-  // }
+  public double getIntakeSpeed() {
+    intakePivotSpeed.refresh();
+    return intakePivotSpeed.getValueAsDouble();
+  }
 
-  // public boolean isIntakeDeployed() {
-  //   if (intakeAngle.getValueAsDouble()
-  //           >= (IntakeConstants.PIVOT_DOWN_POSITION - IntakeConstants.ACCEPTABLE_RANGE)
-  //       && intakeAngle.getValueAsDouble() <= IntakeConstants.PIVOT_DOWN_POSITION) {
-  //     return true;
-  //   } else {
-  //     return false; // this code deport Andrita
-  //   }
-  // }
+  public boolean isIntakeDeployed() {
+    if (intakeAngle.getValueAsDouble()
+            >= (IntakeConstants.PIVOT_DOWN_POSITION - IntakeConstants.ACCEPTABLE_RANGE)
+        && intakeAngle.getValueAsDouble() <= IntakeConstants.PIVOT_DOWN_POSITION) {
+      return true;
+    } else {
+      return false; // this code deport Andrita
+    }
+  }
 }

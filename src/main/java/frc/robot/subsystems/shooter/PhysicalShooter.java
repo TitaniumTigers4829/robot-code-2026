@@ -63,7 +63,7 @@ public class PhysicalShooter implements ShooterInterface {
 
   public void setPercentOutput(double distance) {
     spindexerMotor.setControl(rpsRequest.withVelocity(50));
-    kickerMotor.setControl(rpsRequest.withVelocity(50));
+    kickerMotor.set(0.5);
     leaderFlywheelMotor.setControl(
         rpsRequest.withVelocity(flywheelRPMLookupValues.getLookupValue(distance)));
     followerFlywheelMotor.setControl(

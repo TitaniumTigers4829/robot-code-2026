@@ -73,7 +73,7 @@ public class PhysicalModule implements ModuleInterface {
     driveConfig.CurrentLimits.SupplyCurrentLimit = ModuleConstants.DRIVE_SUPPLY_LIMIT;
     driveConfig.CurrentLimits.StatorCurrentLimit = ModuleConstants.DRIVE_STATOR_LIMIT;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    driveConfig.MotorOutput.ControlTimesyncFreqHz = 120; // 250
+    driveConfig.MotorOutput.ControlTimesyncFreqHz = 250;
 
     driveMotor.getConfigurator().apply(driveConfig, HardwareConstants.LOOP_TIME_SECONDS);
 
@@ -92,7 +92,7 @@ public class PhysicalModule implements ModuleInterface {
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
     turnConfig.CurrentLimits.SupplyCurrentLimit = 15;
     turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    turnConfig.MotorOutput.ControlTimesyncFreqHz = 120; // 250
+    turnConfig.MotorOutput.ControlTimesyncFreqHz = 250;
     turnMotor.getConfigurator().apply(turnConfig, HardwareConstants.LOOP_TIME_SECONDS);
 
     drivePosition = driveMotor.getPosition();

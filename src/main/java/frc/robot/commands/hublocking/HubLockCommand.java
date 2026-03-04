@@ -8,16 +8,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.commands.drive.DriveCommandBase;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.subsystems.turret.TurretSubsystem;
+import frc.robot.subsystems.vision.VisionConstants.Limelight;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.Optional;
 
-public class HubLockCommand extends Command {
+public class HubLockCommand extends DriveCommandBase {
 
   SwerveDrive swerveDrive;
   VisionSubsystem visionSubsystem;
@@ -36,6 +37,7 @@ public class HubLockCommand extends Command {
       VisionSubsystem visionSubsystem,
       AdjustableHoodSubsystem hoodSubsystem,
       TurretSubsystem turretSubsystem) {
+    super(swerveDrive, visionSubsystem);
     this.swerveDrive = swerveDrive;
     this.visionSubsystem = visionSubsystem;
     this.turretSubsystem = turretSubsystem;
@@ -65,7 +67,7 @@ public class HubLockCommand extends Command {
             .getEstimatedPose()
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
-
+    super.execute();
     /**
      * Our turret angling math works as follows. Assuming the 0 rotations on the turret is facing
      * the current heading of the robot and the turret rotates positively counterclockwise, we can

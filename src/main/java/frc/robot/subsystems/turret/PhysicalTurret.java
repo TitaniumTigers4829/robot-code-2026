@@ -95,8 +95,9 @@ public class PhysicalTurret implements TurretInterface {
 
     turretConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TurretConstants.MAX_ANGLE;
     turretConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TurretConstants.MIN_ANGLE;
-    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    //(๑•̀ᗝ•́)૭
 
     turretConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
