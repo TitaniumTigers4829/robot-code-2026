@@ -20,6 +20,7 @@ import frc.robot.commands.shooter.ManualHoodDown;
 import frc.robot.commands.shooter.ManualHoodUp;
 import frc.robot.commands.shooter.ManualShootCommand;
 import frc.robot.commands.shooter.PassFuelCommand;
+import frc.robot.commands.turret.ManualTurret;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
 import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
@@ -232,11 +233,16 @@ public class Robot extends LoggedRobot {
     driverController
         .b()
         .onTrue(new InstantCommand(() -> swerveDrive.resetEstimatedPose(new Pose2d())));
+
+    // driverController.a().onTrue(new InstantCommand())
   }
 
   /** Configures the operator controller buttons and axes to control the robot */
   private void configureOperatorController() {
     // OPERATOR COMMANDS
+    operatorController
+        .a()
+        .whileTrue(new ManualTurret(turretSubsystem, () -> operatorController.getLeftX()));
 
     operatorController.x().whileTrue(new IntakeCommand(intakeSubsystem));
 

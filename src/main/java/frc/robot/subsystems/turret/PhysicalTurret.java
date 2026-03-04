@@ -22,196 +22,191 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants.HardwareConstants;
+import org.littletonrobotics.junction.Logger;
 
-/** Add your docs here. */
 public class PhysicalTurret implements TurretInterface {
+
+  /* -------------------------------------------------------------------------- */
+  /*                                  HARDWARE                                  */
+  /* -------------------------------------------------------------------------- */
 
   private final TalonFX turretMotor =
       new TalonFX(TurretConstants.TURRET_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
+
   private final CANcoder turretEncoder = new CANcoder(TurretConstants.TURRET_CANCODER_ID);
-  //   private final DigitalInput minLimitSwitch = new
-  // DigitalInput(TurretConstants.MIN_LIMIT_SWITCH_PORT);
-  //   private final DigitalInput maxLimitSwitch = new
-  // DigitalInput(TurretConstants.MAX_LIMIT_SWITCH_PORT);
 
-  // Commented out because torqueFOC is in theory easier to tune
-  private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
-  private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
+  /* -------------------------------------------------------------------------- */
+  /*                                CONFIG OBJECTS                              */
+  /* -------------------------------------------------------------------------- */
 
-  // private final PositionDutyCycle mmTorqueRequest = new PositionDutyCycle(0.0);
-  // private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
+  private final TalonFXConfiguration motorConfig = new TalonFXConfiguration();
 
-  private final StatusSignal<Voltage> turretMotorAppliedVoltage;
-  private final StatusSignal<Double> desiredAngle;
-  private final StatusSignal<AngularVelocity> turretAngularVelocity;
-  private final StatusSignal<Angle> turretAngle;
-  private final StatusSignal<Double> dutyCycle;
-  private final StatusSignal<Current> statorCurrent;
+  private final CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+
+  private final MotionMagicVoltage mmRequest = new MotionMagicVoltage(0.0);
+
+  private final DutyCycleOut dutyRequest = new DutyCycleOut(0.0);
+
+  /* -------------------------------------------------------------------------- */
+  /*                                GEAR RATIOS                                 */
+  /* -------------------------------------------------------------------------- */
+
+  private static final double STAGE_ONE_RATIO = 16.66666;
+  private static final double STAGE_TWO_RATIO = 21.6;
+
+  private static final double TOTAL_RATIO = STAGE_ONE_RATIO * STAGE_TWO_RATIO;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                STATUS SIGNALS                              */
+  /* -------------------------------------------------------------------------- */
+
+  private final StatusSignal<Angle> motorPosition;
+  private final StatusSignal<AngularVelocity> motorVelocity;
+  private final StatusSignal<Voltage> motorVoltage;
+  private final StatusSignal<Current> motorCurrent;
   private final StatusSignal<Temperature> motorTemp;
-  private final double angleError;
+  private final StatusSignal<Angle> cancoderPosition;
 
-  private final TalonFXConfiguration turretConfig = new TalonFXConfiguration();
-
-  private final CANcoderConfiguration turretEncoderConfig = new CANcoderConfiguration();
+  /* -------------------------------------------------------------------------- */
+  /*                                 CONSTRUCTOR                                */
+  /* -------------------------------------------------------------------------- */
 
   public PhysicalTurret() {
 
-    turretConfig.Feedback.SensorToMechanismRatio = TurretConstants.GEAR_RATIO;
+    configureEncoder();
+    configureMotor();
 
-    turretEncoderConfig.MagnetSensor.MagnetOffset = TurretConstants.ANGLE_ZERO;
-    turretEncoderConfig.MagnetSensor.SensorDirection = TurretConstants.ENCODER_REVERSED;
-
-    turretEncoder.getConfigurator().apply(turretEncoderConfig);
-
-    turretConfig.Slot0.kP = TurretConstants.TURRET_P;
-    turretConfig.Slot0.kI = TurretConstants.TURRET_I;
-    turretConfig.Slot0.kD = TurretConstants.TURRET_D;
-    turretConfig.Slot0.kS = TurretConstants.TURRET_S;
-    turretConfig.Slot0.kV = TurretConstants.TURRET_V;
-    turretConfig.Slot0.kA = TurretConstants.TURRET_A;
-
-    turretConfig.MotionMagic.MotionMagicAcceleration =
-        TurretConstants.MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
-    turretConfig.MotionMagic.MotionMagicCruiseVelocity =
-        TurretConstants.MAX_VELOCITY_ROTATIONS_PER_SECOND;
-
-    turretConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-    // Set current limits
-    turretConfig.CurrentLimits.StatorCurrentLimit = TurretConstants.STATOR_CURRENT_LIMIT;
-    turretConfig.CurrentLimits.SupplyCurrentLimit = TurretConstants.SUPPLY_CURRENT_LIMIT;
-    turretConfig.CurrentLimits.StatorCurrentLimitEnable =
-        TurretConstants.STATOR_CURRENT_LIMIT_ENABLE;
-    turretConfig.CurrentLimits.SupplyCurrentLimitEnable =
-        TurretConstants.SUPPLY_CURRENT_LIMIT_ENABLE;
-
-    turretConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    turretConfig.MotorOutput.DutyCycleNeutralDeadband = TurretConstants.TURRET_DEADBAND;
-
-    turretConfig.ClosedLoopGeneral.ContinuousWrap = true;
-
-    turretConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    turretConfig.Feedback.FeedbackRemoteSensorID = turretEncoder.getDeviceID();
-
-    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TurretConstants.MAX_ANGLE;
-    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TurretConstants.MIN_ANGLE;
-    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    //(๑•̀ᗝ•́)૭
-
-    turretConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
-    turretConfig.MotionMagic.MotionMagicAcceleration =
-        TurretConstants.MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
-    turretConfig.MotionMagic.MotionMagicCruiseVelocity =
-        TurretConstants.MAX_VELOCITY_ROTATIONS_PER_SECOND;
-    turretConfig.MotionMagic.MotionMagicJerk = 0;
-
-    turretMotor.getConfigurator().apply(turretConfig);
-    turretAngle = turretEncoder.getAbsolutePosition();
-    turretMotorAppliedVoltage = turretMotor.getMotorVoltage();
-    turretAngularVelocity = turretMotor.getVelocity();
-    dutyCycle = turretMotor.getDutyCycle();
-    statorCurrent = turretMotor.getStatorCurrent();
+    motorPosition = turretMotor.getPosition();
+    motorVelocity = turretMotor.getVelocity();
+    motorVoltage = turretMotor.getMotorVoltage();
+    motorCurrent = turretMotor.getStatorCurrent();
     motorTemp = turretMotor.getDeviceTemp();
-    desiredAngle = turretMotor.getClosedLoopReference();
-    angleError =
-        turretMotor.getClosedLoopReference().getValueAsDouble()
-            - turretMotor.getPosition().getValueAsDouble();
+    cancoderPosition = turretEncoder.getAbsolutePosition();
 
-    turretEncoder.setPosition(0.0);
+    seedFalconFromAbsolute();
 
-    // Higher frequency for turret angle and its change over time (angular velocity) because
-    // its more important that the other signals
-    turretAngle.setUpdateFrequency(250.0);
-    turretAngularVelocity.setUpdateFrequency(250.0);
-    desiredAngle.setUpdateFrequency(250.0);
+    motorPosition.setUpdateFrequency(250);
+    motorVelocity.setUpdateFrequency(250);
 
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, turretMotorAppliedVoltage, dutyCycle, statorCurrent, motorTemp);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorCurrent, motorTemp);
+
     ParentDevice.optimizeBusUtilizationForAll(turretMotor, turretEncoder);
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                               CONFIGURATION                                */
+  /* -------------------------------------------------------------------------- */
+
+  private void configureEncoder() {
+    encoderConfig.MagnetSensor.MagnetOffset = TurretConstants.ANGLE_ZERO;
+
+    encoderConfig.MagnetSensor.SensorDirection = TurretConstants.ENCODER_REVERSED;
+
+    turretEncoder.getConfigurator().apply(encoderConfig);
+  }
+
+  private void configureMotor() {
+
+    motorConfig.Feedback.SensorToMechanismRatio = TOTAL_RATIO;
+    motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+
+    motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    motorConfig.ClosedLoopGeneral.ContinuousWrap = true;
+
+    motorConfig.Slot0.kP = TurretConstants.TURRET_P;
+    motorConfig.Slot0.kI = TurretConstants.TURRET_I;
+    motorConfig.Slot0.kD = TurretConstants.TURRET_D;
+    motorConfig.Slot0.kS = TurretConstants.TURRET_S;
+    motorConfig.Slot0.kV = TurretConstants.TURRET_V;
+    motorConfig.Slot0.kA = TurretConstants.TURRET_A;
+
+    motorConfig.MotionMagic.MotionMagicAcceleration =
+        TurretConstants.MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
+
+    motorConfig.MotionMagic.MotionMagicCruiseVelocity =
+        TurretConstants.MAX_VELOCITY_ROTATIONS_PER_SECOND;
+
+    turretMotor.getConfigurator().apply(motorConfig);
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                         STARTUP ABSOLUTE ALIGNMENT                         */
+  /* -------------------------------------------------------------------------- */
+
+  private void seedFalconFromAbsolute() {
+
+    cancoderPosition.refresh();
+    motorPosition.refresh();
+
+    double absoluteTurretRot = cancoderPosition.getValueAsDouble(); // 0–1
+
+    double motorRot = motorPosition.getValueAsDouble();
+
+    double motorTurretRot = motorRot / TOTAL_RATIO;
+
+    double nearestAlignedTurretRot = Math.floor(motorTurretRot) + absoluteTurretRot;
+
+    turretMotor.setPosition(nearestAlignedTurretRot * TOTAL_RATIO);
+    Logger.recordOutput("turret/positionCurrent", nearestAlignedTurretRot * TOTAL_RATIO);
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 IO UPDATE                                  */
+  /* -------------------------------------------------------------------------- */
+
   public void updateInputs(TurretInputs inputs) {
-    // BaseStatusSignal.refreshAll(
-    turretAngle.refresh();
-    turretAngularVelocity.refresh();
-    turretMotorAppliedVoltage.refresh();
-    dutyCycle.refresh();
-    statorCurrent.refresh();
-    motorTemp.refresh();
-    desiredAngle.refresh();
-    // );
 
-    inputs.turretAngle =
-        turretAngle.getValueAsDouble()
-            + BaseStatusSignal.getLatencyCompensatedValueAsDouble(
-                turretAngle, turretAngularVelocity);
-    inputs.turretAngularVelocity = turretAngularVelocity.getValueAsDouble();
-    inputs.turretMotorAppliedVoltage = turretMotorAppliedVoltage.getValueAsDouble();
-    inputs.turretDutyCycle = dutyCycle.getValueAsDouble();
-    inputs.turretStatorCurrent = statorCurrent.getValueAsDouble();
+    BaseStatusSignal.refreshAll(
+        motorPosition, motorVelocity, motorVoltage, motorCurrent, motorTemp);
+
+    inputs.turretAngle = motorPosition.getValueAsDouble() / TOTAL_RATIO;
+
+    inputs.turretAngularVelocity = motorVelocity.getValueAsDouble() / TOTAL_RATIO;
+
+    inputs.turretMotorAppliedVoltage = motorVoltage.getValueAsDouble();
+
+    inputs.turretStatorCurrent = motorCurrent.getValueAsDouble();
+
     inputs.turretMotorTemp = motorTemp.getValueAsDouble();
-    inputs.turretDesiredAngle = desiredAngle.getValueAsDouble();
   }
 
-  //     public void stopWhenMinLimitReached() {
-  //     if (minLimitSwitch.get()) {
-  //         turretMotor.set(0);
-  //     }
-  //   }
+  /* -------------------------------------------------------------------------- */
+  /*                                CONTROL API                                 */
+  /* -------------------------------------------------------------------------- */
 
-  //   public void stopWhenMaxLimitReached() {
-  //     if (maxLimitSwitch.get()) {
-  //         turretMotor.set(0);
-  //     }
-  //   }
-
-  public double getTurretAngle(double angle) {
-    turretAngle.refresh();
-    return turretAngle.getValueAsDouble();
-  }
-
-  // Assumes facing the front of the robot is 0 rotations
-  // Normalizes angle
-  public void setTurretAngle(double desiredAngle) {
-    if (Math.abs(desiredAngle - getTurretAngle()) < 0.5) {
-      turretMotor.setControl(mmPositionRequest.withPosition(desiredAngle));
-    } else {
-      turretMotor.setControl(mmPositionRequest.withPosition(Math.abs(Math.abs(desiredAngle) - 1)));
-    }
-  }
-
-  // For manual in case turret angling fucks up
-  public void setSpeed(double speed) {
-    turretMotor.set(speed);
+  public void setTurretAngle(double turretRotations) {
+    turretMotor.setControl(mmRequest.withPosition(turretRotations));
   }
 
   public void openLoop(double output) {
-    turretMotor.setControl(dutyCyleOut.withOutput(output));
+    turretMotor.setControl(dutyRequest.withOutput(output));
   }
 
   public void setVolts(double volts) {
     turretMotor.setVoltage(volts);
   }
 
-  public double getVolts() {
-    return turretMotorAppliedVoltage.getValueAsDouble();
+  public double getTurretAngle() {
+    motorPosition.refresh();
+    return motorPosition.getValueAsDouble() / TOTAL_RATIO;
   }
 
   @Override
   public void setPID(double kP, double kI, double kD) {
-    turretConfig.Slot0.kP = kP;
-    turretConfig.Slot0.kI = kI;
-    turretConfig.Slot0.kD = kD;
-    turretMotor.getConfigurator().apply(turretConfig);
+    motorConfig.Slot0.kP = kP;
+    motorConfig.Slot0.kI = kI;
+    motorConfig.Slot0.kD = kD;
+    turretMotor.getConfigurator().apply(motorConfig);
   }
 
   @Override
   public void setFF(double kS, double kV, double kA) {
-    turretConfig.Slot0.kS = kS;
-    turretConfig.Slot0.kV = kV;
-    turretConfig.Slot0.kA = kA;
-    turretMotor.getConfigurator().apply(turretConfig);
+    motorConfig.Slot0.kS = kS;
+    motorConfig.Slot0.kV = kV;
+    motorConfig.Slot0.kA = kA;
+    turretMotor.getConfigurator().apply(motorConfig);
   }
 }
