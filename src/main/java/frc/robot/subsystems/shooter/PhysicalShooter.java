@@ -61,6 +61,7 @@ public class PhysicalShooter implements ShooterInterface {
         new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
   }
 
+  // test
   public void setPercentOutput(double distance) {
     spindexerMotor.setControl(rpsRequest.withVelocity(50));
     kickerMotor.set(0.5);
