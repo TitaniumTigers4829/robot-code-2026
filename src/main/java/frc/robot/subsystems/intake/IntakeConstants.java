@@ -24,7 +24,7 @@ public class IntakeConstants {
 
   public static final double STATOR_CURRENT_LIMIT = 30;
   public static final double SUPPLY_CURRENT_LIMIT = 0;
-  public static final double PIVOT_DOWN_POSITION = 0.4;
+  public static final double PIVOT_DOWN_POSITION = 0.35;
   public static final double MAX_ANGLE = 0;
   public static final double ACCEPTABLE_RANGE = 0.01;
   public static final double MIN_ANGLE = 0.4; // I HATE THIS SO MUCH
