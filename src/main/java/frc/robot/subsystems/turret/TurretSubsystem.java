@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.turret;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
@@ -37,6 +38,14 @@ public class TurretSubsystem extends SubsystemBase {
   /** Creates a new turretSubsystem. */
   public TurretSubsystem(TurretInterface turretInterface) {
     this.turretInterface = turretInterface;
+  }
+
+  public void stopWhenMinLimitReached() {
+    turretInterface.stopWhenMinLimitReached();
+  }
+
+  public void stopWhenMaxLimitReached() {
+    turretInterface.stopWhenMaxLimitReached();
   }
 
   public double getTurretAngle() {
@@ -94,7 +103,9 @@ public class TurretSubsystem extends SubsystemBase {
       turretInterface.setFF(turretS.get(), turretV.get(), turretA.get());
     }
 
-    // SmartDashboard.putNumber("turret angle", inputs.turretAngle);
-    // SmartDashboard.putNumber("error")
+    SmartDashboard.putNumber("turret angle", inputs.turretAngle);
+    Logger.recordOutput("Red Hub", Constants.FieldConstants.RED_HUB_CENTER);
+    Logger.recordOutput("Blue Hub", Constants.FieldConstants.BLUE_HUB_CENTER);
+    SmartDashboard.putNumber("error", Math.abs(inputs.turretDesiredAngle - inputs.turretAngle));
   }
 }

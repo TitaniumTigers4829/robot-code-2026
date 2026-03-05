@@ -109,10 +109,10 @@ public final class Constants {
 
     public static final double HUB_WALL_FROM_ALLIANCE_WALL_METERS = Units.inchesToMeters(158.6);
 
-    public static final Translation2d RED_HUB_CENTER =
+    public static final Translation2d BLUE_HUB_CENTER =
         new Translation2d(
             HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2), FIELD_WIDTH_METERS / 2);
-    public static final Translation2d BLUE_HUB_CENTER =
+    public static final Translation2d RED_HUB_CENTER =
         new Translation2d(
             FIELD_LENGTH_METERS - (HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2)),
             FIELD_WIDTH_METERS / 2);
@@ -155,8 +155,15 @@ public final class Constants {
   public static final class AutoConstants {
     // Different Pre-defined Auto Routines
     public static final String Y_ONE_METER_AUTO = "Y-One-Meter-Test";
+    public static final String LEFT_NEUTRAL_AUTO = "left neutral auto";
+    public static final String RIGHT_NEUTRAL_AUTO = "right neutral auto";
+    public static final String MIDDLE_DEPOT_AUTO = "middle depot auto";
 
     public static final String Y_ONE_METER_TRAJECTORY = "MiscTrajectories/one_point_one_meter";
+    public static final String LEFT_NEUTRAL_TRAJECTORY = "MiscTrajectories/blue_neutral_left_auto";
+    public static final String RIGHT_NEUTRAL_TRAJECTORY =
+        "MiscTrajectories/blue_neutral_right_auto";
+    public static final String MIDDLE_DEPOT_TRAJECTORY = "MiscTrajectories/middle_depot_auto";
   }
 
   public static final class JoystickConstants {

@@ -90,7 +90,7 @@ public class PhysicalModule implements ModuleInterface {
     turnConfig.MotionMagic.MotionMagicAcceleration =
         ModuleConstants.MAX_ANGULAR_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-    turnConfig.CurrentLimits.SupplyCurrentLimit = 20;
+    turnConfig.CurrentLimits.SupplyCurrentLimit = 15;
     turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     turnConfig.MotorOutput.ControlTimesyncFreqHz = 250;
     turnMotor.getConfigurator().apply(turnConfig, HardwareConstants.LOOP_TIME_SECONDS);
@@ -138,17 +138,18 @@ public class PhysicalModule implements ModuleInterface {
 
   @Override
   public void updateInputs(ModuleInputs inputs) {
-    BaseStatusSignal.refreshAll(
-        drivePosition,
-        turnEncoderAbsolutePosition,
-        driveVelocity,
-        driveMotorTorque,
-        driveMotorReference,
-        turnEncoderVelocity,
-        turnMotorAppliedVolts,
-        turnMotorCurrent,
-        turnMotorReference,
-        turnMotorTorqueCurrent);
+    // BaseStatusSignal.refreshAll(
+    drivePosition.refresh();
+    turnEncoderAbsolutePosition.refresh();
+    driveVelocity.refresh();
+    driveMotorTorque.refresh();
+    driveMotorReference.refresh();
+    turnEncoderVelocity.refresh();
+    turnMotorAppliedVolts.refresh();
+    turnMotorCurrent.refresh();
+    turnMotorReference.refresh();
+    turnMotorTorqueCurrent.refresh();
+    // );
 
     inputs.isDriveConnected =
         BaseStatusSignal.isAllGood(

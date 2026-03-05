@@ -5,7 +5,6 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -25,7 +24,8 @@ public class IntakePivotUpCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.setIntakeAngle(IntakeConstants.MIN_ANGLE);
+    // intakeSubsystem.setIntakeAngle(IntakeConstants.MIN_ANGLE);
+    intakeSubsystem.setPivotSpeedUp();
   }
 
   // Called once the command ends or is interrupted.

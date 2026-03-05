@@ -63,6 +63,10 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterInterface.openLoop(output);
   }
 
+  public void stopShoot() {
+    shooterInterface.stopShoot();
+  }
+
   public void setPercentOutput(double distance) {
     shooterInterface.setPercentOutput(distance);
   }
