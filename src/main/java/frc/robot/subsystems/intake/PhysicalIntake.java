@@ -14,7 +14,6 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import java.util.function.BooleanSupplier;
 
 public class PhysicalIntake implements IntakeInterface {
   private TalonFX intakeMotor = new TalonFX(IntakeConstants.INTAKE_MOTOR_ID);
@@ -73,16 +72,9 @@ public class PhysicalIntake implements IntakeInterface {
     intakeAngle = intakeCanCoder1.getAbsolutePosition();
     intakeSpeed = intakeCanCoder1.getVelocity();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(
-      0.0, 
-      intakeAngle, 
-      intakeSpeed);
+    BaseStatusSignal.setUpdateFrequencyForAll(0.0, intakeAngle, intakeSpeed);
     ParentDevice.optimizeBusUtilizationForAll(
-        intakeMotor, 
-        intakePivotMotor1, 
-        intakePivotMotor2, 
-        intakeCanCoder1, 
-        intakeCanCoder2);
+        intakeMotor, intakePivotMotor1, intakePivotMotor2, intakeCanCoder1, intakeCanCoder2);
   }
 
   public void updateInputs(IntakeInputs inputs) {

@@ -68,6 +68,10 @@ public class TurretSubsystem extends SubsystemBase {
     turretInterface.setSpeed(speed);
   }
 
+  public void rezeroTurret() {
+    turretInterface.rezeroTurret();
+  }
+
   public boolean iAtSetpointAngle(double targetAngle) {
     return Math.abs(targetAngle - inputs.turretAngle) < TurretConstants.TURRET_ERROR_TOLERANCE;
   }

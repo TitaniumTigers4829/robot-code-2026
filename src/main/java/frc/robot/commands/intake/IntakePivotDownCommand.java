@@ -30,7 +30,7 @@ public class IntakePivotDownCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //intakeSubsystem.setIntakeAngle(0);
+    // intakeSubsystem.setIntakeAngle(0);
   }
 
   // Returns true when the command should end.

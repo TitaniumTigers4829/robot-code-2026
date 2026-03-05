@@ -23,10 +23,8 @@ public class PhysicalShooter implements ShooterInterface {
       new TalonFX(ShooterConstants.LEADER_FLYWHEEL_MOTOR_ID);
   private final TalonFX followerFlywheelMotor =
       new TalonFX(ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID);
-  private final TalonFX kickerMotor = 
-      new TalonFX(ShooterConstants.KICKER_MOTOR_ID);
-  private final TalonFX spindexerMotor = 
-      new TalonFX(ShooterConstants.SPINDEXER_MOTOR_ID);
+  private final TalonFX kickerMotor = new TalonFX(ShooterConstants.KICKER_MOTOR_ID);
+  private final TalonFX spindexerMotor = new TalonFX(ShooterConstants.SPINDEXER_MOTOR_ID);
   MotorAlignmentValue motorAlignment = MotorAlignmentValue.Opposed;
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;

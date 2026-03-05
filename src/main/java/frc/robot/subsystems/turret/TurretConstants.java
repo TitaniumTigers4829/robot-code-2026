@@ -8,54 +8,97 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
-/** Add your docs here. */
 public class TurretConstants {
 
+  /* -------------------------------------------------------------------------- */
+  /*                               HARDWARE IDs                                 */
+  /* -------------------------------------------------------------------------- */
+
   public static final int TURRET_MOTOR_ID = 22;
-  public static final int TURRET_CANCODER_ID = 0 - 9;
-  public static final double GEAR_RATIO = 40;
+  public static final int TURRET_CANCODER_ID = 0;
 
-  // Distance from center of robot to center of turret in x and y directions, turret is at front
-  // left
-  public static final double X_OFFSET = Units.inchesToMeters(-7.75);
+  /* -------------------------------------------------------------------------- */
+  /*                                GEAR RATIOS                                 */
+  /* -------------------------------------------------------------------------- */
+
+  // Total motor-to-turret gear ratio: 44.444:1
+  public static final double TOTAL_GEAR_RATIO = 44.444;
+
+  // The CANcoder sits on an intermediate shaft between the motor and turret output.
+  //   CANcoder shaft → Turret output: 16.666:1
+  //   Motor → CANcoder shaft: 44.444 / 16.666 ≈ 2.667:1
+  // Used by PhysicalTurret for CRT seeding on boot.
+  public static final double CANCODER_TO_TURRET = 16.666;
+
+  /* -------------------------------------------------------------------------- */
+  /*                            TURRET GEOMETRY                                 */
+  /* -------------------------------------------------------------------------- */
+
+  // Distance from center of robot to center of turret (turret is at front left)
+  public static final double X_OFFSET = Units.inchesToMeters(7.75);
   public static final double Y_OFFSET = Units.inchesToMeters(4.68);
-  //   public static final double Y_DISTANCE_FROM_FRONT = Units.inchesToMeters(7.25);
 
-  // Creates a translation for the turret offset from the center of the robot
   public static final Translation2d TURRET_OFFSET =
       new Translation2d(TurretConstants.X_OFFSET, TurretConstants.Y_OFFSET);
+
+  /* -------------------------------------------------------------------------- */
+  /*                            MOTION MAGIC LIMITS                             */
+  /* -------------------------------------------------------------------------- */
 
   public static double MAX_VELOCITY_ROTATIONS_PER_SECOND = 10;
   public static double MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED = 4;
 
-  // For manual control
-  public static double CCW_MANUAL_SPEED = 0.5;
-  public static double CW_MANUAL_SPEED = -0.5;
+  /* -------------------------------------------------------------------------- */
+  /*                             MANUAL CONTROL                                 */
+  /* -------------------------------------------------------------------------- */
 
-  // TODO: Tune
-  public static double TURRET_P = 1;
+  public static double CCW_MANUAL_SPEED = 0.1;
+  public static double CW_MANUAL_SPEED = -0.1;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   PID / FF                                 */
+  /* -------------------------------------------------------------------------- */
+
+  // TODO: Tune these on actual hardware
+  public static double TURRET_P = 0.4829;
   public static double TURRET_I = 0;
   public static double TURRET_D = 0;
   public static double TURRET_S = 0;
-  public static double TURRET_V = 0;
+  public static double TURRET_V = 0.5;
   public static double TURRET_A = 0;
 
-  // in rotations
+  /* -------------------------------------------------------------------------- */
+  /*                              ANGLE TOLERANCES                              */
+  /* -------------------------------------------------------------------------- */
+
+  // All values in turret rotations (not motor rotations)
   public static double TURRET_ERROR_TOLERANCE = 0.01;
   public static double TURRET_DEADBAND = 0.001;
-  public static double MAX_ANGLE = 1;
-  public static double MIN_ANGLE = 0;
+
+  // Soft limits: ±0.5 rotations = ±180°
+  // NOTE: enforce these in TurretSubsystem.setTurretAngle(), NOT via Phoenix
+  // soft limits — ContinuousWrap and Phoenix soft limits conflict with each other.
+  public static double MAX_ANGLE = 0.5;
+  public static double MIN_ANGLE = -0.5;
+
+  /* -------------------------------------------------------------------------- */
+  /*                               CANCODER CONFIG                              */
+  /* -------------------------------------------------------------------------- */
 
   public static final SensorDirectionValue ENCODER_REVERSED =
       SensorDirectionValue.Clockwise_Positive;
 
-  // TODO: Find zero angle from phoenix tuner, should by facing front of robot
-  public static final double ANGLE_ZERO = 0;
+  // Magnet offset found via Phoenix Tuner X with turret physically at forward (0°).
+  // To re-zero: point turret forward, read raw CANcoder absolute position in
+  // Tuner X, and update this value.
+  public static final double ANGLE_ZERO = 0.0; // 0.355224609375;
 
-  // TODO: Find limits, currently both are disabled
+  /* -------------------------------------------------------------------------- */
+  /*                            CURRENT LIMITS                                  */
+  /* -------------------------------------------------------------------------- */
+
   public static final double STATOR_CURRENT_LIMIT = 100;
   public static final double SUPPLY_CURRENT_LIMIT = 100;
-
   public static final boolean STATOR_CURRENT_LIMIT_ENABLE = false;
   public static final boolean SUPPLY_CURRENT_LIMIT_ENABLE = false;
 }

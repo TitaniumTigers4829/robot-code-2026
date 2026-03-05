@@ -211,14 +211,11 @@ public class Robot extends LoggedRobot {
       driverController.leftBumper().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
     }
 
-    driverController.leftTrigger()
-      .toggleOnTrue(
-        new HubLockCommand(
-          swerveDrive,
-          turretSubsystem,
-          hoodSubsystem,
-          shooterSubsystem)
-          .repeatedly());
+    driverController
+        .leftTrigger()
+        .toggleOnTrue(
+            new HubLockCommand(swerveDrive, turretSubsystem, hoodSubsystem, shooterSubsystem)
+                .repeatedly());
   }
 
   /** Configures the operator controller buttons and axes to control the robot */
