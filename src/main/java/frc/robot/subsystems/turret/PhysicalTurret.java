@@ -164,7 +164,7 @@ public class PhysicalTurret implements TurretInterface {
     // ContinuousWrap lets the motor always take the shortest path to target.
     // NOTE: do not use Phoenix soft limits alongside ContinuousWrap — they conflict.
     // Enforce turret angle limits in TurretSubsystem.setTurretAngle() instead.
-    motorConfig.ClosedLoopGeneral.ContinuousWrap = true;
+    // motorConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
     motorConfig.Slot0.kP = TurretConstants.TURRET_P;
     motorConfig.Slot0.kI = TurretConstants.TURRET_I;
@@ -313,7 +313,7 @@ public class PhysicalTurret implements TurretInterface {
    * always resolve correctly.
    *
    * <p>HARDWARE REQUIREMENTS for two-encoder CRT:
-   *   - Two absolute single-turn encoders (CANcoders are fine)
+   *   - Two absolute single-turn encoders 
    *   - Each encoder driven by a small gear off the turret ring
    *   - The tooth counts of the two encoder gears must be CO-PRIME
    *     (their greatest common divisor must equal 1)

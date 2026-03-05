@@ -21,14 +21,14 @@ public class TurretConstants {
   /*                                GEAR RATIOS                                 */
   /* -------------------------------------------------------------------------- */
 
-  // Total motor-to-turret gear ratio: 44.444:1
-  public static final double TOTAL_GEAR_RATIO = 44.444;
+  // Total motor-to-turret gear ratio: 22.22222222222222222:1
+  public static final double TOTAL_GEAR_RATIO = 22.22222222222222222;
 
   // The CANcoder sits on an intermediate shaft between the motor and turret output.
-  //   CANcoder shaft → Turret output: 16.666:1
-  //   Motor → CANcoder shaft: 44.444 / 16.666 ≈ 2.667:1
+  //   CANcoder shaft → Turret output: 10:1
+  //   Motor → CANcoder shaft: 22.22222222222222222 / 10 ≈ 2.2222:1
   // Used by PhysicalTurret for CRT seeding on boot.
-  public static final double CANCODER_TO_TURRET = 16.666;
+  public static final double CANCODER_TO_TURRET = 10;
 
   /* -------------------------------------------------------------------------- */
   /*                            TURRET GEOMETRY                                 */

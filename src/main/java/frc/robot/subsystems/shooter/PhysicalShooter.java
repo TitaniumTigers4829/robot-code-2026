@@ -56,6 +56,8 @@ public class PhysicalShooter implements ShooterInterface {
 
     leaderFlywheelMotor.getConfigurator().apply(leaderFlywheelConfig);
     followerFlywheelMotor.getConfigurator().apply(leaderFlywheelConfig);
+    followerFlywheelMotor.setControl(
+        new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
 
     flywheelRPMLookupValues =
         new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
@@ -67,16 +69,14 @@ public class PhysicalShooter implements ShooterInterface {
     kickerMotor.set(0.5);
     leaderFlywheelMotor.setControl(
         rpsRequest.withVelocity(flywheelRPMLookupValues.getLookupValue(distance)));
-    followerFlywheelMotor.setControl(
-        new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }
 
   public void passFuel(double rps) {
     spindexerMotor.setControl(rpsRequest.withVelocity(50));
     kickerMotor.setControl(rpsRequest.withVelocity(50));
     leaderFlywheelMotor.setControl(rpsRequest.withVelocity(rps));
-    followerFlywheelMotor.setControl(
-        new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+    // followerFlywheelMotor.setControl(
+    //     new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }
 
   // public void setSpeed(double distance) {

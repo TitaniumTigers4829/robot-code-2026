@@ -40,13 +40,13 @@ public class TurretSubsystem extends SubsystemBase {
     this.turretInterface = turretInterface;
   }
 
-  public void stopWhenMinLimitReached() {
-    turretInterface.stopWhenMinLimitReached();
-  }
+  // public void stopWhenMinLimitReached() {
+  //   turretInterface.stopWhenMinLimitReached();
+  // }
 
-  public void stopWhenMaxLimitReached() {
-    turretInterface.stopWhenMaxLimitReached();
-  }
+  // public void stopWhenMaxLimitReached() {
+  //   turretInterface.stopWhenMaxLimitReached();
+  // }
 
   public double getTurretAngle() {
     return turretInterface.getTurretAngle();
