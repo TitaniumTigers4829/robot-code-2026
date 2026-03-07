@@ -28,7 +28,7 @@ public interface TurretInterface {
   }
 
   public default void rezeroTurret() {}
-  
+
   public default void setTurretAngle(double desiredAngle) {}
 
   public default void setVolts(double volts) {}

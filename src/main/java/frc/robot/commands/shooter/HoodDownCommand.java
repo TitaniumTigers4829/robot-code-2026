@@ -14,7 +14,7 @@ public class HoodDownCommand extends Command {
 
   public HoodDownCommand(AdjustableHoodSubsystem hoodSubsystem) {
     this.hoodSubsystem = hoodSubsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(hoodSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -24,7 +24,7 @@ public class HoodDownCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hoodSubsystem.setHoodAngle(0);
+    hoodSubsystem.setAngleWithoutDist(0.5);
   }
 
   // Called once the command ends or is interrupted.

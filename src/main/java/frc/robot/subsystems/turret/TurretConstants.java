@@ -22,7 +22,7 @@ public class TurretConstants {
   /* -------------------------------------------------------------------------- */
 
   // Total motor-to-turret gear ratio: 22.22222222222222222:1
-  public static final double TOTAL_GEAR_RATIO = 22.22222222222222222;
+  public static final double TOTAL_GEAR_RATIO = 22.22222222222;
 
   // The CANcoder sits on an intermediate shaft between the motor and turret output.
   //   CANcoder shaft → Turret output: 10:1
@@ -60,11 +60,11 @@ public class TurretConstants {
   /* -------------------------------------------------------------------------- */
 
   // TODO: Tune these on actual hardware
-  public static double TURRET_P = 0.4829;
+  public static double TURRET_P = 50;
   public static double TURRET_I = 0;
   public static double TURRET_D = 0;
-  public static double TURRET_S = 0;
-  public static double TURRET_V = 0.5;
+  public static double TURRET_S = 0.25;
+  public static double TURRET_V = 2.5;
   public static double TURRET_A = 0;
 
   /* -------------------------------------------------------------------------- */
@@ -72,7 +72,7 @@ public class TurretConstants {
   /* -------------------------------------------------------------------------- */
 
   // All values in turret rotations (not motor rotations)
-  public static double TURRET_ERROR_TOLERANCE = 0.01;
+  public static double TURRET_ERROR_TOLERANCE = 0;
   public static double TURRET_DEADBAND = 0.001;
 
   // Soft limits: ±0.5 rotations = ±180°
@@ -91,7 +91,7 @@ public class TurretConstants {
   // Magnet offset found via Phoenix Tuner X with turret physically at forward (0°).
   // To re-zero: point turret forward, read raw CANcoder absolute position in
   // Tuner X, and update this value.
-  public static final double ANGLE_ZERO = 0.0; // 0.355224609375;
+  public static final double ANGLE_ZERO = 0.034307;
 
   /* -------------------------------------------------------------------------- */
   /*                            CURRENT LIMITS                                  */

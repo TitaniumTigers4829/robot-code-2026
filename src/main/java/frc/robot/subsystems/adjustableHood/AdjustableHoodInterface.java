@@ -6,6 +6,7 @@ public interface AdjustableHoodInterface {
   @AutoLog
   public static class AdjustableHoodInputs {
     public double hoodAngle = 0.0;
+    public double hoodAbsPos = 0.0;
     public double hoodSpeed = 0.0;
     public double desiredAngle;
     public double curentLookupTable = 0.0;
@@ -16,9 +17,13 @@ public interface AdjustableHoodInterface {
 
   public default void setHoodAngle(double angle) {}
 
+  public default void setAngleWithoutDist(double rots) {}
+
   public default void setSpeed(double speed) {}
 
   public default double getHoodAngle() {
     return 0;
   }
+
+  public default void rezeroHood() {}
 }

@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
-import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
@@ -20,9 +19,6 @@ import frc.robot.commands.shooter.ManualHoodDown;
 import frc.robot.commands.shooter.ManualHoodUp;
 import frc.robot.commands.shooter.ManualShootCommand;
 import frc.robot.commands.shooter.PassFuelCommand;
-import frc.robot.commands.turret.ManualTurret;
-import frc.robot.commands.turret.ManualTurretCCWCommand;
-import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
@@ -201,11 +197,11 @@ public class Robot extends LoggedRobot {
                 () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
 
     // // Commands for manual turret
-    driverController.leftBumper().whileTrue(new ManualTurretCCWCommand(turretSubsystem));
+    driverController.leftBumper().whileTrue(new ManualHoodDown(hoodSubsystem));
 
-    driverController.rightBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
+    // driverController.rightBumper().whileTrue(new ManualHoodUp(hoodSubsystem));
 
-    driverController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
+    // driverController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
     driverController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
 
     // // Will have to use manual turret to pass
@@ -213,12 +209,10 @@ public class Robot extends LoggedRobot {
 
     driverController.y().whileTrue(new ManualShootCommand(shooterSubsystem, hoodSubsystem));
 
-    driverController.x().whileTrue(new HoodDownCommand(hoodSubsystem));
-
-    // driverController
-    //     .leftTrigger()
-    //     .toggleOnTrue(
-    //         new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
+    driverController
+        .leftTrigger()
+        .toggleOnTrue(
+            new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
     // Commands.none(),
     // () ->
     //     visionSubsystem.canSeeAprilTags(Limelight.FRONT)
@@ -240,11 +234,25 @@ public class Robot extends LoggedRobot {
   /** Configures the operator controller buttons and axes to control the robot */
   private void configureOperatorController() {
     // OPERATOR COMMANDS
+
+    operatorController.x().whileTrue(new HoodDownCommand(hoodSubsystem));
     operatorController
         .a()
-        .whileTrue(new ManualTurret(turretSubsystem, () -> operatorController.getLeftX()));
+        .whileTrue(
+            new ManualHoodUp(
+                hoodSubsystem, () -> JoystickUtil.modifyAxis(operatorController::getLeftY, 3)));
+    // operatorController
+    //     .b()
+    //     .whileTrue(
+    //         new ManualHoodUp(
+    //             hoodSubsystem, () -> JoystickUtil.modifyAxis(operatorController::getLeftX, 3)));
+    operatorController.b().onTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
 
-    operatorController.x().whileTrue(new IntakeCommand(intakeSubsystem));
+    // operatorController.x().whileTrue(new IntakeCommand(intakeSubsystem));
+
+    operatorController
+        .rightBumper()
+        .onTrue(new InstantCommand(() -> turretSubsystem.rezeroTurret()));
 
     operatorController.povLeft().whileTrue(new OuttakeCommand(intakeSubsystem));
 

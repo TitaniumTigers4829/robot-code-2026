@@ -2,22 +2,20 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.shooter;
+package frc.robot.commands.turret;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
-import java.util.function.DoubleSupplier;
+import frc.robot.subsystems.turret.TurretSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ManualHoodUp extends Command {
-  AdjustableHoodSubsystem hoodSubsystem;
-  DoubleSupplier speed;
+public class SetTurretAngle extends Command {
+  TurretSubsystem turretSubsystem;
 
-  /** Creates a new ManualHoodDown. */
-  public ManualHoodUp(AdjustableHoodSubsystem hoodSubsystem, DoubleSupplier speed) {
-    this.hoodSubsystem = hoodSubsystem;
-    this.speed = speed;
-    addRequirements(hoodSubsystem);
+  /** Creates a new SetTurretAngle. */
+  public SetTurretAngle(TurretSubsystem turretSubsystem) {
+    this.turretSubsystem = turretSubsystem;
+    addRequirements(turretSubsystem);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
@@ -27,13 +25,13 @@ public class ManualHoodUp extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hoodSubsystem.setSpeed(speed.getAsDouble());
+    turretSubsystem.setTurretAngle(0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    hoodSubsystem.setSpeed(0);
+    turretSubsystem.setSpeed(0);
   }
 
   // Returns true when the command should end.
