@@ -8,7 +8,7 @@ public interface AdjustableHoodInterface {
     public double hoodAngle = 0.0;
     public double hoodAbsPos = 0.0;
     public double hoodSpeed = 0.0;
-    public double desiredAngle;
+    public double desiredAngle = 0.0;
     public double curentLookupTable = 0.0;
     public double distanceGiven = 0.0;
   }
