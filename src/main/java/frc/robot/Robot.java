@@ -211,7 +211,7 @@ public class Robot extends LoggedRobot {
 
     driverController
         .leftTrigger()
-        .toggleOnTrue(
+        .whileTrue(
             new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
     // Commands.none(),
     // () ->

@@ -150,10 +150,10 @@ public class PhysicalVision implements VisionInterface {
     this.headingRateDegreesPerSecond = headingRateDegrees;
   }
 
-  // @Override
-  // public boolean isValidMeasurement(Limelight limelight) {
-  //   return isValidPoseEstimate(limelight) && isConfident(limelight) && !isTeleporting(limelight);
-  // }
+  @Override
+  public boolean isValidMeasurement(Limelight limelight) {
+    return isConfident(limelight) && !isTeleporting(limelight);
+  }
 
   /**
    * Gets the pose update of the specified limelight while the robot is enabled.
