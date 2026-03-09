@@ -39,8 +39,8 @@ public class ShooterSubsystem extends SubsystemBase {
     this.shooterInterface = shooterInterface;
   }
 
-  public double getFlywheelRPM() {
-    return shooterInterface.getFlywheelRPM();
+  public double getFlywheelRPS() {
+    return shooterInterface.getFlywheelRPS();
   }
 
   public double getVolts() {
@@ -71,8 +71,8 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterInterface.setPercentOutput(distance);
   }
 
-  public boolean isTopAtSetpointRPM(double targetRPM) {
-    return Math.abs(targetRPM - inputs.flywheelRPM) < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
+  public boolean isAtSetpointRPM(double targetRPM) {
+    return Math.abs(targetRPM - inputs.flywheelRPS) < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
   }
 
   public void passFuel(double output) {
@@ -83,6 +83,8 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     shooterInterface.updateInputs(inputs);
     Logger.processInputs("Shooter/", inputs);
+
+    Logger.recordOutput("currentRPS", getFlywheelRPS());
 
     // Update tunable numbers
     if (flywheelS.hasChanged(hashCode())

@@ -31,34 +31,6 @@ public class HubLockCommand extends DriveCommandBase {
   public double turretToHubXDist;
   public double turretToHubDist;
 
-  @Override
-  public void execute() {
-    super.execute();
-
-    heading = swerveDrive.getOdometryRotation2d();
-
-    Translation2d turretPos =
-        swerveDrive
-            .getEstimatedPose()
-            .getTranslation()
-            .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
-
-    turretToHubYDist = hubPos.getY() - turretPos.getY();
-    turretToHubXDist = hubPos.getX() - turretPos.getX();
-
-    double turretAngleRad = Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
-    turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));
-
-    desiredHeading = turretAngleRad / (2.0 * Math.PI);
-    desiredHeading =
-        Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
-
-    turretSubsystem.setTurretAngle(desiredHeading);
-
-    turretToHubDist = turretPos.getDistance(hubPos);
-    hoodSubsystem.setHoodAngle(turretToHubDist);
-  }
-
   public HubLockCommand(
       SwerveDrive swerveDrive,
       VisionSubsystem visionSubsystem,
@@ -82,6 +54,35 @@ public class HubLockCommand extends DriveCommandBase {
       hubPos = FieldConstants.BLUE_HUB_CENTER;
     }
   }
+
+  @Override
+  public void execute() {
+    heading = swerveDrive.getOdometryRotation2d();
+
+    Translation2d turretPos =
+        swerveDrive
+            .getEstimatedPose()
+            .getTranslation()
+            .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
+
+    turretToHubYDist = hubPos.getY() - turretPos.getY();
+    turretToHubXDist = hubPos.getX() - turretPos.getX();
+
+    double turretAngleRad = Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
+    turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));
+
+    desiredHeading = turretAngleRad / (2.0 * Math.PI);
+    desiredHeading =
+        Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
+
+    turretSubsystem.setTurretAngle(desiredHeading);
+
+    turretToHubDist = turretPos.getDistance(hubPos);
+    hoodSubsystem.setHoodAngle(turretToHubDist);
+    super.execute();
+  }
+
+  
 
   // @Override
   // public void execute() {
@@ -138,11 +139,14 @@ public class HubLockCommand extends DriveCommandBase {
   //   hoodSubsystem.setHoodAngle(turretToHubDist);
   // }
 
-  // @Override
-  // public void end(boolean interrupted) {}
+  @Override
+  public void end(boolean interrupted) {
+    turretSubsystem.setSpeed(0);
+    hoodSubsystem.setSpeed(0);
+  }
 
-  // @Override
-  // public boolean isFinished() {
-  //   return false;
-  // }
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }
