@@ -18,7 +18,7 @@ public class ShooterConstants {
   public static double FLYWHEEL_S = 0;
   public static double FLYWHEEL_V = 0;
   public static double FLYWHEEL_A = 0;
-  public static double FLYWHEEL_P = 1;
+  public static double FLYWHEEL_P = 0;
   public static double FLYWHEEL_I = 0;
   public static double FLYWHEEL_D = 0;
 

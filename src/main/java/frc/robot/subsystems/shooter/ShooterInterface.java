@@ -26,7 +26,7 @@ public interface ShooterInterface {
     return 0.0;
   }
 
-  public default void setFlywheelRPM(double targetRPM) {}
+  public default void setSpeed(double targetRPM) {}
 
   public default void setVolts(double volts) {}
 

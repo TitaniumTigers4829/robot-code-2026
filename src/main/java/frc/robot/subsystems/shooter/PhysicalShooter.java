@@ -105,7 +105,7 @@ public class PhysicalShooter implements ShooterInterface {
   }
 
   public void setSpeed(double rps) {
-    leaderFlywheelMotor.setControl(rpsRequest.withVelocity(100));
+    leaderFlywheelMotor.setControl(rpsRequest.withVelocity(rps));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }

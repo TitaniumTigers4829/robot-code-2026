@@ -235,7 +235,7 @@ public class Robot extends LoggedRobot {
   private void configureOperatorController() {
     // OPERATOR COMMANDS
 
-    operatorController.x().whileTrue(new HoodDownCommand(hoodSubsystem));
+    operatorController.x().whileTrue(new InstantCommand(() -> shooterSubsystem.setSpeed(100)));
     operatorController
         .a()
         .whileTrue(
