@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
+import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
-import frc.robot.commands.shooter.HoodDownCommand;
 import frc.robot.commands.shooter.ManualHoodDown;
 import frc.robot.commands.shooter.ManualHoodUp;
 import frc.robot.commands.shooter.ManualShootCommand;
@@ -253,6 +253,8 @@ public class Robot extends LoggedRobot {
     operatorController
         .rightBumper()
         .onTrue(new InstantCommand(() -> turretSubsystem.rezeroTurret()));
+
+    operatorController.povRight().whileTrue(new IntakeCommand(intakeSubsystem));
 
     operatorController.povLeft().whileTrue(new OuttakeCommand(intakeSubsystem));
 

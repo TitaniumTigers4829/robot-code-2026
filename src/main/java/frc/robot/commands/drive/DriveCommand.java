@@ -1,5 +1,6 @@
 package frc.robot.commands.drive;
 
+import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.function.BooleanSupplier;
@@ -54,23 +55,23 @@ public class DriveCommand extends DriveCommandBase {
 
   @Override
   public void execute() {
-    // // Most of the time the driver prefers that the robot rotates slowly, as it gives them more
-    // // control
-    // // but sometimes (e.g. when fighting defense bots) being able to rotate quickly is necessary
-    // if (isHighRotation.getAsBoolean()) {
-    //   angularSpeed = DriveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
-    // } else {
-    //   angularSpeed = DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND;
-    // }
+    // Most of the time the driver prefers that the robot rotates slowly, as it gives them more
+    // control
+    // but sometimes (e.g. when fighting defense bots) being able to rotate quickly is necessary
+    if (isHighRotation.getAsBoolean()) {
+      angularSpeed = DriveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
+    } else {
+      angularSpeed = DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND;
+    }
 
-    // // Drives the robot by scaling the joystick inputs
-    // driveSubsystem.drive(
-    //     leftJoystickX.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND,
-    //     leftJoystickY.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND,
-    //     rightJoystickX.getAsDouble() * angularSpeed,
-    //     isFieldRelative.getAsBoolean());
-    // // Runs all the code from DriveCommand that estimates pose
-    // super.execute();
+    // Drives the robot by scaling the joystick inputs
+    driveSubsystem.drive(
+        leftJoystickX.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND,
+        leftJoystickY.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND,
+        rightJoystickX.getAsDouble() * angularSpeed,
+        isFieldRelative.getAsBoolean());
+    // Runs all the code from DriveCommand that estimates pose
+    super.execute();
   }
 
   @Override

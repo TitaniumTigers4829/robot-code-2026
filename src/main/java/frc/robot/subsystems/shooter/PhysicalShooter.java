@@ -17,7 +17,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
@@ -68,7 +67,7 @@ public class PhysicalShooter implements ShooterInterface {
 
     flywheelRPMLookupValues =
         new SingleLinearInterpolator(ShooterConstants.DISTANCE_TO_FLYWHEEL_RPM);
-    
+
     currentRPS = leaderFlywheelMotor.getVelocity();
 
     currentRPS.setUpdateFrequency(100);

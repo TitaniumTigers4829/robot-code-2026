@@ -2,16 +2,19 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Constants.HardwareConstants;
@@ -23,10 +26,13 @@ public class PhysicalIntake implements IntakeInterface {
       new TalonFX(IntakeConstants.PIVOT_MOTOR_1_ID, HardwareConstants.RIO_CAN_BUS_STRING);
   private TalonFX intakePivotMotor2 = new TalonFX(IntakeConstants.PIVOT_MOTOR_2_ID);
 
+  private final CANcoder pivotEncoder = new CANcoder(13, HardwareConstants.RIO_CAN_BUS_STRING);
+
   private MotionMagicVoltage request = new MotionMagicVoltage(0.0);
   private MotorAlignmentValue pivotMotorAlignment = MotorAlignmentValue.Opposed;
   private TalonFXConfiguration intakeConfig;
   private TalonFXConfiguration pivotConfig;
+  private CANcoderConfiguration encoderConfig;
 
   public StatusSignal<Angle> intakeAngle;
   public StatusSignal<AngularVelocity> intakePivotSpeed;
@@ -34,9 +40,15 @@ public class PhysicalIntake implements IntakeInterface {
   public PhysicalIntake() {
     intakeConfig = new TalonFXConfiguration();
     pivotConfig = new TalonFXConfiguration();
+    encoderConfig = new CANcoderConfiguration();
+
+    encoderConfig.MagnetSensor.MagnetOffset = IntakeConstants.ZERO_ANGLE;
+    encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    pivotEncoder.getConfigurator().apply(encoderConfig);
 
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     intakeConfig.Slot0.kP = IntakeConstants.INTAKE_P;
     intakeConfig.Slot0.kI = IntakeConstants.INTAKE_I;
     intakeConfig.Slot0.kD = IntakeConstants.INTAKE_D;
@@ -55,6 +67,7 @@ public class PhysicalIntake implements IntakeInterface {
     pivotConfig.Slot0.kG = IntakeConstants.PIVOT_G;
     pivotConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     pivotConfig.Feedback.SensorToMechanismRatio = IntakeConstants.GEAR_RATIO;
+    pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 
     pivotConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT;
     pivotConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT;
@@ -71,7 +84,7 @@ public class PhysicalIntake implements IntakeInterface {
     intakePivotMotor1.getConfigurator().apply(pivotConfig);
     intakePivotMotor2.getConfigurator().apply(pivotConfig);
 
-    intakeAngle = intakePivotMotor1.getPosition();
+    intakeAngle = pivotEncoder.getAbsolutePosition();
     intakePivotSpeed = intakePivotMotor1.getVelocity();
 
     intakePivotMotor1.setPosition(0.0);

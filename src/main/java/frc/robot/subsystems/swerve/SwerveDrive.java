@@ -158,12 +158,12 @@ public class SwerveDrive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // final double t0 = TimeUtil.getRealTimeSeconds();
-    // updateSwerveInputs();
-    // Logger.recordOutput(
-    //     "SystemPerformance/OdometryFetchingTimeMS", (TimeUtil.getRealTimeSeconds() - t0) * 1000);
-    // // Runs the SwerveModules periodic methods
-    // modulesPeriodic();
+    final double t0 = TimeUtil.getRealTimeSeconds();
+    updateSwerveInputs();
+    Logger.recordOutput(
+        "SystemPerformance/OdometryFetchingTimeMS", (TimeUtil.getRealTimeSeconds() - t0) * 1000);
+    // Runs the SwerveModules periodic methods
+    modulesPeriodic();
   }
 
   /**
@@ -678,30 +678,30 @@ public class SwerveDrive extends SubsystemBase {
 
     ChassisSpeeds outputFieldRelative = feedback;
 
-    // if (nudgeSupplier != null) {
-    //   Translation2d nudge = nudgeSupplier.get();
-    //   if (nudge.getNorm() > .1) {
-    //     double nudgeScalar =
-    //         Math.min(error.getTranslation().getNorm() / 3, 1)
-    //             * Math.min(error.getTranslation().getNorm() / 3, 1)
-    //             * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
+    if (nudgeSupplier != null) {
+      Translation2d nudge = nudgeSupplier.get();
+      if (nudge.getNorm() > .1) {
+        double nudgeScalar =
+            Math.min(error.getTranslation().getNorm() / 3, 1)
+                * Math.min(error.getTranslation().getNorm() / 3, 1)
+                * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
 
-    //     if (AllianceFlipper.isRed()) {
-    //       nudge = new Translation2d(-nudge.getX(), -nudge.getY());
-    //     }
-    //     nudgeScalar *=
-    //         Math.abs(
-    //             nudge
-    //                 .getAngle()
-    //                 .minus(
-    //                     new Rotation2d(
-    //                         outputFieldRelative.vxMetersPerSecond,
-    //                         outputFieldRelative.vyMetersPerSecond))
-    //                 .getSin());
-    //     outputFieldRelative.vxMetersPerSecond += nudge.getX() * nudgeScalar;
-    //     outputFieldRelative.vyMetersPerSecond += nudge.getY() * nudgeScalar;
-    //   }
-    // }
+        if (AllianceFlipper.isRed()) {
+          nudge = new Translation2d(-nudge.getX(), -nudge.getY());
+        }
+        nudgeScalar *=
+            Math.abs(
+                nudge
+                    .getAngle()
+                    .minus(
+                        new Rotation2d(
+                            outputFieldRelative.vxMetersPerSecond,
+                            outputFieldRelative.vyMetersPerSecond))
+                    .getSin());
+        outputFieldRelative.vxMetersPerSecond += nudge.getX() * nudgeScalar;
+        outputFieldRelative.vyMetersPerSecond += nudge.getY() * nudgeScalar;
+      }
+    }
 
     ChassisSpeeds outputRobotRelative =
         ChassisSpeeds.fromFieldRelativeSpeeds(

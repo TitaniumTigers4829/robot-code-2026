@@ -13,10 +13,10 @@ public class ShooterConstants {
   public static int SPINDEXER_MOTOR_ID = 61;
 
   public static double SHOOTER_HEIGHT_FROM_GROUND = 0;
-  public static double GEAR_RATIO = 24 / 36;
+  public static double GEAR_RATIO = 0.95;
 
-  public static double FLYWHEEL_S = 0;
-  public static double FLYWHEEL_V = 0;
+  public static double FLYWHEEL_S = 0.4;
+  public static double FLYWHEEL_V = 10;
   public static double FLYWHEEL_A = 0;
   public static double FLYWHEEL_P = 0;
   public static double FLYWHEEL_I = 0;
@@ -32,10 +32,10 @@ public class ShooterConstants {
   // Lookup table for rpms needed for certain distances
   public static double[][] DISTANCE_TO_FLYWHEEL_RPM = {
     // Distance from hub in meters, needed rps of flywheel
-    {0.5, 100},
-    {1, 105},
-    {1.5, 112},
-    {2, 122},
-    {2.5, 133.33333}
+    {0.5, 75},
+    {1, 85},
+    {1.5, 90},
+    {2, 95},
+    {2.5, 100}
   };
 }
