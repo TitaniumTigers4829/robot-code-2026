@@ -39,6 +39,8 @@ public interface TurretInterface {
     return 0.0;
   }
 
+  public default void zeroTurret() {}
+
   public default void setSpeed(double speed) {}
 
   public default void openLoop(double output) {}

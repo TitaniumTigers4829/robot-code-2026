@@ -227,6 +227,7 @@ public class Robot extends LoggedRobot {
     driverController
         .b()
         .onTrue(new InstantCommand(() -> swerveDrive.resetEstimatedPose(new Pose2d())));
+    driverController.a().onTrue(new InstantCommand(() -> turretSubsystem.zeroTurret()));
 
     // driverController.a().onTrue(new InstantCommand())
   }

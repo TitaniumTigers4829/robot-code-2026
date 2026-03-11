@@ -135,6 +135,7 @@ public class PhysicalTurret implements TurretInterface {
   private void configureEncoder() {
     encoderConfig.MagnetSensor.MagnetOffset = TurretConstants.ANGLE_ZERO;
     encoderConfig.MagnetSensor.SensorDirection = TurretConstants.ENCODER_REVERSED;
+    // encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 3;
     turretEncoder.getConfigurator().apply(encoderConfig);
   }
 
@@ -157,6 +158,7 @@ public class PhysicalTurret implements TurretInterface {
     // Do NOT divide by TOTAL_RATIO again anywhere when reading these signals.
     motorConfig.Feedback.SensorToMechanismRatio = TOTAL_RATIO;
     motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    // motorConfig.Feedback.RotorToSensorRatio = TurretConstants.CANCODER_TO_TURRET;
 
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -450,6 +452,11 @@ public class PhysicalTurret implements TurretInterface {
     turretMotor.setPosition(0.0);
     Logger.recordOutput("turret/rezero/triggered", true);
     DriverStation.reportWarning("Turret manually re-zeroed to forward position.", false);
+  }
+
+  @Override
+  public void zeroTurret() {
+    turretMotor.setControl(mmRequest.withPosition(0));
   }
 
   @Override

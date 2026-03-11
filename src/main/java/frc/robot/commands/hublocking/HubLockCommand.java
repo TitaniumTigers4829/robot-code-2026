@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.drive.DriveCommandBase;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
@@ -111,7 +112,8 @@ public class HubLockCommand extends DriveCommandBase {
     turretToHubXDist = hubPos.getX() - turretPos.getX();
 
     // Gets the needed angle for the turret to turn to face the hub in radians
-    double turretAngleRad = Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
+    double turretAngleRad =
+        -(Math.PI / 4) + Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
 
     // Wrap to [-pi, pi]
     turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));
@@ -126,11 +128,15 @@ public class HubLockCommand extends DriveCommandBase {
 
     // Gets the actual distance from the hub, which becomes the paramenter for the lookup tables
     // of the hood and shooter
-    turretToHubDist = turretPos.getDistance(hubPos);
+    turretToHubDist = Math.hypot(turretToHubXDist, turretToHubYDist);
+    // turretPos.getDistance(hubPos);
 
     // Locks hood angle on hub
     hoodSubsystem.setHoodAngle(turretToHubDist);
     super.execute();
+    SmartDashboard.putNumber("dist", turretToHubDist);
+    SmartDashboard.putNumber("Y dist", turretToHubYDist);
+    SmartDashboard.putNumber("xdist", turretToHubXDist);
   }
 
   @Override

@@ -18,6 +18,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
@@ -87,12 +88,13 @@ public class PhysicalShooter implements ShooterInterface {
 
   // test
   public void setPercentOutput(double distance) {
-    spindexerMotor.setControl(rpsRequest.withVelocity(50));
-    kickerMotor.set(0.5);
     leaderFlywheelMotor.setControl(
         rpsRequest.withVelocity(flywheelRPMLookupValues.getLookupValue(distance)));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+    new WaitCommand(0.5);
+    spindexerMotor.setControl(rpsRequest.withVelocity(50));
+    kickerMotor.set(0.5);
   }
 
   public void passFuel(double rps) {
