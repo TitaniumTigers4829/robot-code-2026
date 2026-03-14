@@ -3,8 +3,9 @@ package frc.robot.subsystems.intake;
 public class IntakeConstants {
   public static final int INTAKE_MOTOR_1_ID = 9;
   public static final int INTAKE_MOTOR_2_ID = 17;
-  public static final int PIVOT_MOTOR_1_ID = 41;
-  public static final int PIVOT_MOTOR_2_ID = 23;
+  public static final int PIVOT_MOTOR_RIGHT_ID = 41;
+  public static final int PIVOT_MOTOR_LEFT_ID = 23;
+  public static final int CANCODER_ID = 11;
 
   public static final double INTAKE_P = 1.0;
   public static final double INTAKE_I = 0.0;
@@ -13,7 +14,7 @@ public class IntakeConstants {
   public static final double INTAKE_V = 0.0; // IK this is bad but we will see how it goes
   public static final double INTAKE_A = 0.0; // Suicidal thoughts are coming to me
 
-  public static final double PIVOT_P = 5.0;
+  public static final double PIVOT_P = 10.0;
   public static final double PIVOT_I = 0.0; // I having so much fun :D
   public static final double PIVOT_D = 0.0; // Something happened to my brain
   public static final double PIVOT_S = 0.0; // NO NO I DON'T WANT TO TAKE SPANISH WITH MS. WALSH
@@ -22,16 +23,16 @@ public class IntakeConstants {
   public static final double PIVOT_A = 0.0; // THIS IS WORST THAN 9/11
   public static final double PIVOT_G = 0.02;
 
-  public static final double ZERO_ANGLE = 0;
+  public static final double ZERO_ANGLE = 0.35498046875;
 
   public static final double STATOR_CURRENT_LIMIT = 30;
   public static final double SUPPLY_CURRENT_LIMIT = 0;
-  public static final double PIVOT_DOWN_POSITION = 0.35;
-  public static final double MAX_ANGLE = 0;
+  public static final double PIVOT_DOWN_POSITION = 0.37;
+  public static final double MAX_ANGLE = 0.45;
   public static final double ACCEPTABLE_RANGE = 0.01;
-  public static final double MIN_ANGLE = 0.4; // I HATE THIS SO MUCH
-  public static final double INTAKE_SPEED_OUTER = 0.6;
-  public static final double INTAKE_SPEED_INNER = 0.5;
+  public static final double MIN_ANGLE = 0.0; // I HATE THIS SO MUCH
+  public static final double INTAKE_SPEED_OUTER = 0.5;
+  public static final double INTAKE_SPEED_INNER = 0.35;
 
   public static final double GEAR_RATIO = 8;
 }

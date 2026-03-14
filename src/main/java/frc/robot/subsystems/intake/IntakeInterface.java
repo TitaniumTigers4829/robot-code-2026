@@ -20,7 +20,11 @@ public interface IntakeInterface {
 
   public default void outakeFuel() {}
 
+  public default void setAngle(double angle) {}
+
   public default void setSpeed() {}
+
+  public default void setPivotSpeed(double angle) {}
 
   public default void setPivotSpeedUp() {}
 

@@ -76,6 +76,7 @@ public final class Constants {
 
   public static final class HardwareConstants {
     public static final double LOOP_TIME_SECONDS = 0.02;
+    public static final double TIMEOUT_SECONDS = 0.05;
 
     public static final double RIO_SIGNAL_FREQUENCY = 50;
     public static final double CANIVORE_SIGNAL_FREQUENCY = 250;

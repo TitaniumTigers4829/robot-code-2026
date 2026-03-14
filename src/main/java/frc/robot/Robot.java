@@ -15,6 +15,7 @@ import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
+import frc.robot.commands.intake.SetIntakeAngleCommand;
 import frc.robot.commands.shooter.ManualHoodDown;
 import frc.robot.commands.shooter.ManualHoodUp;
 import frc.robot.commands.shooter.ManualShootCommand;
@@ -235,6 +236,8 @@ public class Robot extends LoggedRobot {
   /** Configures the operator controller buttons and axes to control the robot */
   private void configureOperatorController() {
     // OPERATOR COMMANDS
+
+    operatorController.leftBumper().whileTrue(new SetIntakeAngleCommand(intakeSubsystem));
 
     operatorController.x().whileTrue(new InstantCommand(() -> shooterSubsystem.setSpeed(100)));
     operatorController

@@ -55,6 +55,14 @@ public class IntakeSubsystem extends SubsystemBase {
     this.intakeInterface.setSpeed();
   }
 
+  public void setAngle(double angle) {
+    this.intakeInterface.setAngle(angle);
+  }
+
+  public void setPivotSpeed(double speed) {
+    this.intakeInterface.setPivotSpeed(speed);
+  }
+
   public double getIntakeAngle() {
     return this.intakeInterface.getIntakeAngle();
   }
