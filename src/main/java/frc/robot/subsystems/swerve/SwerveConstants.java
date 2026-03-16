@@ -60,7 +60,7 @@ public class SwerveConstants {
       public static final int REAR_LEFT_TURN_MOTOR_ID = 5;
       public static final int REAR_RIGHT_TURN_MOTOR_ID = 6;
 
-      public static final int FRONT_LEFT_CANCODER_ID = 11;
+      public static final int FRONT_LEFT_CANCODER_ID = 16;
       public static final int FRONT_RIGHT_CANCODER_ID = 13;
       public static final int REAR_LEFT_CANCODER_ID = 10;
       public static final int REAR_RIGHT_CANCODER_ID = 12;
@@ -158,7 +158,7 @@ public class SwerveConstants {
       public static final int REAR_LEFT_TURN_MOTOR_ID = 5;
       public static final int REAR_RIGHT_TURN_MOTOR_ID = 6;
 
-      public static final int FRONT_LEFT_CANCODER_ID = 11;
+      public static final int FRONT_LEFT_CANCODER_ID = 16;
       public static final int FRONT_RIGHT_CANCODER_ID = 13;
       public static final int REAR_LEFT_CANCODER_ID = 10;
       public static final int REAR_RIGHT_CANCODER_ID = 12;

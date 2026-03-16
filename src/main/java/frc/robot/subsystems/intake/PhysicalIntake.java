@@ -45,12 +45,12 @@ public class PhysicalIntake implements IntakeInterface {
     encoderConfig = new CANcoderConfiguration();
 
     encoderConfig.MagnetSensor.MagnetOffset = IntakeConstants.ZERO_ANGLE;
-    encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+    encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     pivotEncoder.getConfigurator().apply(encoderConfig, HardwareConstants.TIMEOUT_SECONDS);
 
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     intakeConfig.Slot0.kP = IntakeConstants.INTAKE_P;
     intakeConfig.Slot0.kI = IntakeConstants.INTAKE_I;
     intakeConfig.Slot0.kD = IntakeConstants.INTAKE_D;
@@ -60,6 +60,7 @@ public class PhysicalIntake implements IntakeInterface {
 
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     pivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    pivotConfig.MotorOutput.DutyCycleNeutralDeadband = 0.00001;
     pivotConfig.Slot0.kP = IntakeConstants.PIVOT_P;
     pivotConfig.Slot0.kI = IntakeConstants.PIVOT_I;
     pivotConfig.Slot0.kD = IntakeConstants.PIVOT_D;
@@ -69,11 +70,12 @@ public class PhysicalIntake implements IntakeInterface {
     pivotConfig.Slot0.kG = IntakeConstants.PIVOT_G;
     pivotConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     pivotConfig.Feedback.SensorToMechanismRatio = IntakeConstants.GEAR_RATIO;
-    pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    pivotConfig.Feedback.FeedbackRemoteSensorID = pivotEncoder.getDeviceID();
+    pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
     pivotConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT;
     pivotConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT;
-    pivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    pivotConfig.CurrentLimits.StatorCurrentLimitEnable = false;
     pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
 
     pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = IntakeConstants.PIVOT_DOWN_POSITION;
@@ -81,9 +83,15 @@ public class PhysicalIntake implements IntakeInterface {
     pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
+    pivotConfig.MotionMagic.MotionMagicAcceleration = 5.0;
+    pivotConfig.MotionMagic.MotionMagicCruiseVelocity = 2.5;
+
     intakeMotorOuter.getConfigurator().apply(intakeConfig);
     intakeMotorInside.getConfigurator().apply(intakeConfig);
     intakePivotMotorRight.getConfigurator().apply(pivotConfig);
+
+    pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
     intakePivotMotorLeft.getConfigurator().apply(pivotConfig);
 
     intakeAngle = pivotEncoder.getPosition();
@@ -104,14 +112,15 @@ public class PhysicalIntake implements IntakeInterface {
     inputs.intakeAngle = intakeAngle.getValueAsDouble();
     inputs.intakePivotSpeed = intakePivotSpeed.getValueAsDouble();
     inputs.isIntakeDeployed = isIntakeDeployed();
-    SmartDashboard.putNumber("intake angle", inputs.intakeAngle);
+    SmartDashboard.putNumber("intake angle encoder", inputs.intakeAngle);
+    SmartDashboard.putNumber(
+        "real intake position", intakePivotMotorRight.getPosition().getValueAsDouble());
     // System.out.println("WORKING");
   }
 
   public void setIntakeAngle(double angle) {
     intakePivotMotorRight.setControl(request.withPosition(angle));
-    intakePivotMotorLeft.setControl(
-        new Follower(intakePivotMotorRight.getDeviceID(), pivotMotorAlignment));
+    intakePivotMotorLeft.setControl(request.withPosition(angle));
   }
 
   public void intakeFuel() {
@@ -142,15 +151,13 @@ public class PhysicalIntake implements IntakeInterface {
   }
 
   public void setPivotSpeedUp() {
-    intakePivotMotorRight.setControl(request.withPosition(IntakeConstants.MIN_ANGLE));
-    intakePivotMotorLeft.setControl(
-        new Follower(intakePivotMotorLeft.getDeviceID(), pivotMotorAlignment));
+    intakePivotMotorRight.setControl(request.withPosition(IntakeConstants.PIVOT_UP_POSITION));
+    intakePivotMotorLeft.setControl(request.withPosition(IntakeConstants.PIVOT_UP_POSITION));
   }
 
   public void setPivotSpeedDown() {
     intakePivotMotorRight.setControl(request.withPosition(IntakeConstants.PIVOT_DOWN_POSITION));
-    intakePivotMotorLeft.setControl(
-        new Follower(intakePivotMotorLeft.getDeviceID(), pivotMotorAlignment));
+    intakePivotMotorLeft.setControl(request.withPosition(IntakeConstants.PIVOT_DOWN_POSITION));
   }
 
   public double getIntakeAngle() {

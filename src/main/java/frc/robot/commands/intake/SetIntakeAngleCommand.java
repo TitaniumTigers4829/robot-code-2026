@@ -14,7 +14,7 @@ public class SetIntakeAngleCommand extends Command {
 
   public SetIntakeAngleCommand(IntakeSubsystem intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
-    addRequirements(intakeSubsystem);
+    addRequirements();
   }
 
   // Called when the command is initially scheduled.
@@ -24,7 +24,7 @@ public class SetIntakeAngleCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.setAngle(0);
+    intakeSubsystem.setIntakeAngle(0.1);
   }
 
   // Called once the command ends or is interrupted.

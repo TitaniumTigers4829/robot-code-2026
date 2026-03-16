@@ -9,33 +9,18 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.drive.DriveCommand;
-import frc.robot.commands.hublocking.HubLockCommand;
-import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.intake.SetIntakeAngleCommand;
-import frc.robot.commands.shooter.ManualHoodDown;
-import frc.robot.commands.shooter.ManualHoodUp;
-import frc.robot.commands.shooter.ManualShootCommand;
-import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.extras.util.JoystickUtil;
-import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
-import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.PhysicalIntake;
-import frc.robot.subsystems.shooter.PhysicalShooter;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
-import frc.robot.subsystems.swerve.gyro.GyroInterface;
-import frc.robot.subsystems.swerve.gyro.PhysicalGyroNavX;
 import frc.robot.subsystems.swerve.gyro.PhysicalGyroPigeon;
-import frc.robot.subsystems.swerve.module.ModuleInterface;
 import frc.robot.subsystems.swerve.module.PhysicalModule;
-import frc.robot.subsystems.turret.PhysicalTurret;
-import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.PhysicalVision;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.function.DoubleSupplier;
@@ -60,9 +45,9 @@ public class Robot extends LoggedRobot {
   // private VisionSubsystem visionSubsystem;
   private SwerveDrive swerveDrive;
   private VisionSubsystem visionSubsystem;
-  private ShooterSubsystem shooterSubsystem;
-  private TurretSubsystem turretSubsystem;
-  private AdjustableHoodSubsystem hoodSubsystem;
+  // private ShooterSubsystem shooterSubsystem;
+  // private TurretSubsystem turretSubsystem;
+  // private AdjustableHoodSubsystem hoodSubsystem;
   private IntakeSubsystem intakeSubsystem;
 
   // private Autos autos;
@@ -191,44 +176,44 @@ public class Robot extends LoggedRobot {
 
     // Reset robot odometry based on the most recent vision pose measurement from april tags
     // This should be pressed when looking at an april tag
-    driverController
-        .povLeft()
-        .onTrue(
-            new InstantCommand(
-                () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
+    // driverController
+    //     .povLeft()
+    //     .onTrue(
+    //         new InstantCommand(
+    //             () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
 
     // // Commands for manual turret
-    driverController.leftBumper().whileTrue(new ManualHoodDown(hoodSubsystem));
+    // driverController.leftBumper().whileTrue(new ManualHoodDown(hoodSubsystem));
 
     // driverController.rightBumper().whileTrue(new ManualHoodUp(hoodSubsystem));
 
     // driverController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
-    driverController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
+    // driverController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
 
     // // Will have to use manual turret to pass
-    driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
+    // driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
 
-    driverController.y().whileTrue(new ManualShootCommand(shooterSubsystem, hoodSubsystem));
+    // driverController.y().whileTrue(new ManualShootCommand(shooterSubsystem, hoodSubsystem));
 
-    driverController
-        .leftTrigger()
-        .whileTrue(
-            new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
+    // driverController
+    //     .leftTrigger()
+    //     .whileTrue(
+    //         new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
     // Commands.none(),
     // () ->
     //     visionSubsystem.canSeeAprilTags(Limelight.FRONT)
     //         || visionSubsystem.canSeeAprilTags(Limelight.SIDE)));
 
-    driverController
-        .rightTrigger()
-        .whileTrue(
-            new ShootWhileHublockedCommand(
-                shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem));
+    // driverController
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         new ShootWhileHublockedCommand(
+    //             shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem));
 
-    driverController
-        .b()
-        .onTrue(new InstantCommand(() -> swerveDrive.resetEstimatedPose(new Pose2d())));
-    driverController.a().onTrue(new InstantCommand(() -> turretSubsystem.zeroTurret()));
+    // driverController
+    //     .b()
+    //     .onTrue(new InstantCommand(() -> swerveDrive.resetEstimatedPose(new Pose2d())));
+    // driverController.a().onTrue(new InstantCommand(() -> turretSubsystem.zeroTurret()));
 
     // driverController.a().onTrue(new InstantCommand())
   }
@@ -239,24 +224,24 @@ public class Robot extends LoggedRobot {
 
     operatorController.leftBumper().whileTrue(new SetIntakeAngleCommand(intakeSubsystem));
 
-    operatorController.x().whileTrue(new InstantCommand(() -> shooterSubsystem.setSpeed(100)));
-    operatorController
-        .a()
-        .whileTrue(
-            new ManualHoodUp(
-                hoodSubsystem, () -> JoystickUtil.modifyAxis(operatorController::getLeftY, 3)));
+    // operatorController.x().whileTrue(new InstantCommand(() -> shooterSubsystem.setSpeed(100)));
+    // operatorController
+    //     .a()
+    //     .whileTrue(
+    //         new ManualHoodUp(
+    //             hoodSubsystem, () -> JoystickUtil.modifyAxis(operatorController::getLeftY, 3)));
     // operatorController
     //     .b()
     //     .whileTrue(
     //         new ManualHoodUp(
     //             hoodSubsystem, () -> JoystickUtil.modifyAxis(operatorController::getLeftX, 3)));
-    operatorController.b().onTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
+    // operatorController.b().onTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
 
-    // operatorController.x().whileTrue(new IntakeCommand(intakeSubsystem));
+    operatorController.x().whileTrue(new IntakeCommand(intakeSubsystem));
 
-    operatorController
-        .rightBumper()
-        .onTrue(new InstantCommand(() -> turretSubsystem.rezeroTurret()));
+    // operatorController
+    //     .rightBumper()
+    //     .onTrue(new InstantCommand(() -> turretSubsystem.rezeroTurret()));
 
     operatorController.povRight().whileTrue(new IntakeCommand(intakeSubsystem));
 
@@ -336,20 +321,20 @@ public class Robot extends LoggedRobot {
                 new PhysicalModule(SwerveConstants.compModuleConfigs[2]),
                 new PhysicalModule(SwerveConstants.compModuleConfigs[3]));
         this.visionSubsystem = new VisionSubsystem(new PhysicalVision() {}); // PhysicalVision
-        this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
-        this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
-        this.hoodSubsystem = new AdjustableHoodSubsystem(new PhysicalAdjustableHood());
+        // this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
+        // this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
+        // this.hoodSubsystem = new AdjustableHoodSubsystem(new PhysicalAdjustableHood());
         this.intakeSubsystem = new IntakeSubsystem(new PhysicalIntake());
       }
       case DEV_ROBOT -> {
         /* Real robot, instantiate hardware IO implementations */
-        this.swerveDrive =
-            new SwerveDrive(
-                new PhysicalGyroNavX(),
-                new PhysicalModule(SwerveConstants.devModuleConfigs[0]),
-                new PhysicalModule(SwerveConstants.devModuleConfigs[1]),
-                new PhysicalModule(SwerveConstants.devModuleConfigs[2]),
-                new PhysicalModule(SwerveConstants.devModuleConfigs[3]));
+        // this.swerveDrive =
+        //     new SwerveDrive(
+        //         new PhysicalGyroNavX(),
+        //         new PhysicalModule(SwerveConstants.devModuleConfigs[0]),
+        //         new PhysicalModule(SwerveConstants.devModuleConfigs[1]),
+        //         new PhysicalModule(SwerveConstants.devModuleConfigs[2]),
+        //         new PhysicalModule(SwerveConstants.devModuleConfigs[3]));
         // this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
         // this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
         // this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
@@ -357,15 +342,15 @@ public class Robot extends LoggedRobot {
       }
       case SWERVE_ROBOT -> {
         /* Real robot, instantiate hardware IO implementations */
-        this.swerveDrive =
-            new SwerveDrive(
-                new PhysicalGyroNavX(),
-                new PhysicalModule(SwerveConstants.aquilaModuleConfigs[0]),
-                new PhysicalModule(SwerveConstants.aquilaModuleConfigs[1]),
-                new PhysicalModule(SwerveConstants.aquilaModuleConfigs[2]),
-                new PhysicalModule(SwerveConstants.aquilaModuleConfigs[3]));
+        // this.swerveDrive =
+        //     new SwerveDrive(
+        //         new PhysicalGyroNavX(),
+        //         new PhysicalModule(SwerveConstants.aquilaModuleConfigs[0]),
+        //         new PhysicalModule(SwerveConstants.aquilaModuleConfigs[1]),
+        //         new PhysicalModule(SwerveConstants.aquilaModuleConfigs[2]),
+        //         new PhysicalModule(SwerveConstants.aquilaModuleConfigs[3]));
         // this.visionSubsystem = new VisionSubsystem(new VisionInterface() {});
-        this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
+        // this.shooterSubsystem = new ShooterSubsystem(new PhysicalShooter());
         // this.turretSubsystem = new TurretSubsystem(new PhysicalTurret());
       }
 
@@ -392,13 +377,13 @@ public class Robot extends LoggedRobot {
         /* Replayed robot, disable IO implementations */
 
         /* physics simulations are also not needed */
-        this.swerveDrive =
-            new SwerveDrive(
-                new GyroInterface() {},
-                new ModuleInterface() {},
-                new ModuleInterface() {},
-                new ModuleInterface() {},
-                new ModuleInterface() {});
+        // this.swerveDrive =
+        //     new SwerveDrive(
+        //         new GyroInterface() {},
+        //         new ModuleInterface() {},
+        //         new ModuleInterface() {},
+        //         new ModuleInterface() {},
+        //         new ModuleInterface() {});
         // this.elevatorSubsystem = new ElevatorSubsystem(new ElevatorInterface() {});
         // SYNTAX ^^
       }

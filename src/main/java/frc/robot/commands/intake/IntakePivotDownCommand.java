@@ -5,6 +5,7 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -24,13 +25,13 @@ public class IntakePivotDownCommand extends Command {
   @Override
   public void execute() {
     // intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_DOWN_POSITION);
-    intakeSubsystem.setPivotSpeedDown();
+    intakeSubsystem.setIntakePos(IntakeConstants.PIVOT_DOWN_POSITION);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // intakeSubsystem.setIntakeAngle(0);
+    intakeSubsystem.setIntakePos(IntakeConstants.PIVOT_UP_POSITION);
   }
 
   // Returns true when the command should end.

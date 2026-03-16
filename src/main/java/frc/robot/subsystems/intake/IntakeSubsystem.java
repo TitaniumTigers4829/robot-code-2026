@@ -13,6 +13,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private IntakeInterface intakeInterface;
   private IntakeInputsAutoLogged inputs = new IntakeInputsAutoLogged();
+  private double intakePos = IntakeConstants.PIVOT_UP_POSITION;
 
   private static final LoggedTunableNumber IntakeS = new LoggedTunableNumber("Intake/IntakeS");
   private static final LoggedTunableNumber IntakeV = new LoggedTunableNumber("Intake/IntakeV");
@@ -87,10 +88,15 @@ public class IntakeSubsystem extends SubsystemBase {
     this.intakeInterface.updateInputs(inputs);
   }
 
+  public void setIntakePos(double intakePos) {
+    this.intakePos = intakePos;
+  }
+
   @Override
   public void periodic() {
     updateInputs();
     SmartDashboard.putBoolean("intake deployed", inputs.isIntakeDeployed);
     SmartDashboard.putNumber("intake angle", inputs.intakeAngle);
+    setIntakeAngle(intakePos);
   }
 }

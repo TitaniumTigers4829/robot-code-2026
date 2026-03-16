@@ -158,12 +158,12 @@ public class SwerveDrive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    final double t0 = TimeUtil.getRealTimeSeconds();
+    // final double t0 = TimeUtil.getRealTimeSeconds();
     updateSwerveInputs();
-    Logger.recordOutput(
-        "SystemPerformance/OdometryFetchingTimeMS", (TimeUtil.getRealTimeSeconds() - t0) * 1000);
-    // Runs the SwerveModules periodic methods
-    modulesPeriodic();
+    // Logger.recordOutput(
+    //     "SystemPerformance/OdometryFetchingTimeMS", (TimeUtil.getRealTimeSeconds() - t0) * 1000);
+    // // Runs the SwerveModules periodic methods
+    // modulesPeriodic();
   }
 
   /**
