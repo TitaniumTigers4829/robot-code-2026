@@ -75,6 +75,13 @@ public class PhysicalModule implements ModuleInterface {
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     driveConfig.MotorOutput.ControlTimesyncFreqHz = 250;
 
+    driveConfig.Slot0.kP = ModuleConstants.DRIVE_P;
+    driveConfig.Slot0.kI = ModuleConstants.DRIVE_I;
+    driveConfig.Slot0.kD = ModuleConstants.DRIVE_D;
+    driveConfig.Slot0.kS = ModuleConstants.DRIVE_S;
+    driveConfig.Slot0.kV = ModuleConstants.DRIVE_V;
+    driveConfig.Slot0.kA = ModuleConstants.DRIVE_A;
+
     driveMotor.getConfigurator().apply(driveConfig, HardwareConstants.LOOP_TIME_SECONDS);
 
     turnConfig.Feedback.FeedbackRemoteSensorID = turnEncoder.getDeviceID();
@@ -94,6 +101,13 @@ public class PhysicalModule implements ModuleInterface {
     turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     turnConfig.MotorOutput.ControlTimesyncFreqHz = 250;
     turnMotor.getConfigurator().apply(turnConfig, HardwareConstants.LOOP_TIME_SECONDS);
+
+    turnConfig.Slot0.kP = ModuleConstants.TURN_P;
+    turnConfig.Slot0.kI = ModuleConstants.TURN_I;
+    turnConfig.Slot0.kD = ModuleConstants.TURN_D;
+    turnConfig.Slot0.kS = ModuleConstants.TURN_S;
+    turnConfig.Slot0.kV = ModuleConstants.TURN_V;
+    turnConfig.Slot0.kA = ModuleConstants.TURN_A;
 
     drivePosition = driveMotor.getPosition();
     driveVelocity = driveMotor.getVelocity();
@@ -138,17 +152,18 @@ public class PhysicalModule implements ModuleInterface {
 
   @Override
   public void updateInputs(ModuleInputs inputs) {
-    BaseStatusSignal.refreshAll(
-        drivePosition,
-        turnEncoderAbsolutePosition,
-        driveVelocity,
-        driveMotorTorque,
-        driveMotorReference,
-        turnEncoderVelocity,
-        turnMotorAppliedVolts,
-        turnMotorCurrent,
-        turnMotorReference,
-        turnMotorTorqueCurrent);
+    // BaseStatusSignal.refreshAll(
+    drivePosition.refresh();
+    turnEncoderAbsolutePosition.refresh();
+    driveVelocity.refresh();
+    driveMotorTorque.refresh();
+    driveMotorReference.refresh();
+    turnEncoderVelocity.refresh();
+    turnMotorAppliedVolts.refresh();
+    turnMotorCurrent.refresh();
+    turnMotorReference.refresh();
+    turnMotorTorqueCurrent.refresh();
+    // );
 
     inputs.isDriveConnected =
         BaseStatusSignal.isAllGood(

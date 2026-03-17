@@ -74,13 +74,14 @@ public class ShootWhileHublockedCommand extends Command {
 
     shooterSubsystem.setPercentOutput(turretAngleToHub);
 
-    // hoodSubsystem.setHoodAngle(turretAngleToHub);
+    hoodSubsystem.setHoodAngle(turretAngleToHub);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     shooterSubsystem.stopShoot();
+    hoodSubsystem.setAngleWithoutDist(0);
   }
 
   // Returns true when the command should end.

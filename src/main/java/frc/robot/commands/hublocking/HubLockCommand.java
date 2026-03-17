@@ -132,7 +132,7 @@ public class HubLockCommand extends DriveCommandBase {
     // turretPos.getDistance(hubPos);
 
     // Locks hood angle on hub
-    hoodSubsystem.setHoodAngle(turretToHubDist);
+    // hoodSubsystem.setHoodAngle(turretToHubDist);
     super.execute();
     SmartDashboard.putNumber("dist", turretToHubDist);
     SmartDashboard.putNumber("Y dist", turretToHubYDist);

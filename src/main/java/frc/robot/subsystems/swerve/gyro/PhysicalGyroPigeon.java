@@ -49,16 +49,16 @@ public class PhysicalGyroPigeon implements GyroInterface {
 
   @Override
   public void updateInputs(GyroInputs inputs) {
-    BaseStatusSignal.refreshAll(
-        yaw, pitch, roll, yawVelocity, pitchVelocity, rollVelocity, xAccel, yAccel);
-    // yaw.refresh();
-    // pitch.refresh();
-    // roll.refresh();
-    // yawVelocity.refresh();
-    // pitchVelocity.refresh();
-    // rollVelocity.refresh();
-    // xAccel.refresh();
-    // yAccel.refresh();
+    // BaseStatusSignal.refreshAll(
+    //     yaw, pitch, roll, yawVelocity, pitchVelocity, rollVelocity, xAccel, yAccel);
+    yaw.refresh();
+    pitch.refresh();
+    roll.refresh();
+    yawVelocity.refresh();
+    pitchVelocity.refresh();
+    rollVelocity.refresh();
+    xAccel.refresh();
+    yAccel.refresh();
     inputs.isConnected = gyro.isConnected();
     inputs.yawVelocityDegreesPerSecond = yawVelocity.getValueAsDouble();
     inputs.rollVelocityDegreesPerSecond = rollVelocity.getValueAsDouble();
