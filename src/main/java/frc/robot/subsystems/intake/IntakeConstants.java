@@ -24,12 +24,12 @@ public class IntakeConstants {
   public static final double PIVOT_A = 0.0; // THIS IS WORST THAN 9/11
   public static final double PIVOT_G = 0.0; // 0.8;
 
-  public static final double ZERO_ANGLE = 0.31498046875;
+  public static final double ZERO_ANGLE = -0.35107421875;
 
   public static final double STATOR_CURRENT_LIMIT = 60;
   public static final double SUPPLY_CURRENT_LIMIT = 0.1;
-  public static final double PIVOT_DOWN_POSITION = 0.37;
-  public static final double PIVOT_UP_POSITION = -0.12; // -0.33
+  public static final double PIVOT_DOWN_POSITION = 0.75;
+  public static final double PIVOT_UP_POSITION = 0.12; // -0.33
   public static final double MAX_ANGLE = 1;
   public static final double ACCEPTABLE_RANGE = 0.01;
   public static final double MIN_ANGLE = 0.0; // I HATE THIS SO MUCH

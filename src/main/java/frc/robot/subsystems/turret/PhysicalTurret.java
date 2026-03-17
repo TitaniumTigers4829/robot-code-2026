@@ -157,7 +157,8 @@ public class PhysicalTurret implements TurretInterface {
     // getPosition() returns turret output rotations, not raw motor rotations.
     // Do NOT divide by TOTAL_RATIO again anywhere when reading these signals.
     motorConfig.Feedback.SensorToMechanismRatio = TOTAL_RATIO;
-    motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    motorConfig.Feedback.FeedbackRemoteSensorID = turretEncoder.getDeviceID();
+    motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     // motorConfig.Feedback.RotorToSensorRatio = TurretConstants.CANCODER_TO_TURRET;
 
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;

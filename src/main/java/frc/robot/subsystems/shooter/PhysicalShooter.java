@@ -26,10 +26,11 @@ import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 public class PhysicalShooter implements ShooterInterface {
 
   private final TalonFX leaderFlywheelMotor =
-      new TalonFX(ShooterConstants.LEADER_FLYWHEEL_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
+      new TalonFX(
+          ShooterConstants.LEADER_FLYWHEEL_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
   private final TalonFX followerFlywheelMotor =
       new TalonFX(
-          ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
+          ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
   private final TalonFX kickerMotor = new TalonFX(ShooterConstants.KICKER_MOTOR_ID);
   private final TalonFX spindexerMotor = new TalonFX(ShooterConstants.SPINDEXER_MOTOR_ID);
   MotorAlignmentValue motorAlignment = MotorAlignmentValue.Opposed;

@@ -138,18 +138,17 @@ public class PhysicalModule implements ModuleInterface {
 
   @Override
   public void updateInputs(ModuleInputs inputs) {
-    // BaseStatusSignal.refreshAll(
-    drivePosition.refresh();
-    turnEncoderAbsolutePosition.refresh();
-    driveVelocity.refresh();
-    driveMotorTorque.refresh();
-    driveMotorReference.refresh();
-    turnEncoderVelocity.refresh();
-    turnMotorAppliedVolts.refresh();
-    turnMotorCurrent.refresh();
-    turnMotorReference.refresh();
-    turnMotorTorqueCurrent.refresh();
-    // );
+    BaseStatusSignal.refreshAll(
+        drivePosition,
+        turnEncoderAbsolutePosition,
+        driveVelocity,
+        driveMotorTorque,
+        driveMotorReference,
+        turnEncoderVelocity,
+        turnMotorAppliedVolts,
+        turnMotorCurrent,
+        turnMotorReference,
+        turnMotorTorqueCurrent);
 
     inputs.isDriveConnected =
         BaseStatusSignal.isAllGood(

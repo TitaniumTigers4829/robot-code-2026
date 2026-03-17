@@ -9,7 +9,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
 import frc.robot.extras.logging.Tracer;
@@ -211,16 +210,16 @@ public class SwerveModule {
   public void periodic() {
 
     // Update tunable numbers
-    if (driveS.hasChanged(hashCode()) || driveV.hasChanged(hashCode())) {
-      moduleInterface.setDriveFF(driveS.get(), driveV.get(), 0.0);
-    }
-    if (driveP.hasChanged(hashCode()) || driveD.hasChanged(hashCode())) {
-      moduleInterface.setDrivePID(driveP.get(), 0, driveD.get());
-    }
-    if (turnP.hasChanged(hashCode()) || turnD.hasChanged(hashCode())) {
-      moduleInterface.setTurnPID(turnP.get(), 0, turnD.get());
-    }
-    SmartDashboard.putNumber(moduleName + "offset", getPosition().angle.getRotations());
-    SmartDashboard.putNumber("dist to hub", getDistanceFromAllianceHub());
+    // if (driveS.hasChanged(hashCode()) || driveV.hasChanged(hashCode())) {
+    //   moduleInterface.setDriveFF(driveS.get(), driveV.get(), 0.0);
+    // }
+    // if (driveP.hasChanged(hashCode()) || driveD.hasChanged(hashCode())) {
+    //   moduleInterface.setDrivePID(driveP.get(), 0, driveD.get());
+    // }
+    // if (turnP.hasChanged(hashCode()) || turnD.hasChanged(hashCode())) {
+    //   moduleInterface.setTurnPID(turnP.get(), 0, turnD.get());
+    // }
+    // SmartDashboard.putNumber(moduleName + "offset", getPosition().angle.getRotations());
+    // SmartDashboard.putNumber("dist to hub", getDistanceFromAllianceHub());
   }
 }

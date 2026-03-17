@@ -12,11 +12,14 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
+import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
 public class PhysicalAdjustableHood implements AdjustableHoodInterface {
-  private final TalonFX hoodMotor = new TalonFX(AdjustableHoodConstants.HOOD_MOTOR_ID);
-  private final CANcoder hoodEncoder = new CANcoder(AdjustableHoodConstants.CANCODER_ID);
+  private final TalonFX hoodMotor =
+      new TalonFX(AdjustableHoodConstants.HOOD_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
+  private final CANcoder hoodEncoder =
+      new CANcoder(AdjustableHoodConstants.CANCODER_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
 
   private final TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
   private final CANcoderConfiguration hoodEncoderConfig = new CANcoderConfiguration();
