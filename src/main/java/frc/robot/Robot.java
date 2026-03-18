@@ -13,15 +13,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
-import frc.robot.commands.hublocking.HubLockCommand;
-import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.intake.SetIntakeAngleCommand;
-import frc.robot.commands.shooter.HoodDownCommand;
-import frc.robot.commands.shooter.HoodUpCommand;
 import frc.robot.extras.util.JoystickUtil;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
@@ -208,24 +204,24 @@ public class Robot extends LoggedRobot {
     // driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
 
     // driverController.y().whileTrue(new SetTurretAngle(turretSubsystem));
-    driverController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
-    driverController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
+    // driverController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
+    // driverController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
 
-    driverController
-        .leftTrigger()
-        .whileTrue(
-            new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
+    // driverController
+    //     .leftTrigger()
+    //     .whileTrue(
+    //         new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
 
-    driverController
-        .rightTrigger()
-        .whileTrue(
-            new ShootWhileHublockedCommand(
-                shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem));
+    // driverController
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         new ShootWhileHublockedCommand(
+    //             shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem));
 
-    driverController
-        .b()
-        .onTrue(new InstantCommand(() -> swerveDrive.resetEstimatedPose(new Pose2d())));
-    driverController.a().onTrue(new InstantCommand(() -> turretSubsystem.zeroTurret()));
+    // driverController
+    //     .b()
+    //     .onTrue(new InstantCommand(() -> swerveDrive.resetEstimatedPose(new Pose2d())));
+    // driverController.a().onTrue(new InstantCommand(() -> turretSubsystem.zeroTurret()));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */

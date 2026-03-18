@@ -95,20 +95,6 @@ public class TurretSubsystem extends SubsystemBase {
   public void periodic() {
     turretInterface.updateInputs(inputs);
     Logger.processInputs("turret/", inputs);
-
-    // Update tunable numbers
-    if (turretP.hasChanged(hashCode())
-        || turretI.hasChanged(hashCode())
-        || turretD.hasChanged(hashCode())) {
-      turretInterface.setPID(turretP.get(), turretI.get(), turretD.get());
-    }
-
-    if (turretS.hasChanged(hashCode())
-        || turretV.hasChanged(hashCode())
-        || turretA.hasChanged(hashCode())) {
-      turretInterface.setFF(turretS.get(), turretV.get(), turretA.get());
-    }
-
     SmartDashboard.putNumber("turret angle", inputs.turretAngle);
     Logger.recordOutput("Red Hub", Constants.FieldConstants.RED_HUB_CENTER);
     Logger.recordOutput("Blue Hub", Constants.FieldConstants.BLUE_HUB_CENTER);

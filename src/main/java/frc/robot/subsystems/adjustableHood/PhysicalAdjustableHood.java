@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
@@ -31,6 +32,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   private final PositionVoltage positionRequest = new PositionVoltage(0.0);
   private final DutyCycleOut current = new DutyCycleOut(0.0);
   public StatusSignal<Angle> hoodAngle;
+  private StatusSignal<AngularVelocity> hoodVelocity;
   public double desiredAngle;
   public double lookupTableStuff = 0.0;
   public double distanceGiven = 0.0;
@@ -72,9 +74,11 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodEncoder.setPosition(0);
 
     hoodAngle = hoodEncoder.getPosition();
+    hoodVelocity = hoodMotor.getVelocity();
 
     // hoodEncoder.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
     hoodAngle.setUpdateFrequency(50.0);
+    hoodVelocity.setUpdateFrequency(50);
     hoodEncoder.getAbsolutePosition().setUpdateFrequency(50);
     ParentDevice.optimizeBusUtilizationForAll(hoodMotor, hoodEncoder);
   }
@@ -82,6 +86,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   @Override
   public void updateInputs(AdjustableHoodInputs inputs) {
     hoodAngle.refresh();
+    hoodVelocity.refresh();
     hoodEncoder.getAbsolutePosition().refresh();
     inputs.hoodAbsPos = hoodEncoder.getAbsolutePosition().getValueAsDouble();
     inputs.hoodAngle = hoodAngle.getValueAsDouble();
@@ -97,25 +102,25 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
 
   @Override
   public void setHoodAngle(double distance) {
-    lookupTableStuff = adjustableHoodLookupValues.getLookupValue(distance);
-    distanceGiven = distance;
-    hoodMotor.setControl(positionRequest.withPosition(lookupTableStuff));
+    // lookupTableStuff = adjustableHoodLookupValues.getLookupValue(distance);
+    // distanceGiven = distance;
+    // hoodMotor.setControl(positionRequest.withPosition(lookupTableStuff));
   }
 
   @Override
   public void setAngleWithoutDist(double rots) {
-    hoodMotor.setControl(positionRequest.withPosition(rots));
+    hoodMotor.setControl(positionRequest.withPosition(rots * 10 + 1));
     SmartDashboard.putNumber("pos req", positionRequest.Position);
     SmartDashboard.putNumber("pos req 2", hoodMotor.getPosition().getValueAsDouble());
   }
 
   @Override
   public void setSpeed(double speed) {
-    hoodMotor.setControl(current.withOutput(speed));
+    // hoodMotor.setControl(current.withOutput(speed));
   }
 
   @Override
   public void rezeroHood() {
-    hoodEncoder.setPosition(0.0);
+    // hoodEncoder.setPosition(0.0);
   }
 }

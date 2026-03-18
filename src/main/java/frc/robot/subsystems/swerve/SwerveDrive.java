@@ -708,9 +708,6 @@ public class SwerveDrive extends SubsystemBase {
         ChassisSpeeds.fromFieldRelativeSpeeds(
             outputFieldRelative, poseEstimator.getEstimatedPosition().getRotation());
 
-    Logger.recordOutput("Repulsor/Speeds", outputRobotRelative);
-    // Logger.recordOutput(getName(), null);
-
     drive(outputRobotRelative.unaryMinus(), false);
   }
 }

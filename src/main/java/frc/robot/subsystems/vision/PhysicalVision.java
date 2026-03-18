@@ -90,7 +90,7 @@ public class PhysicalVision implements VisionInterface {
     // First checks if it can see an april tag, then checks if it is fully in frame
     // as the limelight can see an april tag but not have it fully in frame, leading
     // to inaccurate pose estimates
-    if (isLimelightConnected(limelight)) {
+    if (isLimelightConnected(limelight) && getNumberOfAprilTags(limelight) > 0) {
       return Math.abs(TigerHelpers.getTX(limelight.getName())) <= limelight.getAccurateFOV();
     }
     return false;
@@ -307,7 +307,9 @@ public class PhysicalVision implements VisionInterface {
       } else {
         // Disable internal IMU when robot is disabled
         TigerHelpers.setIMUMode(limelight.getName(), IMUMode.EXTERNAL_IMU_SEED_INTERNAL);
-        TigerHelpers.setLimelightThrottle(limelight.getName(), VisionConstants.DISABLED_THROTTLE);
+        TigerHelpers.setLimelightThrottle(
+            limelight.getName(),
+            VisionConstants.ENABLED_THROTTLE); // VisionConstants.DISABLED_THROTTLE);
       }
     }
   }
