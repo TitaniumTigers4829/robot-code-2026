@@ -22,6 +22,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -107,7 +108,7 @@ public class PhysicalTurret implements TurretInterface {
     configureEncoder();
     configureMotor();
 
-    motorPosition = turretMotor.getPosition();
+    motorPosition = turretEncoder.getPosition();
     motorVelocity = turretMotor.getVelocity();
     motorVoltage = turretMotor.getMotorVoltage();
     motorCurrent = turretMotor.getStatorCurrent();
@@ -116,8 +117,6 @@ public class PhysicalTurret implements TurretInterface {
 
     // TODO(second-cancoder): Uncomment when second CANcoder is installed.
     // cancoderPosition2 = turretEncoder2.getAbsolutePosition();
-
-    seedFalconFromAbsolute();
 
     motorPosition.setUpdateFrequency(250);
     motorVelocity.setUpdateFrequency(250);
@@ -133,9 +132,8 @@ public class PhysicalTurret implements TurretInterface {
   /* -------------------------------------------------------------------------- */
 
   private void configureEncoder() {
-    encoderConfig.MagnetSensor.MagnetOffset = TurretConstants.ANGLE_ZERO;
+    encoderConfig.MagnetSensor.MagnetOffset = -TurretConstants.ANGLE_ZERO;
     encoderConfig.MagnetSensor.SensorDirection = TurretConstants.ENCODER_REVERSED;
-    // encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 3;
     turretEncoder.getConfigurator().apply(encoderConfig);
   }
 
@@ -156,11 +154,8 @@ public class PhysicalTurret implements TurretInterface {
     // divide all motor position/velocity signals by TOTAL_RATIO, so that
     // getPosition() returns turret output rotations, not raw motor rotations.
     // Do NOT divide by TOTAL_RATIO again anywhere when reading these signals.
-    motorConfig.Feedback.SensorToMechanismRatio = TOTAL_RATIO;
     motorConfig.Feedback.FeedbackRemoteSensorID = turretEncoder.getDeviceID();
     motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    // motorConfig.Feedback.RotorToSensorRatio = TurretConstants.CANCODER_TO_TURRET;
-
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
@@ -185,222 +180,21 @@ public class PhysicalTurret implements TurretInterface {
   }
 
   /* -------------------------------------------------------------------------- */
-  /*                         STARTUP ABSOLUTE ALIGNMENT                         */
-  /* -------------------------------------------------------------------------- */
-
-  /**
-   * Seeds the Falcon's internal encoder with the true absolute turret position on boot, using a
-   * single-encoder variation of the Chinese Remainder Theorem (CRT).
-   *
-   * <p>======================================================================== THE PROBLEM
-   * ========================================================================
-   *
-   * <p>The CANcoder is a single-turn absolute encoder mounted on an intermediate shaft — NOT
-   * directly on the turret output. It always reports a value between 0.0 and 1.0 representing its
-   * fractional position within ONE shaft rotation, but it has no memory of how many full rotations
-   * it has completed.
-   *
-   * <p>Because the intermediate shaft spins 2.667 times per turret rotation, a CANcoder reading of
-   * 0.3 is consistent with the turret being at ANY of these:
-   *
-   * <p>0.3 / 2.667 = 0.112 turret rotations (~40°) 1.3 / 2.667 = 0.487 turret rotations (~175°) 2.3
-   * / 2.667 = 0.862 turret rotations (~310°) ... and so on.
-   *
-   * <p>The CANcoder alone cannot tell us which of these is the real position. We need a second
-   * piece of information to resolve the ambiguity.
-   *
-   * <p>======================================================================== THE SOLUTION
-   * (current — single CANcoder + stale Falcon encoder)
-   * ========================================================================
-   *
-   * <p>The Falcon's internal encoder value persists across power cycles — it is stored inside the
-   * motor controller and survives a reboot. It may be slightly stale if the turret was physically
-   * moved while the robot was off, but it is close enough to reality to tell us which of the ~2.667
-   * possible positions the CANcoder reading corresponds to.
-   *
-   * <p>We convert the stale Falcon reading into estimated intermediate shaft rotations, then use
-   * CRT to snap it to the nearest valid answer given what the CANcoder is actually reading right
-   * now.
-   *
-   * <p>======================================================================== THE MATH — step by
-   * step ========================================================================
-   *
-   * <p>Step 1 — Read the CANcoder fractional position (0.0–1.0). This value is always accurate
-   * regardless of power history. Call it: cancoderRot
-   *
-   * <p>Step 2 — Convert the stale Falcon reading to intermediate shaft rotations. motorPosition
-   * (turret rotations, stale) × TOTAL_RATIO = raw motor rotations raw motor rotations /
-   * MOTOR_TO_CANCODER = estimatedCancoderRot This is approximate — possibly off by a fraction if
-   * turret moved while off.
-   *
-   * <p>Step 3 — CRT: find k, the number of complete intermediate shaft rotations. k =
-   * Math.round(estimatedCancoderRot - cancoderRot) trueCancoderRot = k + cancoderRot
-   *
-   * <p>Why this works: (estimatedCancoderRot - cancoderRot) is approximately equal to the integer
-   * number of full shaft rotations. Math.round snaps it to the nearest whole number, giving us k.
-   * We then add back the accurate fractional reading from the CANcoder to get the true total shaft
-   * rotations.
-   *
-   * <p>Step 4 — Convert trueCancoderRot back to turret rotations and seed. trueMotorRot =
-   * trueCancoderRot × MOTOR_TO_CANCODER finalTurretRot = trueMotorRot / TOTAL_RATIO
-   * turretMotor.setPosition(finalTurretRot)
-   *
-   * <p>Worked example: cancoderRot = 0.3 ← CANcoder reads 0.3 shaft rotations right now turretRot
-   * (stale) = 0.45 ← Falcon thinks turret is at 0.45 rotations motorRot = 0.45 × 44.444 = 20.0 raw
-   * motor rotations estimatedCancoderRot = 20.0 / 2.667 = 7.5 intermediate shaft rotations k =
-   * round(7.5 - 0.3) = round(7.2) = 7 trueCancoderRot = 7 + 0.3 = 7.3 intermediate shaft rotations
-   * trueMotorRot = 7.3 × 2.667 = 19.47 raw motor rotations finalTurretRot = 19.47 / 44.444 = 0.438
-   * turret rotations ✓
-   *
-   * <p>======================================================================== THE LIMIT — when
-   * does this break? ========================================================================
-   *
-   * <p>Math.round picks the WRONG k if the Falcon's estimate is off by more than ±0.5 intermediate
-   * shaft rotations from reality. This would happen if the turret was physically moved more than a
-   * certain amount while powered off.
-   *
-   * <p>Safe window calculation: ±0.5 intermediate shaft rotations = ±0.5 / 2.667 turret rotations =
-   * ±0.1875 turret rotations = ±0.1875 × 360° = ±67.5°
-   *
-   * <p>So the turret can be moved up to ±67.5° from forward while the robot is off and seeding will
-   * still resolve correctly. This is a very wide window — eyeballing "roughly forward" before
-   * powering on is more than sufficient.
-   *
-   * <p>If seeding IS wrong, it will be wrong by exactly one intermediate shaft rotation = 1/2.667
-   * turret rotations = 135°. That's a big jump and will be immediately obvious during testing. The
-   * sanity check below catches the case where the bad seed lands outside MIN/MAX. A bad seed that
-   * happens to land INSIDE valid range cannot be detected without additional hardware.
-   *
-   * <p>======================================================================== PRE-MATCH PROCEDURE
-   * ========================================================================
-   *
-   * <p>1. Before powering on the robot, physically rotate the turret so it is pointing roughly
-   * toward the front of the robot. Eyeballing is fine — you have a ±67.5° window, which is very
-   * generous.
-   *
-   * <p>2. Power on the robot. seedFalconFromAbsolute() runs automatically.
-   *
-   * <p>3. Check Driver Station for the "Turret seeding out of range!" warning. If it appears, the
-   * turret was too far from forward. Manually drive the turret to forward using open loop and press
-   * the rezero button.
-   *
-   * <p>4. If no warning appears, seeding succeeded. Verify by checking turret/seed/finalTurretRot
-   * in AdvantageScope — it should be close to 0.0 if the turret was pointing forward.
-   *
-   * <p>========================================================================
-   * TODO(second-cancoder): UPGRADE PATH TO TRUE TWO-ENCODER CRT
-   * ========================================================================
-   *
-   * <p>When a second CANcoder is physically installed, this method should be REPLACED with a true
-   * two-encoder CRT implementation. This eliminates the dependency on the stale Falcon encoder
-   * entirely and makes seeding fully power-independent — the turret can be anywhere when you boot
-   * and it will always resolve correctly.
-   *
-   * <p>HARDWARE REQUIREMENTS for two-encoder CRT: - Two absolute single-turn encoders - Each
-   * encoder driven by a small gear off the turret ring - The tooth counts of the two encoder gears
-   * must be CO-PRIME (their greatest common divisor must equal 1) - Easy way to pick co-prime
-   * teeth: choose one prime number (e.g. 17), and pick any other number ≤ 18 that isn't a multiple
-   * of 17 (e.g. 16) - The product (e1_teeth × e2_teeth) divided by turret ring teeth must be ≥ the
-   * number of turret rotations you need to track
-   *
-   * <p>SOFTWARE — how the two-encoder algorithm works:
-   *
-   * <p>For each encoder, generate a list of ALL possible turret positions consistent with that
-   * encoder's current reading:
-   *
-   * <p>for (int n = 0; n &lt; otherEncoder_teeth; n++) { double candidate = (n + encoderReading) /
-   * gearRatio; add candidate to list; }
-   *
-   * <p>Do this for both encoders. The two lists will share exactly ONE value (within floating point
-   * tolerance). That shared value is the true turret position. Example (from Team SCREAM 4522,
-   * tooth counts 35T and 36T):
-   *
-   * <p>Encoder 1 reads 75° → possible positions: [0.097, 0.565, 1.032, 1.5, ...] Encoder 2 reads
-   * 108° → possible positions: [0.136, 0.591, 1.045, 1.5, ...] Shared value: 1.5 rotations → turret
-   * is at 1.5 × 360° = 540° from zero ✓
-   *
-   * <p>MATCHING — to find the shared value, iterate both lists and compare:
-   *
-   * <p>double TOLERANCE = 0.5 / turretRingTeeth; // half a tooth of tolerance for (double a :
-   * list1) { for (double b : list2) { if (Math.abs(a - b) &lt; TOLERANCE) { // found it — seed
-   * turretMotor with this value } } }
-   *
-   * <p>IMPORTANT NOTES for the upgrade: - Zero both encoders at the same known physical reference
-   * position (e.g. turret at its hard stop) using Phoenix Tuner X - Add CANCODER_2_TO_TURRET and
-   * ANGLE_ZERO_2 to TurretConstants - The stale Falcon encoder and MOTOR_TO_CANCODER are no longer
-   * needed once this is implemented — you can remove them - See Team SCREAM 4522's 2024 write-up
-   * for full worked examples - See all TODO(second-cancoder) comments throughout this file
-   */
-  private void seedFalconFromAbsolute() {
-
-    cancoderPosition.refresh();
-    motorPosition.refresh();
-
-    // STEP 1: Read the CANcoder.
-    // Returns the fractional position of the intermediate shaft (0.0–1.0).
-    // This is always accurate — it's absolute and power-independent.
-    double cancoderRot = cancoderPosition.getValueAsDouble();
-
-    // STEP 2: Estimate the intermediate shaft position from the stale Falcon encoder.
-    // motorPosition is already in turret rotations (Phoenix divided by TOTAL_RATIO).
-    // We multiply back up to raw motor rotations, then divide by MOTOR_TO_CANCODER
-    // to get how many full+fractional rotations the intermediate shaft has done.
-    // This is stale but good enough to identify the correct integer revolution.
-    double turretRot = motorPosition.getValueAsDouble(); // turret rotations (stale)
-    double motorRot = turretRot * TOTAL_RATIO; // raw motor rotations (stale)
-    double estimatedCancoderRot =
-        motorRot / MOTOR_TO_CANCODER; // intermediate shaft rotations (stale)
-
-    // STEP 3: CRT — resolve which revolution of the intermediate shaft we are on.
-    // Subtracting cancoderRot from the estimate isolates the integer part (full rotations).
-    // Math.round snaps it to the nearest whole number — this is valid as long as the
-    // turret hasn't moved more than ±67.5° while powered off (see method javadoc).
-    double k = Math.round(estimatedCancoderRot - cancoderRot);
-
-    // Recombine: the true intermediate shaft position is k full rotations
-    // plus the fractional position the CANcoder is currently reading.
-    double trueCancoderRot = k + cancoderRot;
-
-    // STEP 4: Convert back to turret rotations and seed the Falcon.
-    // trueCancoderRot (intermediate shaft) → raw motor rotations → turret rotations.
-    double trueMotorRot = trueCancoderRot * MOTOR_TO_CANCODER;
-    double finalTurretRot = trueMotorRot / TOTAL_RATIO;
-
-    // Sanity check: if the resolved position is outside physical limits, something
-    // went wrong (turret moved too far while off, or first-ever boot with no history).
-    // Fall back to 0.0 and fire a Driver Station warning so the drive team knows.
-    // NOTE: a bad seed that happens to land within MIN/MAX will NOT be caught here —
-    // that requires additional hardware such as a second CANcoder or hall effect sensor.
-    boolean seedingValid =
-        finalTurretRot >= TurretConstants.MIN_ANGLE && finalTurretRot <= TurretConstants.MAX_ANGLE;
-
-    if (seedingValid) {
-      turretMotor.setPosition(finalTurretRot);
-    } else {
-      turretMotor.setPosition(0.0);
-      DriverStation.reportWarning(
-          "Turret seeding out of range! Position defaulted to 0. "
-              + "Point turret forward and press rezero before enabling.",
-          false);
-    }
-
-    Logger.recordOutput("turret/seed/cancoderRot", cancoderRot);
-    Logger.recordOutput("turret/seed/estimatedCancoderRot", estimatedCancoderRot);
-    Logger.recordOutput("turret/seed/k", k);
-    Logger.recordOutput("turret/seed/trueCancoderRot", trueCancoderRot);
-    Logger.recordOutput("turret/seed/finalTurretRot", finalTurretRot);
-    Logger.recordOutput("turret/seed/seedingValid", seedingValid);
-  }
-
-  /* -------------------------------------------------------------------------- */
   /*                                 IO UPDATE                                  */
   /* -------------------------------------------------------------------------- */
 
   @Override
   public void updateInputs(TurretInputs inputs) {
 
-    BaseStatusSignal.refreshAll(
-        motorPosition, motorVelocity, motorVoltage, motorCurrent, motorTemp);
+    // BaseStatusSignal.refreshAll(
+    //     motorPosition, motorVelocity, motorVoltage, motorCurrent, motorTemp);
+
+    motorPosition.refresh();
+    motorVelocity.refresh();
+    motorVoltage.refresh();
+    motorCurrent.refresh();
+    motorTemp.refresh();
+    cancoderPosition.refresh();
 
     // Phoenix 6 already divides by SensorToMechanismRatio (TOTAL_RATIO) internally.
     // These values are already in turret output rotations — do NOT divide again.
@@ -410,6 +204,7 @@ public class PhysicalTurret implements TurretInterface {
     inputs.turretMotorAppliedVoltage = motorVoltage.getValueAsDouble();
     inputs.turretStatorCurrent = motorCurrent.getValueAsDouble();
     inputs.turretMotorTemp = motorTemp.getValueAsDouble();
+    SmartDashboard.putNumber("abs pos", cancoderPosition.getValueAsDouble());
   }
 
   /* -------------------------------------------------------------------------- */

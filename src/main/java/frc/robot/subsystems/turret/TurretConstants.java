@@ -46,7 +46,7 @@ public class TurretConstants {
   /* -------------------------------------------------------------------------- */
 
   public static double MAX_VELOCITY_ROTATIONS_PER_SECOND = 10;
-  public static double MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED = 4;
+  public static double MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED = 30;
 
   /* -------------------------------------------------------------------------- */
   /*                             MANUAL CONTROL                                 */
@@ -60,11 +60,11 @@ public class TurretConstants {
   /* -------------------------------------------------------------------------- */
 
   // TODO: Tune these on actual hardware
-  public static double TURRET_P = 50;
+  public static double TURRET_P = 9.4829;
   public static double TURRET_I = 0;
   public static double TURRET_D = 0;
-  public static double TURRET_S = 0.25;
-  public static double TURRET_V = 2.5;
+  public static double TURRET_S = 0.22;
+  public static double TURRET_V = 0.1;
   public static double TURRET_A = 0;
 
   /* -------------------------------------------------------------------------- */
@@ -91,7 +91,7 @@ public class TurretConstants {
   // Magnet offset found via Phoenix Tuner X with turret physically at forward (0°).
   // To re-zero: point turret forward, read raw CANcoder absolute position in
   // Tuner X, and update this value.
-  public static final double ANGLE_ZERO = 0.03125;
+  public static final double ANGLE_ZERO = -0.043701;
 
   /* -------------------------------------------------------------------------- */
   /*                            CURRENT LIMITS                                  */
