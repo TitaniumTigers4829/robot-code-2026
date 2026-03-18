@@ -4,7 +4,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
@@ -26,7 +27,8 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   private final SingleLinearInterpolator adjustableHoodLookupValues =
       new SingleLinearInterpolator(AdjustableHoodConstants.hoodLookUpTable);
 
-  private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0.0);
+  // private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0.0);
+  private final PositionVoltage positionRequest = new PositionVoltage(0.0);
   private final DutyCycleOut current = new DutyCycleOut(0.0);
   public StatusSignal<Angle> hoodAngle;
   public double desiredAngle;
@@ -47,10 +49,9 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
 
     hoodConfig.ClosedLoopGeneral.ContinuousWrap = true;
     hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    hoodConfig.Feedback.SensorToMechanismRatio = AdjustableHoodConstants.GEAR_RATIO;
 
-    // hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
-    // hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -1.2;
+    // hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1.1;
+    // hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
     // hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     // hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
@@ -59,20 +60,22 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
 
     hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    hoodEncoderConfig.MagnetSensor.MagnetOffset = AdjustableHoodConstants.HOOD_ZERO_ANGLE;
+    hoodEncoderConfig.MagnetSensor.MagnetOffset = -AdjustableHoodConstants.HOOD_ZERO_ANGLE;
     hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
 
-    hoodConfig.MotionMagic.MotionMagicAcceleration = 10;
-    hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
+    // hoodConfig.MotionMagic.MotionMagicAcceleration = 10;
+    // hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
 
     hoodMotor.getConfigurator().apply(hoodConfig);
     hoodEncoder.getConfigurator().apply(hoodEncoderConfig);
 
+    hoodEncoder.setPosition(0);
+
     hoodAngle = hoodEncoder.getPosition();
 
     // hoodEncoder.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
-    hoodAngle.setUpdateFrequency(250.0);
-    hoodEncoder.getAbsolutePosition().setUpdateFrequency(250);
+    hoodAngle.setUpdateFrequency(50.0);
+    hoodEncoder.getAbsolutePosition().setUpdateFrequency(50);
     ParentDevice.optimizeBusUtilizationForAll(hoodMotor, hoodEncoder);
   }
 
@@ -102,6 +105,8 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   @Override
   public void setAngleWithoutDist(double rots) {
     hoodMotor.setControl(positionRequest.withPosition(rots));
+    SmartDashboard.putNumber("pos req", positionRequest.Position);
+    SmartDashboard.putNumber("pos req 2", hoodMotor.getPosition().getValueAsDouble());
   }
 
   @Override

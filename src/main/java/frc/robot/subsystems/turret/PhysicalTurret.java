@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.turret;
 
-import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -18,9 +17,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
@@ -91,9 +87,6 @@ public class PhysicalTurret implements TurretInterface {
 
   private final StatusSignal<Angle> motorPosition;
   private final StatusSignal<AngularVelocity> motorVelocity;
-  private final StatusSignal<Voltage> motorVoltage;
-  private final StatusSignal<Current> motorCurrent;
-  private final StatusSignal<Temperature> motorTemp;
   private final StatusSignal<Angle> cancoderPosition;
 
   // TODO(second-cancoder): Uncomment when second CANcoder is installed.
@@ -110,9 +103,6 @@ public class PhysicalTurret implements TurretInterface {
 
     motorPosition = turretEncoder.getPosition();
     motorVelocity = turretMotor.getVelocity();
-    motorVoltage = turretMotor.getMotorVoltage();
-    motorCurrent = turretMotor.getStatorCurrent();
-    motorTemp = turretMotor.getDeviceTemp();
     cancoderPosition = turretEncoder.getAbsolutePosition();
 
     // TODO(second-cancoder): Uncomment when second CANcoder is installed.
@@ -120,8 +110,6 @@ public class PhysicalTurret implements TurretInterface {
 
     motorPosition.setUpdateFrequency(250);
     motorVelocity.setUpdateFrequency(250);
-
-    BaseStatusSignal.setUpdateFrequencyForAll(50, motorVoltage, motorCurrent, motorTemp);
 
     // TODO(second-cancoder): Add turretEncoder2 to optimizeBusUtilizationForAll.
     ParentDevice.optimizeBusUtilizationForAll(turretMotor, turretEncoder);
@@ -191,19 +179,12 @@ public class PhysicalTurret implements TurretInterface {
 
     motorPosition.refresh();
     motorVelocity.refresh();
-    motorVoltage.refresh();
-    motorCurrent.refresh();
-    motorTemp.refresh();
     cancoderPosition.refresh();
 
     // Phoenix 6 already divides by SensorToMechanismRatio (TOTAL_RATIO) internally.
     // These values are already in turret output rotations — do NOT divide again.
     inputs.turretAngle = motorPosition.getValueAsDouble();
     inputs.turretAngularVelocity = motorVelocity.getValueAsDouble();
-
-    inputs.turretMotorAppliedVoltage = motorVoltage.getValueAsDouble();
-    inputs.turretStatorCurrent = motorCurrent.getValueAsDouble();
-    inputs.turretMotorTemp = motorTemp.getValueAsDouble();
     SmartDashboard.putNumber("abs pos", cancoderPosition.getValueAsDouble());
   }
 

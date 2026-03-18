@@ -20,8 +20,8 @@ import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.intake.SetIntakeAngleCommand;
-import frc.robot.commands.shooter.PassFuelCommand;
-import frc.robot.commands.turret.SetTurretAngle;
+import frc.robot.commands.shooter.HoodDownCommand;
+import frc.robot.commands.shooter.HoodUpCommand;
 import frc.robot.extras.util.JoystickUtil;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
@@ -205,9 +205,11 @@ public class Robot extends LoggedRobot {
     // driverController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
 
     // // Will have to use manual turret to pass
-    driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
+    // driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
 
-    driverController.y().whileTrue(new SetTurretAngle(turretSubsystem));
+    // driverController.y().whileTrue(new SetTurretAngle(turretSubsystem));
+    driverController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
+    driverController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
 
     driverController
         .leftTrigger()

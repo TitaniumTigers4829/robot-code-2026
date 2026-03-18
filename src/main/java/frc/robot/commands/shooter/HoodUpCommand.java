@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class HoodDownCommand extends Command {
+public class HoodUpCommand extends Command {
   /** Creates a new HoodDownCommand. */
   AdjustableHoodSubsystem hoodSubsystem;
 
-  public HoodDownCommand(AdjustableHoodSubsystem hoodSubsystem) {
+  public HoodUpCommand(AdjustableHoodSubsystem hoodSubsystem) {
     this.hoodSubsystem = hoodSubsystem;
     addRequirements(hoodSubsystem);
   }
@@ -24,7 +24,7 @@ public class HoodDownCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hoodSubsystem.setAngleWithoutDist(0); // 0.5
+    hoodSubsystem.setAngleWithoutDist(1); // 0.5
   }
 
   // Called once the command ends or is interrupted.
