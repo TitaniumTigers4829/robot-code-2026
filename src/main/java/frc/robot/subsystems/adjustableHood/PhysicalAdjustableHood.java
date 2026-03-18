@@ -4,13 +4,15 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,10 +20,8 @@ import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
 public class PhysicalAdjustableHood implements AdjustableHoodInterface {
-  private final TalonFX hoodMotor =
-      new TalonFX(AdjustableHoodConstants.HOOD_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
-  private final CANcoder hoodEncoder =
-      new CANcoder(AdjustableHoodConstants.CANCODER_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
+  private final TalonFX hoodMotor;
+  private final CANcoder hoodEncoder;
 
   private final TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
   private final CANcoderConfiguration hoodEncoderConfig = new CANcoderConfiguration();
@@ -29,18 +29,27 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
       new SingleLinearInterpolator(AdjustableHoodConstants.hoodLookUpTable);
 
   // private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0.0);
-  private final PositionVoltage positionRequest = new PositionVoltage(0.0);
+  private final PositionDutyCycle positionRequest = new PositionDutyCycle(0.0);
   private final DutyCycleOut current = new DutyCycleOut(0.0);
   public StatusSignal<Angle> hoodAngle;
   private StatusSignal<AngularVelocity> hoodVelocity;
   public double desiredAngle;
   public double lookupTableStuff = 0.0;
   public double distanceGiven = 0.0;
+  private final PIDController hoodController = new PIDController(0.224829, 0, 0.004829);
+  private final SimpleMotorFeedforward ffHoodController = new SimpleMotorFeedforward(0.0, 0.0);
 
   public PhysicalAdjustableHood() {
 
-    hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    hoodMotor =
+        new TalonFX(
+            AdjustableHoodConstants.HOOD_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
+    hoodEncoder =
+        new CANcoder(
+            AdjustableHoodConstants.CANCODER_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
+
     hoodConfig.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
+    hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
     hoodConfig.Slot0.kP = AdjustableHoodConstants.HOOD_P;
     hoodConfig.Slot0.kI = AdjustableHoodConstants.HOOD_I;
@@ -63,7 +72,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     hoodEncoderConfig.MagnetSensor.MagnetOffset = -AdjustableHoodConstants.HOOD_ZERO_ANGLE;
-    hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+    // hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
 
     // hoodConfig.MotionMagic.MotionMagicAcceleration = 10;
     // hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
@@ -109,18 +118,22 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
 
   @Override
   public void setAngleWithoutDist(double rots) {
-    hoodMotor.setControl(positionRequest.withPosition(rots * 10 + 1));
+    // hoodMotor.setControl(positionRequest.withPosition(rots));
+    hoodMotor.set(
+        hoodController.calculate(hoodAngle.getValueAsDouble(), rots)
+            + ffHoodController.calculate(hoodVelocity.refresh().getValueAsDouble()));
+
     SmartDashboard.putNumber("pos req", positionRequest.Position);
-    SmartDashboard.putNumber("pos req 2", hoodMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("pos req 2", hoodMotor.getPosition().refresh().getValueAsDouble());
   }
 
   @Override
   public void setSpeed(double speed) {
-    // hoodMotor.setControl(current.withOutput(speed));
+    hoodMotor.setControl(current.withOutput(speed));
   }
 
   @Override
   public void rezeroHood() {
-    // hoodEncoder.setPosition(0.0);
+    hoodEncoder.setPosition(0.0);
   }
 }

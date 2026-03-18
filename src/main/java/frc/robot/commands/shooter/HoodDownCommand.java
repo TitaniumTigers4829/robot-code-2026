@@ -24,7 +24,7 @@ public class HoodDownCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hoodSubsystem.setAngleWithoutDist(0); // 0.5
+    hoodSubsystem.setAngleWithoutDist(0.5); // 0.5
   }
 
   // Called once the command ends or is interrupted.

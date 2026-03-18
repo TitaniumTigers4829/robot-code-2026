@@ -14,9 +14,9 @@ public class ManualHoodUp extends Command {
   DoubleSupplier speed;
 
   /** Creates a new ManualHoodDown. */
-  public ManualHoodUp(AdjustableHoodSubsystem hoodSubsystem, DoubleSupplier speed) {
+  public ManualHoodUp(AdjustableHoodSubsystem hoodSubsystem) {
     this.hoodSubsystem = hoodSubsystem;
-    this.speed = speed;
+    // this.speed = speed;
     addRequirements(hoodSubsystem);
   }
 
@@ -27,7 +27,7 @@ public class ManualHoodUp extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hoodSubsystem.setSpeed(speed.getAsDouble());
+    hoodSubsystem.setSpeed(0.05);
   }
 
   // Called once the command ends or is interrupted.

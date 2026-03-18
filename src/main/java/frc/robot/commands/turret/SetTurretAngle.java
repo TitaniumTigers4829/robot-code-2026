@@ -26,7 +26,7 @@ public class SetTurretAngle extends Command {
   @Override
   public void execute() {
     // turretSubsystem.setTurretAngle(0.5 * 10);
-    turretSubsystem.setTurretAngle(2);
+    turretSubsystem.setTurretAngle(.4);
   }
 
   // Called once the command ends or is interrupted.

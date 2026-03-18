@@ -59,7 +59,9 @@ public class TurretSubsystem extends SubsystemBase {
   // In rotations
   public void setTurretAngle(double targetAngle) {
     double clamped =
-        Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, targetAngle));
+        Math.max(
+            TurretConstants.MIN_ANGLE * 10,
+            Math.min(TurretConstants.MAX_ANGLE * 10, targetAngle * 10));
     turretInterface.setTurretAngle(clamped);
   }
 

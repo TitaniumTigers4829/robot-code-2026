@@ -78,7 +78,7 @@ public class TurretConstants {
   // Soft limits: ±0.5 rotations = ±180°
   // NOTE: enforce these in TurretSubsystem.setTurretAngle(), NOT via Phoenix
   // soft limits — ContinuousWrap and Phoenix soft limits conflict with each other.
-  public static double MAX_ANGLE = 0.5;
+  public static double MAX_ANGLE = 0.3;
   public static double MIN_ANGLE = -0.5;
 
   /* -------------------------------------------------------------------------- */
