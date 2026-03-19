@@ -16,9 +16,9 @@ public class ShooterConstants {
   public static double GEAR_RATIO = 0.95;
 
   public static double FLYWHEEL_S = 0.4;
-  public static double FLYWHEEL_V = 10;
+  public static double FLYWHEEL_V = 0;
   public static double FLYWHEEL_A = 0;
-  public static double FLYWHEEL_P = 0;
+  public static double FLYWHEEL_P = 55;
   public static double FLYWHEEL_I = 0;
   public static double FLYWHEEL_D = 0;
 
@@ -27,12 +27,16 @@ public class ShooterConstants {
 
   public static double PASS_SHOOTER_SPEED = -1;
   public static double KICKER_PERCENT_OUTPUT = 0.95;
-  public static double SPINDEXER_PERCENT_OUTPUT = 0.9; // 0.675
+  public static double SPINDEXER_INTAKE_SPEED = 0.5; // 0.675
+  public static double SPINDEXER_SHOOT_SPEED = 0.9; // 0.675
+
+  public static double FLYWHEEL_STATOR_CURRENT_LIMIT = 80.0;
+  public static double FLYWHEEL_SUPPLY_CURRENT_LIMIT = 20.0;
 
   // Lookup table for rpms needed for certain distances
   public static double[][] DISTANCE_TO_FLYWHEEL_RPM = {
     // Distance from hub in meters, needed rps of flywheel
-    {0.5, 75},
+    {1.0, 75},
     {1, 85},
     {1.5, 90},
     {2, 95},

@@ -63,8 +63,8 @@ public class HubLockCommand extends DriveCommandBase {
 
     // Gets the position of the turret
     Translation2d turretPos =
-        swerveDrive
-            .getEstimatedPose()
+        visionSubsystem
+            .getLastSeenPose()
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
     super.execute();
@@ -84,8 +84,7 @@ public class HubLockCommand extends DriveCommandBase {
     turretToHubXDist = hubPos.getX() - turretPos.getX();
 
     // Gets the needed angle for the turret to turn to face the hub in radians
-    double turretAngleRad =
-        -(Math.PI / 4) + Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
+    double turretAngleRad = Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
 
     // Wrap to [-pi, pi]
     turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));

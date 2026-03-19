@@ -28,10 +28,10 @@ public class IntakeConstants {
 
   public static final double STATOR_CURRENT_LIMIT = 60;
   public static final double SUPPLY_CURRENT_LIMIT = 0.1;
-  public static final double PIVOT_DOWN_POSITION = 0.75;
+  public static final double PIVOT_DOWN_POSITION = 0.78;
   public static final double PIVOT_UP_POSITION = 0.12; // -0.33
   public static final double MAX_ANGLE = 1;
-  public static final double ACCEPTABLE_RANGE = 0.01;
+  public static final double ACCEPTABLE_RANGE = 0.1;
   public static final double MIN_ANGLE = 0.0; // I HATE THIS SO MUCH
   public static final double INTAKE_SPEED_OUTER = 0.5;
   public static final double INTAKE_SPEED_INNER = 0.35;

@@ -83,6 +83,10 @@ public class ShooterSubsystem implements ShooterInterface {
     shooterInterface.passFuel(output);
   }
 
+  public boolean isUpToSpeed() {
+    return this.shooterInterface.isUpToSpeed();
+  }
+
   @Override
   public void periodic() {
     shooterInterface.updateInputs(inputs);

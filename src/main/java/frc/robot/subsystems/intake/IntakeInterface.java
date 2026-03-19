@@ -1,8 +1,9 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IntakeInterface {
+public interface IntakeInterface extends Subsystem {
   @AutoLog
   public static class IntakeInputs {
     public boolean isIntakeDeployed = false;
@@ -22,7 +23,7 @@ public interface IntakeInterface {
 
   public default void setAngle(double angle) {}
 
-  public default void setSpeed() {}
+  public default void setSpeed(double speed) {}
 
   public default void setPivotSpeed(double angle) {}
 

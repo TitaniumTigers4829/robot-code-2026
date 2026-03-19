@@ -13,12 +13,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
+import frc.robot.commands.hublocking.HubLockCommand;
+import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.intake.SetIntakeAngleCommand;
-import frc.robot.commands.shooter.ManualShootCommand;
+import frc.robot.commands.turret.ManualTurretCCWCommand;
+import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
@@ -194,9 +197,9 @@ public class Robot extends LoggedRobot {
     //             () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
 
     // // Commands for manual turret
-    // driverController.leftBumper().whileTrue(new ManualHoodDown(hoodSubsystem));
+    driverController.leftBumper().whileTrue(new ManualTurretCCWCommand(turretSubsystem));
 
-    // driverController.rightBumper().whileTrue(new ManualHoodUp(hoodSubsystem, null));
+    driverController.rightBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
 
     // driverController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
     // driverController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
@@ -208,24 +211,27 @@ public class Robot extends LoggedRobot {
     // driverController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
     // driverController.y().whileTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
 
-    // driverController
-    //     .leftTrigger()
-    //     .whileTrue(
-    //         new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
-
-    // driverController
-    //     .rightTrigger()
-    //     .whileTrue(
-    //         new ShootWhileHublockedCommand(
-    //             shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem));
+    driverController
+        .leftTrigger()
+        .whileTrue(
+            new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
 
     driverController
         .rightTrigger()
-        .whileTrue(new ManualShootCommand(shooterSubsystem, hoodSubsystem));
-    // driverController
-    //     .b()
-    //     .onTrue(new InstantCommand(() -> swerveDrive.resetEstimatedPose(new Pose2d())));
-    // driverController.a().onTrue(new InstantCommand(() -> turretSubsystem.zeroTurret()));
+        .whileTrue(
+            new ShootWhileHublockedCommand(
+                shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
+
+    driverController.a().whileTrue(new IntakeCommand(intakeSubsystem));
+
+    driverController.b().whileTrue(new OuttakeCommand(intakeSubsystem));
+
+    driverController
+        .povLeft()
+        .onTrue(
+            new InstantCommand(
+                () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
+    driverController.povRight().onTrue(new InstantCommand(() -> turretSubsystem.zeroTurret()));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */
@@ -249,11 +255,12 @@ public class Robot extends LoggedRobot {
 
     operatorController.x().whileTrue(new IntakeCommand(intakeSubsystem));
 
-    // operatorController
-    //     .rightBumper()
-    //     .onTrue(new InstantCommand(() -> turretSubsystem.rezeroTurret()));
+    operatorController
+        .rightBumper()
+        .onTrue(new InstantCommand(() -> turretSubsystem.rezeroTurret()));
 
-    operatorController.povRight().whileTrue(new IntakeCommand(intakeSubsystem));
+    // operatorController.povRight().whileTrue(new IntakeCommand(intakeSubsystem,
+    // shooterSubsystem));
 
     operatorController.povLeft().whileTrue(new OuttakeCommand(intakeSubsystem));
 

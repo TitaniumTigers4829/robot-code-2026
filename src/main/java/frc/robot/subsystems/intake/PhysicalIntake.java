@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class PhysicalIntake implements IntakeInterface {
   private TalonFX intakeMotorOuter = new TalonFX(IntakeConstants.INTAKE_MOTOR_1_ID);
@@ -133,9 +134,9 @@ public class PhysicalIntake implements IntakeInterface {
     intakeMotorInside.set(-IntakeConstants.INTAKE_SPEED_INNER);
   }
 
-  public void setSpeed() {
-    intakeMotorOuter.set(0);
-    intakeMotorInside.set(0);
+  public void setSpeed(double speed) {
+    intakeMotorOuter.set(speed);
+    intakeMotorInside.set(speed);
   }
 
   public void setPivotSpeed(double speed) {
@@ -170,13 +171,9 @@ public class PhysicalIntake implements IntakeInterface {
     return intakePivotSpeed.getValueAsDouble();
   }
 
+  @AutoLogOutput(key = "isintake")
   public boolean isIntakeDeployed() {
-    if (intakeAngle.getValueAsDouble()
-            >= (IntakeConstants.PIVOT_DOWN_POSITION - IntakeConstants.ACCEPTABLE_RANGE)
-        && intakeAngle.getValueAsDouble() <= IntakeConstants.PIVOT_DOWN_POSITION) {
-      return true;
-    } else {
-      return false; // this code deport Andrita
-    }
+    return Math.abs(getIntakeAngle() - IntakeConstants.PIVOT_DOWN_POSITION)
+        < IntakeConstants.ACCEPTABLE_RANGE;
   }
 }

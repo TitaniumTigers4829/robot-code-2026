@@ -51,5 +51,9 @@ public interface ShooterInterface extends Subsystem {
 
   public default void setSpindexerSpeed(double speed) {}
 
-  public default void setTurretSpeed(double speed) {}
+  public default void setKickerSpeed(double speed) {}
+
+  public default boolean isUpToSpeed() {
+    return false;
+  }
 }

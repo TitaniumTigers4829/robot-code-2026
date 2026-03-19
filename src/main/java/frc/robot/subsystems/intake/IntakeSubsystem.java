@@ -5,11 +5,10 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
 
-public class IntakeSubsystem extends SubsystemBase {
+public class IntakeSubsystem implements IntakeInterface {
 
   private IntakeInterface intakeInterface;
   private IntakeInputsAutoLogged inputs = new IntakeInputsAutoLogged();
@@ -52,8 +51,8 @@ public class IntakeSubsystem extends SubsystemBase {
     this.intakeInterface.outakeFuel();
   }
 
-  public void setSpeed() {
-    this.intakeInterface.setSpeed();
+  public void setSpeed(double speed) {
+    this.intakeInterface.setSpeed(speed);
   }
 
   public void setAngle(double angle) {
@@ -89,7 +88,8 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void setIntakePos(double intakePos) {
-    this.intakePos = intakePos;
+    // this.intakePos = intakePos;
+    this.intakeInterface.setIntakeAngle(intakePos);
   }
 
   @Override
@@ -98,5 +98,8 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("intake deployed", inputs.isIntakeDeployed);
     SmartDashboard.putNumber("intake angle", inputs.intakeAngle);
     // setIntakeAngle(intakePos);
+    // if (isIntakeDeployed()) {
+    //   intakeFuel();
+    // } else setSpeed(0);
   }
 }

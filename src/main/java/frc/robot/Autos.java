@@ -123,7 +123,11 @@ public class Autos {
                 Commands.run(
                     () ->
                         new ShootWhileHublockedCommand(
-                            shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem))));
+                            shooterSubsystem,
+                            swerveDrive,
+                            visionSubsystem,
+                            hoodSubsystem,
+                            turretSubsystem))));
     return routine;
   }
 
@@ -144,7 +148,11 @@ public class Autos {
                 Commands.run(
                     () ->
                         new ShootWhileHublockedCommand(
-                            shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem)),
+                            shooterSubsystem,
+                            swerveDrive,
+                            visionSubsystem,
+                            hoodSubsystem,
+                            turretSubsystem)),
                 Commands.runOnce(() -> new IntakePivotDownCommand(intakeSubsystem)),
                 new WaitCommand(2.0),
                 Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),
@@ -173,7 +181,11 @@ public class Autos {
                 Commands.run(
                     () ->
                         new ShootWhileHublockedCommand(
-                            shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem))));
+                            shooterSubsystem,
+                            swerveDrive,
+                            visionSubsystem,
+                            hoodSubsystem,
+                            turretSubsystem))));
     return routine;
   }
 

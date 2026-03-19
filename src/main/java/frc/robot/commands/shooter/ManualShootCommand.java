@@ -31,7 +31,7 @@ public class ManualShootCommand extends Command {
   public void execute() {
     hoodSubsystem.setAngleWithoutDist(0.5);
     shooterSubsystem.setSpindexerSpeed(0.2);
-    shooterSubsystem.setTurretSpeed(0.1);
+    shooterSubsystem.setKickerSpeed(0.1);
     shooterSubsystem.setPercentOutput2(0.5);
     // System.out.println("Here");
   }
@@ -42,7 +42,7 @@ public class ManualShootCommand extends Command {
     // shooterSubsystem.stopShoot();
     shooterSubsystem.setPercentOutput2(0);
     shooterSubsystem.setSpindexerSpeed(0);
-    shooterSubsystem.setTurretSpeed(0);
+    shooterSubsystem.setKickerSpeed(0);
     hoodSubsystem.setSpeed(0);
   }
 

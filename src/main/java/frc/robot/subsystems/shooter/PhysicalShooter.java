@@ -18,12 +18,15 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
+import frc.robot.subsystems.intake.IntakeConstants;
 
 /** Add your docs here. */
 public class PhysicalShooter implements ShooterInterface {
+
+  private boolean isUpToSpeed = false;
 
   private final TalonFX leaderFlywheelMotor =
       new TalonFX(
@@ -61,6 +64,10 @@ public class PhysicalShooter implements ShooterInterface {
     leaderFlywheelConfig.Slot0.kS = ShooterConstants.FLYWHEEL_S;
     leaderFlywheelConfig.Slot0.kV = ShooterConstants.FLYWHEEL_V;
     leaderFlywheelConfig.Slot0.kA = ShooterConstants.FLYWHEEL_A;
+    leaderFlywheelConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT;
+    leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT;
+    leaderFlywheelConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+    leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
 
     leaderFlywheelMotor.getConfigurator().apply(leaderFlywheelConfig);
     followerFlywheelMotor.getConfigurator().apply(leaderFlywheelConfig);
@@ -89,13 +96,19 @@ public class PhysicalShooter implements ShooterInterface {
 
   // test
   public void setPercentOutput(double distance) {
-    leaderFlywheelMotor.setControl(
-        rpsRequest.withVelocity(flywheelRPMLookupValues.getLookupValue(distance)));
+    double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
+    leaderFlywheelMotor.setControl(rpsRequest.withVelocity(desiredSpeed));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
-    new WaitCommand(0.5);
-    spindexerMotor.setControl(rpsRequest.withVelocity(50));
-    kickerMotor.set(0.5);
+    this.isUpToSpeed = Math.abs(desiredSpeed - currentRPS.refresh().getValueAsDouble()) < 10;
+    SmartDashboard.putNumber("desiredRPS", desiredSpeed);
+    SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
+    setKickerSpeed(1);
+    setSpindexerSpeed(1);
+  }
+
+  public boolean isUpToSpeed() {
+    return this.isUpToSpeed;
   }
 
   public void passFuel(double rps) {
@@ -128,7 +141,7 @@ public class PhysicalShooter implements ShooterInterface {
     spindexerMotor.set(speed);
   }
 
-  public void setTurretSpeed(double speed) {
+  public void setKickerSpeed(double speed) {
     kickerMotor.set(speed);
   }
 }

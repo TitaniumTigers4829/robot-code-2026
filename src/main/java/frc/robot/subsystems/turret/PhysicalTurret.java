@@ -146,10 +146,8 @@ public class PhysicalTurret implements TurretInterface {
     motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        TurretConstants.MAX_ANGLE * TurretConstants.CANCODER_TO_TURRET;
-    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-        TurretConstants.MIN_ANGLE * TurretConstants.CANCODER_TO_TURRET;
+    motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TurretConstants.MAX_ANGLE;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TurretConstants.MIN_ANGLE;
     motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
@@ -233,6 +231,7 @@ public class PhysicalTurret implements TurretInterface {
   @Override
   public void rezeroTurret() {
     turretMotor.setPosition(0.0);
+    turretEncoder.setPosition(0.0);
     Logger.recordOutput("turret/rezero/triggered", true);
     DriverStation.reportWarning("Turret manually re-zeroed to forward position.", false);
   }
