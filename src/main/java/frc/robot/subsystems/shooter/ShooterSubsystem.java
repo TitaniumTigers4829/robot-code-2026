@@ -5,12 +5,11 @@
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
-public class ShooterSubsystem extends SubsystemBase {
+public class ShooterSubsystem implements ShooterInterface {
 
   private ShooterInterface shooterInterface;
   private ShooterInputsAutoLogged inputs = new ShooterInputsAutoLogged();
@@ -70,6 +69,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setPercentOutput(double distance) {
     shooterInterface.setPercentOutput(distance);
+  }
+
+  public void setPercentOutput2(double distance) {
+    shooterInterface.setPercentOutput2(distance);
   }
 
   public boolean isAtSetpointRPM(double targetRPM) {

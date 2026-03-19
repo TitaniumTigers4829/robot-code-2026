@@ -41,7 +41,7 @@ public class ShootWhileHublockedCommand extends Command {
     this.swerveDrive = swerveDrive;
     this.hoodSubsystem = hoodSubsystem;
     this.visionSubsystem = visionSubsystem;
-    // addRequirements(shooterSubsystem, swerveDrive);
+    addRequirements(shooterSubsystem, swerveDrive);
   }
 
   // Called when the command is initially scheduled.

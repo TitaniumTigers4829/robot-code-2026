@@ -29,14 +29,21 @@ public class ManualShootCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hoodSubsystem.setHoodAngle(3);
-    shooterSubsystem.passFuel(1);
+    hoodSubsystem.setAngleWithoutDist(0.5);
+    shooterSubsystem.setSpindexerSpeed(0.2);
+    shooterSubsystem.setTurretSpeed(0.1);
+    shooterSubsystem.setPercentOutput2(0.5);
+    // System.out.println("Here");
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooterSubsystem.stopShoot();
+    // shooterSubsystem.stopShoot();
+    shooterSubsystem.setPercentOutput2(0);
+    shooterSubsystem.setSpindexerSpeed(0);
+    shooterSubsystem.setTurretSpeed(0);
+    hoodSubsystem.setSpeed(0);
   }
 
   // Returns true when the command should end.

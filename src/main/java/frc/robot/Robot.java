@@ -13,15 +13,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
-import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.intake.SetIntakeAngleCommand;
-import frc.robot.commands.shooter.HoodDownCommand;
-import frc.robot.commands.shooter.ManualHoodDown;
-import frc.robot.commands.shooter.ManualHoodUp;
+import frc.robot.commands.shooter.ManualShootCommand;
 import frc.robot.extras.util.JoystickUtil;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
@@ -201,27 +198,30 @@ public class Robot extends LoggedRobot {
 
     // driverController.rightBumper().whileTrue(new ManualHoodUp(hoodSubsystem, null));
 
-    driverController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
-    driverController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
+    // driverController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
+    // driverController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
 
     // // Will have to use manual turret to pass
     // driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
 
     // driverController.y().whileTrue(new SetTurretAngle(turretSubsystem));
-    driverController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
-    driverController.y().whileTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
+    // driverController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
+    // driverController.y().whileTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
 
     // driverController
     //     .leftTrigger()
     //     .whileTrue(
     //         new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
 
+    // driverController
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         new ShootWhileHublockedCommand(
+    //             shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem));
+
     driverController
         .rightTrigger()
-        .whileTrue(
-            new ShootWhileHublockedCommand(
-                shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem));
-
+        .whileTrue(new ManualShootCommand(shooterSubsystem, hoodSubsystem));
     // driverController
     //     .b()
     //     .onTrue(new InstantCommand(() -> swerveDrive.resetEstimatedPose(new Pose2d())));

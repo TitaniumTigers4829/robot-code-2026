@@ -129,7 +129,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
 
   @Override
   public void setSpeed(double speed) {
-    hoodMotor.setControl(current.withOutput(speed));
+    hoodMotor.set(speed);
   }
 
   @Override

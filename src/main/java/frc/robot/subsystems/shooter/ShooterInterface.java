@@ -4,10 +4,11 @@
 
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */
-public interface ShooterInterface {
+public interface ShooterInterface extends Subsystem {
   @AutoLog
   public static class ShooterInputs { // For values
     public double flywheelRPS = 0.0;
@@ -32,6 +33,8 @@ public interface ShooterInterface {
 
   public default void setPercentOutput(double distance) {}
 
+  public default void setPercentOutput2(double speed) {}
+
   public default double getVolts() {
     return 0.0;
   }
@@ -45,4 +48,8 @@ public interface ShooterInterface {
   public default void setPID(double kP, double kI, double kD) {}
 
   public default void setFF(double kS, double kV, double kA) {}
+
+  public default void setSpindexerSpeed(double speed) {}
+
+  public default void setTurretSpeed(double speed) {}
 }

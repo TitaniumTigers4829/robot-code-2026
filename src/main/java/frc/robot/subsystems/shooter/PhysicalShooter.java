@@ -112,10 +112,23 @@ public class PhysicalShooter implements ShooterInterface {
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }
 
+  public void setPercentOuput2(double speed) {
+    leaderFlywheelMotor.set(speed);
+    followerFlywheelMotor.set(-1 * speed);
+  }
+
   public void stopShoot() {
     leaderFlywheelMotor.set(0);
     followerFlywheelMotor.set(0);
     kickerMotor.set(0);
     spindexerMotor.set(0);
+  }
+
+  public void setSpindexerSpeed(double speed) {
+    spindexerMotor.set(speed);
+  }
+
+  public void setTurretSpeed(double speed) {
+    kickerMotor.set(speed);
   }
 }
