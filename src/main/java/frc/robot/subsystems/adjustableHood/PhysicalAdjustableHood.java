@@ -81,7 +81,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     // hoodConfig.MotionMagic.MotionMagicAcceleration = 10;
     // hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
 
-    hoodMotor.getConfigurator().apply(hoodConfig);
+    hoodMotor.getConfigurator().apply(hoodConfig, 0.02);
     // hoodEncoder.getConfigurator().apply(hoodEncoderConfig);
 
     hoodMotor.setPosition(0);
@@ -152,6 +152,6 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("hood angle", hoodAngle.refresh().getValueAsDouble());
+    SmartDashboard.putNumber("hood angle", getHoodAngle());
   }
 }

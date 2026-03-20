@@ -160,7 +160,7 @@ public class Robot extends LoggedRobot {
     Command driveCommand =
         new DriveCommand(
             swerveDrive,
-            null,
+            visionSubsystem,
             // Translation in the X direction
             driverLeftStick[0],
             // Translation in the Y direction
