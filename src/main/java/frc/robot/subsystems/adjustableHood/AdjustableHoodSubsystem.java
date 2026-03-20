@@ -38,13 +38,11 @@ public class AdjustableHoodSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     adjustableHoodInterface.updateInputs(inputs);
-    Logger.recordOutput("hoodAngle", getHoodAngle());
+    Logger.recordOutput("hoodAngle", inputs.hoodAngle);
     Logger.recordOutput("hoodAbsPos", inputs.hoodAbsPos);
     Logger.recordOutput("desired angle", inputs.desiredAngle);
-    Logger.recordOutput("lookup table", inputs.curentLookupTable);
-    Logger.recordOutput("distance given", inputs.distanceGiven);
-    if (getHoodAngle() < 0 && inputs.desiredAngle < 0.01) {
-      setSpeed(0);
-    }
+    // if (getHoodAngle() < 0 && inputs.desiredAngle < 0.01) {
+    //   setSpeed(0);
+    // }
   }
 }

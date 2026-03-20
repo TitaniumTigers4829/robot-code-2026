@@ -16,11 +16,9 @@ import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.intake.IntakeCommand;
-import frc.robot.commands.intake.IntakePivotBounceHigher;
-import frc.robot.commands.intake.IntakePivotBounceLower;
-import frc.robot.commands.intake.IntakePivotDownCommand;
-import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
+import frc.robot.commands.shooter.HoodDownCommand;
+import frc.robot.commands.shooter.HoodUpCommand;
 import frc.robot.commands.shooter.ManualHoodDown;
 import frc.robot.commands.shooter.ManualHoodUp;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
@@ -247,10 +245,10 @@ public class Robot extends LoggedRobot {
         .whileTrue(new OuttakeCommand(intakeSubsystem, shooterSubsystem));
     operatorController.rightTrigger().whileTrue(new IntakeCommand(intakeSubsystem));
 
-    operatorController.y().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
-    operatorController.a().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
-    operatorController.x().whileTrue(new IntakePivotBounceLower(intakeSubsystem));
-    operatorController.b().whileTrue(new IntakePivotBounceHigher(intakeSubsystem));
+    // operatorController.y().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
+    // operatorController.a().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
+    // operatorController.x().whileTrue(new IntakePivotBounceLower(intakeSubsystem));
+    // operatorController.b().whileTrue(new IntakePivotBounceHigher(intakeSubsystem));
 
     operatorController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
     operatorController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
@@ -261,8 +259,8 @@ public class Robot extends LoggedRobot {
     operatorController.povLeft().onTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
     operatorController.povRight().onTrue(new InstantCommand(() -> turretSubsystem.rezeroTurret()));
 
-    // operatorController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
-    // operatorController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
+    operatorController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
+    operatorController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
   }
 
   /** Checks the git status and records it to the log */

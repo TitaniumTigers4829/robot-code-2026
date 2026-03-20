@@ -4,15 +4,15 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Constants.HardwareConstants;
@@ -38,10 +38,14 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   //     new PIDController(0.15, 0, 0.004); // 0.224829    0.004829
   // private final SimpleMotorFeedforward ffHoodController = new SimpleMotorFeedforward(0.035, 0.0);
 
+  private final MotionMagicVoltage mmRequest = new MotionMagicVoltage(0.0);
+
   private double desiredPosition = 0;
 
-  private final PIDController hoodController = new PIDController(0.224829, 0, 0.004829);
-  private final SimpleMotorFeedforward ffHoodController = new SimpleMotorFeedforward(0.0, 0.0);
+  // private final PIDController hoodController = new PIDController(0.224829, 0, 0.004829);
+  private final PIDController hoodController = new PIDController(0.0, 0, 0.0);
+
+  // private final SimpleMotorFeedforward ffHoodController = new SimpleMotorFeedforward(100, 0.0);
 
   public PhysicalAdjustableHood() {
 
@@ -53,8 +57,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
             AdjustableHoodConstants.CANCODER_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
 
     // hoodConfig.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
-    // TODO: try SyncCANCoder
-    hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    // hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
     hoodConfig.Slot0.kP = AdjustableHoodConstants.HOOD_P;
     hoodConfig.Slot0.kI = AdjustableHoodConstants.HOOD_I;
@@ -63,7 +66,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodConfig.Slot0.kV = AdjustableHoodConstants.HOOD_V;
     hoodConfig.Slot0.kA = AdjustableHoodConstants.HOOD_A;
 
-    hoodConfig.ClosedLoopGeneral.ContinuousWrap = true;
+    // hoodConfig.ClosedLoopGeneral.ContinuousWrap = true;
     hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1.1;
@@ -76,16 +79,16 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
 
     hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    // hoodEncoderConfig.MagnetSensor.MagnetOffset = -AdjustableHoodConstants.HOOD_ZERO_ANGLE;
+    hoodEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     // hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
     // hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     // hoodEncoderConfig.MagnetSensor.
 
-    // hoodConfig.MotionMagic.MotionMagicAcceleration = 10;
-    // hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
+    hoodConfig.MotionMagic.MotionMagicAcceleration = 10;
+    hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
 
     hoodMotor.getConfigurator().apply(hoodConfig, 0.02);
-    // hoodEncoder.getConfigurator().apply(hoodEncoderConfig);
+    hoodEncoder.getConfigurator().apply(hoodEncoderConfig);
 
     hoodMotor.setPosition(0);
 
@@ -93,10 +96,8 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodVelocity = hoodMotor.getVelocity();
 
     // hoodEncoder.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
-    // TODO: this was 50hz, can go up to 1000hz
-    hoodAngle.setUpdateFrequency(250.0);
-    hoodVelocity.setUpdateFrequency(250);
-    // hoodEncoder.getAbsolutePosition().setUpdateFrequency(50);
+    hoodAngle.setUpdateFrequency(50.0);
+    hoodVelocity.setUpdateFrequency(50);
     ParentDevice.optimizeBusUtilizationForAll(hoodMotor, hoodEncoder);
   }
 
@@ -131,15 +132,15 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     // todo use lookup
     this.desiredPosition = rots;
 
-    if (getHoodAngle() < 0 && rots < 0.01) {
-      hoodMotor.set(0);
-    } else {
-      hoodMotor.set(
-          hoodController.calculate(getHoodAngle(), this.desiredPosition)
-              + ffHoodController.calculate(hoodVelocity.refresh().getValueAsDouble()));
-    }
+    // if (getHoodAngle() < 0 && rots < 0.01) {
+    //   hoodMotor.set(0);
+    // } else {
+    //   hoodMotor.set(
+    //       hoodController.calculate(getHoodAngle(), this.desiredPosition));
+    // }
     // SmartDashboard.putNumber("pos req", positionRequest.Position);
     // SmartDashboard.putNumber("pos req 2", hoodMotor.getPosition().refresh().getValueAsDouble());
+    hoodMotor.setControl(mmRequest.withPosition(rots));
   }
 
   @Override
