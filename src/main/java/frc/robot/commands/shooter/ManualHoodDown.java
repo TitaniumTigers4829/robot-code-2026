@@ -24,7 +24,7 @@ public class ManualHoodDown extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hoodSubsystem.setSpeed(-0.2);
+    hoodSubsystem.setSpeed(-0.05);
   }
 
   // Called once the command ends or is interrupted.

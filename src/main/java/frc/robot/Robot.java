@@ -16,12 +16,13 @@ import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakePivotBounceHigher;
+import frc.robot.commands.intake.IntakePivotBounceLower;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
-import frc.robot.commands.intake.SetIntakeAngleCommand;
-import frc.robot.commands.shooter.HoodDownCommand;
-import frc.robot.commands.shooter.HoodUpCommand;
+import frc.robot.commands.shooter.ManualHoodDown;
+import frc.robot.commands.shooter.ManualHoodUp;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
 import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
@@ -199,9 +200,6 @@ public class Robot extends LoggedRobot {
     //             () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
 
     // // Commands for manual turret
-    driverController.leftBumper().whileTrue(new ManualTurretCCWCommand(turretSubsystem));
-
-    driverController.rightBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
 
     // driverController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
     // driverController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
@@ -233,10 +231,6 @@ public class Robot extends LoggedRobot {
 
     driverController.a().whileTrue(new IntakeCommand(intakeSubsystem));
 
-    driverController.b().whileTrue(new OuttakeCommand(intakeSubsystem));
-
-    driverController.x().whileTrue(new IntakeCommand(intakeSubsystem));
-
     driverController
         .povLeft()
         .onTrue(
@@ -247,38 +241,28 @@ public class Robot extends LoggedRobot {
 
   /** Configures the operator controller buttons and axes to control the robot */
   private void configureOperatorController() {
-    // OPERATOR COMMANDS
-
-    operatorController.leftBumper().whileTrue(new SetIntakeAngleCommand(intakeSubsystem));
-
-    // operatorController.x().whileTrue(new InstantCommand(() -> shooterSubsystem.setSpeed(100)));
-    // operatorController
-    //     .a()
-    //     .whileTrue(
-    //         new ManualHoodUp(
-    //             hoodSubsystem, () -> JoystickUtil.modifyAxis(operatorController::getLeftY, 3)));
-    // operatorController
-    //     .b()
-    //     .whileTrue(
-    //         new ManualHoodUp(
-    //             hoodSubsystem, () -> JoystickUtil.modifyAxis(operatorController::getLeftX, 3)));
-    // operatorController.b().onTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
-
-    operatorController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
-    operatorController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
-
+    // outake also runs kicker backwards
     operatorController
-        .rightBumper()
-        .onTrue(new InstantCommand(() -> turretSubsystem.rezeroTurret()));
+        .leftTrigger()
+        .whileTrue(new OuttakeCommand(intakeSubsystem, shooterSubsystem));
+    operatorController.rightTrigger().whileTrue(new IntakeCommand(intakeSubsystem));
 
-    // operatorController.povRight().whileTrue(new IntakeCommand(intakeSubsystem,
-    // shooterSubsystem));
+    operatorController.y().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
+    operatorController.a().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
+    operatorController.x().whileTrue(new IntakePivotBounceLower(intakeSubsystem));
+    operatorController.b().whileTrue(new IntakePivotBounceHigher(intakeSubsystem));
 
-    operatorController.povLeft().whileTrue(new OuttakeCommand(intakeSubsystem));
+    operatorController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
+    operatorController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
 
-    operatorController.povUp().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
+    operatorController.leftBumper().whileTrue(new ManualTurretCCWCommand(turretSubsystem));
+    operatorController.rightBumper().whileTrue(new ManualTurretCWCommand(turretSubsystem));
 
-    operatorController.povDown().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
+    operatorController.povLeft().onTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
+    operatorController.povRight().onTrue(new InstantCommand(() -> turretSubsystem.rezeroTurret()));
+
+    // operatorController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
+    // operatorController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
   }
 
   /** Checks the git status and records it to the log */

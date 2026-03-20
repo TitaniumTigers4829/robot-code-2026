@@ -160,8 +160,7 @@ public class PhysicalIntake implements IntakeInterface {
 
   public void setPivotSpeed(double speed) {
     intakePivotMotorRight.set(speed);
-    intakePivotMotorLeft.setControl(
-        new Follower(intakePivotMotorLeft.getDeviceID(), pivotMotorAlignment));
+    intakePivotMotorLeft.set(speed);
   }
 
   public void setAngle(double angle) {

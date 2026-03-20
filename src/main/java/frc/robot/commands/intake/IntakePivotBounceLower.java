@@ -4,17 +4,18 @@
 
 package frc.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class IntakeCommand extends Command {
-  /** Creates a new intake. */
+public class IntakePivotBounceLower extends Command {
+  /** Creates a new IntakePivotBounceLower. */
   IntakeSubsystem intakeSubsystem;
 
-  public IntakeCommand(IntakeSubsystem intakeSubsystem) {
+  private int i = 0;
+
+  public IntakePivotBounceLower(IntakeSubsystem intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     addRequirements(intakeSubsystem);
   }
@@ -26,20 +27,19 @@ public class IntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_DOWN_POSITION);
-    if (intakeSubsystem.isIntakeDeployed()) {
-      SmartDashboard.putBoolean("deployed", true);
-      intakeSubsystem.intakeFuel();
+    i++;
+    if (i % 20 < 10) {
+      intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_DOWN_POSITION);
     } else {
-      SmartDashboard.putBoolean("deployed", false);
-      intakeSubsystem.setSpeed(0);
+      intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_BOUNCE_LOWER_POSITION);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeSubsystem.setSpeed(0);
+    // TODO maybe don't do this if the intake tries to fall down
+    intakeSubsystem.setPivotSpeed(0);
   }
 
   // Returns true when the command should end.

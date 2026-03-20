@@ -24,14 +24,13 @@ public class IntakePivotDownCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_DOWN_POSITION);
-    intakeSubsystem.setIntakePos(IntakeConstants.PIVOT_DOWN_POSITION);
+    intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_DOWN_POSITION);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeSubsystem.setIntakePos(IntakeConstants.PIVOT_UP_POSITION);
+    intakeSubsystem.setPivotSpeed(0);
   }
 
   // Returns true when the command should end.

@@ -87,6 +87,10 @@ public class ShooterSubsystem implements ShooterInterface {
     return this.shooterInterface.isUpToSpeed();
   }
 
+  public void setKickerSpeed(double speed) {
+    this.shooterInterface.setKickerSpeed(speed);
+  }
+
   @Override
   public void periodic() {
     shooterInterface.updateInputs(inputs);
