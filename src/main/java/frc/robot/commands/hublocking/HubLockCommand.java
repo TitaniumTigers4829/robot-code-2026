@@ -54,6 +54,7 @@ public class HubLockCommand extends DriveCommandBase {
     } else {
       hubPos = FieldConstants.BLUE_HUB_CENTER;
     }
+    hoodSubsystem.resetHoodPID();
   }
 
   @Override
@@ -114,7 +115,9 @@ public class HubLockCommand extends DriveCommandBase {
   @Override
   public void end(boolean interrupted) {
     turretSubsystem.setSpeed(0);
-    hoodSubsystem.setSpeed(0);
+    // hoodSubsystem.setSpeed(0);
+    hoodSubsystem.resetHoodPID();
+    hoodSubsystem.setAngleWithoutDist(0);
   }
 
   @Override

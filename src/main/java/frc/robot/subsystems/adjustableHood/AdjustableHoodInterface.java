@@ -1,8 +1,9 @@
 package frc.robot.subsystems.adjustableHood;
 
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface AdjustableHoodInterface {
+public interface AdjustableHoodInterface extends Subsystem {
   @AutoLog
   public static class AdjustableHoodInputs {
     public double hoodAngle = 0.0;
@@ -26,4 +27,6 @@ public interface AdjustableHoodInterface {
   }
 
   public default void rezeroHood() {}
+
+  public void resetHoodPID();
 }

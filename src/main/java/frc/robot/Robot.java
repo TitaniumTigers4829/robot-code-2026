@@ -334,6 +334,8 @@ public class Robot extends LoggedRobot {
     PowerDistribution powerDistribution = new PowerDistribution(1, ModuleType.kRev);
     powerDistribution.clearStickyFaults();
     powerDistribution.setSwitchableChannel(true);
+    powerDistribution.close();
+    hoodSubsystem.rezeroHood();
   }
 
   /** Sets up the subsystems based on the robot type */

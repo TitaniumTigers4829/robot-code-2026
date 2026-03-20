@@ -31,6 +31,10 @@ public class AdjustableHoodSubsystem extends SubsystemBase {
     adjustableHoodInterface.rezeroHood();
   }
 
+  public void resetHoodPID() {
+    adjustableHoodInterface.resetHoodPID();
+  }
+
   @Override
   public void periodic() {
     adjustableHoodInterface.updateInputs(inputs);

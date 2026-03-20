@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
@@ -48,8 +49,9 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
         new CANcoder(
             AdjustableHoodConstants.CANCODER_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
 
-    hoodConfig.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
-    hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // hoodConfig.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
+    // TODO: try SyncCANCoder
+    hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 
     hoodConfig.Slot0.kP = AdjustableHoodConstants.HOOD_P;
     hoodConfig.Slot0.kI = AdjustableHoodConstants.HOOD_I;
@@ -71,25 +73,30 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
 
     hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    hoodEncoderConfig.MagnetSensor.MagnetOffset = -AdjustableHoodConstants.HOOD_ZERO_ANGLE;
+    // hoodEncoderConfig.MagnetSensor.MagnetOffset = -AdjustableHoodConstants.HOOD_ZERO_ANGLE;
+    // hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
     // hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+    // hoodEncoderConfig.MagnetSensor.
 
     // hoodConfig.MotionMagic.MotionMagicAcceleration = 10;
     // hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
 
     hoodMotor.getConfigurator().apply(hoodConfig);
-    hoodEncoder.getConfigurator().apply(hoodEncoderConfig);
+    // hoodEncoder.getConfigurator().apply(hoodEncoderConfig);
 
-    hoodEncoder.setPosition(0);
+    hoodMotor.setPosition(0);
 
-    hoodAngle = hoodEncoder.getPosition();
+    hoodAngle = hoodMotor.getPosition();
     hoodVelocity = hoodMotor.getVelocity();
 
     // hoodEncoder.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
-    hoodAngle.setUpdateFrequency(50.0);
-    hoodVelocity.setUpdateFrequency(50);
-    hoodEncoder.getAbsolutePosition().setUpdateFrequency(50);
+    // TODO: this was 50hz, can go up to 1000hz
+    hoodAngle.setUpdateFrequency(250.0);
+    hoodVelocity.setUpdateFrequency(250);
+    // hoodEncoder.getAbsolutePosition().setUpdateFrequency(50);
     ParentDevice.optimizeBusUtilizationForAll(hoodMotor, hoodEncoder);
+
+    desiredAngle = 0;
   }
 
   @Override
@@ -120,7 +127,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   public void setAngleWithoutDist(double rots) {
     // hoodMotor.setControl(positionRequest.withPosition(rots));
     hoodMotor.set(
-        hoodController.calculate(hoodAngle.getValueAsDouble(), rots)
+        hoodController.calculate(getHoodAngle(), rots)
             + ffHoodController.calculate(hoodVelocity.refresh().getValueAsDouble()));
 
     // SmartDashboard.putNumber("pos req", positionRequest.Position);
@@ -135,5 +142,16 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   @Override
   public void rezeroHood() {
     hoodEncoder.setPosition(0.0);
+    hoodMotor.setPosition(0);
+  }
+
+  @Override
+  public void resetHoodPID() {
+    hoodController.reset();
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("hood angle", hoodAngle.refresh().getValueAsDouble());
   }
 }
