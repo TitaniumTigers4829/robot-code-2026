@@ -1,6 +1,5 @@
 package frc.robot.commands.drive;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.extras.math.interpolation.MultiLinearInterpolator;
 import frc.robot.extras.util.TimeUtil;
@@ -89,14 +88,10 @@ public abstract class DriveCommandBase extends Command {
             scaleStandardDeviations(limelight, standardDeviations[2]));
       }
 
-      SmartDashboard.putBoolean("valid measurement", true);
-
       // Adds the timestamped pose gotten from the limelights to our pose estimation
       swerveDrive.addPoseEstimatorVisionMeasurement(
           vision.getPoseFromAprilTags(limelight),
           TimeUtil.getLogTimeSeconds() - vision.getLatencySeconds(limelight));
-    } else {
-      SmartDashboard.putBoolean("valid measurement", false);
     }
     Logger.recordOutput(
         "Vision/valid measurement" + limelight.getId(), vision.isValidMeasurement(limelight));

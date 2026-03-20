@@ -1,7 +1,6 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.extras.logging.Tracer;
 import frc.robot.subsystems.vision.VisionConstants.Limelight;
@@ -94,7 +93,6 @@ public class VisionSubsystem extends SubsystemBase {
    * @return True if the limelight sees any April Tags, false otherwise.
    */
   public boolean canSeeAprilTags(Limelight limelight) {
-    SmartDashboard.putBoolean("april tags seen", inputs.limelightSeesAprilTags[limelight.getId()]);
     return inputs.limelightSeesAprilTags[limelight.getId()];
   }
 

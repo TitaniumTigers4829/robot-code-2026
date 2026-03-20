@@ -8,7 +8,6 @@ import com.titaniumtigers4829.utils.NTUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.extras.math.mathutils.GeomUtil;
 import frc.robot.extras.util.Pose2dMovingAverageFilter;
@@ -91,9 +90,6 @@ public class PhysicalVision implements VisionInterface {
     // First checks if it can see an april tag, then checks if it is fully in frame
     // as the limelight can see an april tag but not have it fully in frame, leading
     // to inaccurate pose estimates
-    SmartDashboard.putBoolean("ll connected", isLimelightConnected(limelight));
-    SmartDashboard.putNumber("ll tx", TigerHelpers.getTX(limelight.getName()));
-
     if (isLimelightConnected(limelight) && getNumberOfAprilTags(limelight) > 0) {
       return Math.abs(TigerHelpers.getTX(limelight.getName())) <= limelight.getAccurateFOV();
     }
@@ -156,8 +152,6 @@ public class PhysicalVision implements VisionInterface {
 
   @Override
   public boolean isValidMeasurement(Limelight limelight) {
-    SmartDashboard.putBoolean("isConfident", isConfident(limelight));
-    SmartDashboard.putBoolean("!isTeleporting", !isTeleporting(limelight));
     return isConfident(limelight) && !isTeleporting(limelight);
   }
 
@@ -168,7 +162,6 @@ public class PhysicalVision implements VisionInterface {
    */
   public void enabledPoseUpdate(Limelight limelight) {
     PoseEstimate megatag1Estimate = getMegaTag1PoseEstimate(limelight);
-    SmartDashboard.putString("megatag1Estimate", megatag1Estimate.toString());
     PoseEstimate megatag2Estimate = getMegaTag2PoseEstimate(limelight);
     Optional<Pose2d> pose1Opt = megatag1Estimate.pose();
     Optional<Pose2d> pose2Opt = megatag2Estimate.pose();
@@ -336,6 +329,8 @@ public class PhysicalVision implements VisionInterface {
 
     Pose2d pose = poseOpt.get();
 
+    // jank fix its bc we changed the isValidMeasurement logic to not use isValidPoseEstimate i
+    // think
     if (pose.getX() == 0 && pose.getY() == 0) {
       return false;
     }
@@ -344,7 +339,7 @@ public class PhysicalVision implements VisionInterface {
         VisionConstants.MAX_TRANSLATION_DELTA_METERS,
         VisionConstants.MAX_ROTATION_DELTA_DEGREES,
         pose,
-    pose2dMovingAverageFilter.calculate(pose));
+        pose2dMovingAverageFilter.calculate(pose));
   }
 
   /**

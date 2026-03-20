@@ -15,7 +15,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
@@ -33,12 +32,16 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   private final DutyCycleOut current = new DutyCycleOut(0.0);
   public StatusSignal<Angle> hoodAngle;
   private StatusSignal<AngularVelocity> hoodVelocity;
-  public double desiredAngle;
   public double lookupTableStuff = 0.0;
   public double distanceGiven = 0.0;
-  private final PIDController hoodController =
-      new PIDController(0.15, 0, 0.004); // 0.224829    0.004829
-  private final SimpleMotorFeedforward ffHoodController = new SimpleMotorFeedforward(0.035, 0.0);
+  // private final PIDController hoodController =
+  //     new PIDController(0.15, 0, 0.004); // 0.224829    0.004829
+  // private final SimpleMotorFeedforward ffHoodController = new SimpleMotorFeedforward(0.035, 0.0);
+
+  private double desiredPosition = 0;
+
+  private final PIDController hoodController = new PIDController(0.224829, 0, 0.004829);
+  private final SimpleMotorFeedforward ffHoodController = new SimpleMotorFeedforward(0.0, 0.0);
 
   public PhysicalAdjustableHood() {
 
@@ -95,8 +98,6 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodVelocity.setUpdateFrequency(250);
     // hoodEncoder.getAbsolutePosition().setUpdateFrequency(50);
     ParentDevice.optimizeBusUtilizationForAll(hoodMotor, hoodEncoder);
-
-    desiredAngle = 0;
   }
 
   @Override
@@ -108,6 +109,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     inputs.hoodAngle = hoodAngle.getValueAsDouble();
     inputs.curentLookupTable = lookupTableStuff;
     inputs.distanceGiven = distanceGiven;
+    inputs.desiredAngle = this.desiredPosition;
   }
 
   @Override
@@ -126,10 +128,16 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   @Override
   public void setAngleWithoutDist(double rots) {
     // hoodMotor.setControl(positionRequest.withPosition(rots));
-    hoodMotor.set(
-        hoodController.calculate(getHoodAngle(), rots)
-            + ffHoodController.calculate(hoodVelocity.refresh().getValueAsDouble()));
+    // todo use lookup
+    this.desiredPosition = rots;
 
+    if (getHoodAngle() < 0 && rots < 0.01) {
+      hoodMotor.set(0);
+    } else {
+      hoodMotor.set(
+          hoodController.calculate(getHoodAngle(), this.desiredPosition)
+              + ffHoodController.calculate(hoodVelocity.refresh().getValueAsDouble()));
+    }
     // SmartDashboard.putNumber("pos req", positionRequest.Position);
     // SmartDashboard.putNumber("pos req 2", hoodMotor.getPosition().refresh().getValueAsDouble());
   }
@@ -148,10 +156,5 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   @Override
   public void resetHoodPID() {
     hoodController.reset();
-  }
-
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber("hood angle", getHoodAngle());
   }
 }

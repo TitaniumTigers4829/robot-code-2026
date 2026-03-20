@@ -95,7 +95,7 @@ public class ShootWhileHublockedCommand extends Command {
     desiredHeading =
         Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
 
-    // turretSubsystem.setTurretAngle(desiredHeading);
+    turretSubsystem.setTurretAngle(desiredHeading);
     heading = swerveDrive.getOdometryRotation2d();
 
     // Gets the position of the turret
@@ -112,14 +112,12 @@ public class ShootWhileHublockedCommand extends Command {
     // Gets the actual distance from the hub, which becomes the paramenter for the lookup tables
     // of the hood and shooter
     turretToHubDist = Math.hypot(turretToHubXDist, turretToHubYDist);
-    SmartDashboard.putNumber("y dist", turretToHubYDist);
-    SmartDashboard.putNumber("x dist", turretToHubXDist);
     SmartDashboard.putNumber("hub dist", turretToHubDist);
 
     shooterSubsystem.setPercentOutput(turretToHubDist);
 
     // hoodSubsystem.setHoodAngle(turretToHubDist);
-    hoodSubsystem.setAngleWithoutDist(0.75);
+    hoodSubsystem.setAngleWithoutDist(.75);
   }
 
   // Called once the command ends or is interrupted.

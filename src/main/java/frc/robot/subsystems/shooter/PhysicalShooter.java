@@ -112,8 +112,7 @@ public class PhysicalShooter implements ShooterInterface {
 
   // test
   public void setPercentOutput(double distance) {
-    // double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
-    double desiredSpeed = 90;
+    double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
     leaderFlywheelMotor.setControl(rpsRequest.withVelocity(desiredSpeed));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));

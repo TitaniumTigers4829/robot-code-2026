@@ -20,6 +20,8 @@ import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.intake.SetIntakeAngleCommand;
+import frc.robot.commands.shooter.HoodDownCommand;
+import frc.robot.commands.shooter.HoodUpCommand;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
 import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
@@ -260,7 +262,10 @@ public class Robot extends LoggedRobot {
     //             hoodSubsystem, () -> JoystickUtil.modifyAxis(operatorController::getLeftX, 3)));
     // operatorController.b().onTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
 
-    operatorController.x().whileTrue(new IntakeCommand(intakeSubsystem));
+    // operatorController.x().whileTrue(new IntakeCommand(intakeSubsystem));
+
+    operatorController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
+    operatorController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
 
     operatorController
         .rightBumper()

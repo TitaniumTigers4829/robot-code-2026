@@ -43,5 +43,8 @@ public class AdjustableHoodSubsystem extends SubsystemBase {
     Logger.recordOutput("desired angle", inputs.desiredAngle);
     Logger.recordOutput("lookup table", inputs.curentLookupTable);
     Logger.recordOutput("distance given", inputs.distanceGiven);
+    if (getHoodAngle() < 0 && inputs.desiredAngle < 0.01) {
+      setSpeed(0);
+    }
   }
 }
