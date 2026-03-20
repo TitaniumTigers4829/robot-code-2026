@@ -66,6 +66,7 @@ public class PhysicalShooter implements ShooterInterface {
     leaderFlywheelConfig.Slot0.kS = ShooterConstants.FLYWHEEL_S;
     leaderFlywheelConfig.Slot0.kV = ShooterConstants.FLYWHEEL_V;
     leaderFlywheelConfig.Slot0.kA = ShooterConstants.FLYWHEEL_A;
+    // TODO: drop down
     leaderFlywheelConfig.CurrentLimits.StatorCurrentLimit = 80;
     leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimit = 40;
     leaderFlywheelConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -73,7 +74,6 @@ public class PhysicalShooter implements ShooterInterface {
 
     // TODO: timeouts
     // TODO: unscuff
-    // TODO: FKJSAHDKJH<EAEA
     leaderFlywheelMotor.getConfigurator().apply(leaderFlywheelConfig);
     followerFlywheelMotor.getConfigurator().apply(leaderFlywheelConfig);
     // kickerMotor.getConfigurator().apply(leaderFlywheelConfig);
@@ -114,7 +114,9 @@ public class PhysicalShooter implements ShooterInterface {
 
   // test
   public void setPercentOutput(double distance) {
-    double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
+    // double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
+    // TODO: revert
+    double desiredSpeed = 75;
     leaderFlywheelMotor.setControl(rpsRequest.withVelocity(desiredSpeed));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
