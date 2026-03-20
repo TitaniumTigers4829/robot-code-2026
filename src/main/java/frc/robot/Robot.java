@@ -385,7 +385,13 @@ public class Robot extends LoggedRobot {
 
   /** Sets up the auto commands */
   private void setupAuto() {
-    this.autos = new Autos(this.swerveDrive, this.visionSubsystem);
+    this.autos =
+        new Autos(
+            this.swerveDrive,
+            this.visionSubsystem,
+            shooterSubsystem,
+            turretSubsystem,
+            hoodSubsystem);
   }
 
   /** This function is called periodically during operator control. */

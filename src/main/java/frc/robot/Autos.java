@@ -60,9 +60,17 @@ public class Autos {
   private Command selectedCommand = Commands.none();
   private boolean selectedOnRed = false;
 
-  public Autos(SwerveDrive swerveDrive, VisionSubsystem visionSubsystem) {
+  public Autos(
+      SwerveDrive swerveDrive,
+      VisionSubsystem visionSubsystem,
+      ShooterSubsystem shooterSubsystem,
+      TurretSubsystem turretSubsystem,
+      AdjustableHoodSubsystem hoodSubsystem) {
     this.swerveDrive = swerveDrive;
     this.visionSubsystem = visionSubsystem;
+    this.hoodSubsystem = hoodSubsystem;
+    this.turretSubsystem = turretSubsystem;
+    this.shooterSubsystem = shooterSubsystem;
     chooser = new LoggedDashboardChooser<>("Auto Chooser");
     chooser.addDefaultOption(NONE_NAME, NONE_NAME);
     routines.put(NONE_NAME, Commands::none);
@@ -101,7 +109,14 @@ public class Autos {
         .onTrue(
             Commands.sequence(
                 autoFactory.resetOdometry(AutoConstants.Y_ONE_METER_TRAJECTORY),
-                yOneMeterTrajectory.cmd()));
+                yOneMeterTrajectory.cmd().withTimeout(5),
+                new ShootWhileHublockedCommand(
+                    shooterSubsystem,
+                    swerveDrive,
+                    visionSubsystem,
+                    hoodSubsystem,
+                    turretSubsystem)));
+
     return routine;
   }
 
@@ -200,8 +215,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
-                autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
-                oneRadAuto.cmd()));
+                autoFactory.resetOdometry(AutoConstants.ONE_RAD_TRAJ), oneRadAuto.cmd()));
 
     return routine;
   }
