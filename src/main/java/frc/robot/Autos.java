@@ -89,6 +89,8 @@ public class Autos {
     addRoutine("middle_depot_auto", () -> middleDepotAuto());
 
     addRoutine("fancy things", () -> createRoutine(autoFactory, swerveDrive, Source.L));
+
+    addRoutine("rotate 180", () -> oneradauto());
   }
 
   public AutoRoutine yOneMeterAuto() {
@@ -171,7 +173,7 @@ public class Autos {
             Commands.sequence(
                 autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
                 leftNeutralTrajectory.cmd(),
-                Commands.runOnce(() -> new IntakePivotDownCommand(intakeSubsystem)),
+                Commands.run(() -> new IntakePivotDownCommand(intakeSubsystem)),
                 new WaitCommand(2.0),
                 Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),
                 new WaitCommand(5.0),
@@ -187,6 +189,20 @@ public class Autos {
                             visionSubsystem,
                             hoodSubsystem,
                             turretSubsystem))));
+
+    return routine;
+  }
+
+  public AutoRoutine oneradauto() {
+    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.ONE_RAD_AUTO);
+    AutoTrajectory oneRadAuto = routine.trajectory(AutoConstants.ONE_RAD_TRAJ);
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
+                oneRadAuto.cmd()));
+
     return routine;
   }
 
