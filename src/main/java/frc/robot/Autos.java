@@ -10,9 +10,11 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.commands.autos.AutoShootWhileHubLocked;
 import frc.robot.commands.drive.FollowSwerveSampleCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
@@ -107,13 +109,12 @@ public class Autos {
     routine
         .active()
         .onTrue(
-            Commands.sequence(
+            new SequentialCommandGroup(
                 autoFactory.resetOdometry(AutoConstants.Y_ONE_METER_TRAJECTORY),
                 yOneMeterTrajectory.cmd().withTimeout(5),
-                new ShootWhileHublockedCommand(
+                new AutoShootWhileHubLocked(
                     shooterSubsystem,
                     swerveDrive,
-                    visionSubsystem,
                     hoodSubsystem,
                     turretSubsystem)));
 

@@ -1,0 +1,134 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.commands.autos;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.FieldConstants;
+import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.subsystems.turret.TurretConstants;
+import frc.robot.subsystems.turret.TurretSubsystem;
+import java.util.Optional;
+
+/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+public class AutoShootWhileHubLocked extends Command {
+  /** Creates a new ShootWhileHublockedCommand. */
+  private final ShooterSubsystem shooterSubsystem;
+  private final AdjustableHoodSubsystem hoodSubsystem;
+  private final SwerveDrive swerveDrive;
+  private final TurretSubsystem turretSubsystem;
+  private double desiredHeading;
+  private Rotation2d heading;
+  private Translation2d hubPos;
+  private double turretToHubYDist;
+  private double turretToHubXDist;
+  private double turretToHubDist;
+
+  public AutoShootWhileHubLocked(
+      ShooterSubsystem shooterSubsystem,
+      SwerveDrive swerveDrive,
+      AdjustableHoodSubsystem hoodSubsystem,
+      TurretSubsystem turretSubsystem) {
+    this.shooterSubsystem = shooterSubsystem;
+    this.swerveDrive = swerveDrive;
+    this.hoodSubsystem = hoodSubsystem;
+    this.turretSubsystem = turretSubsystem;
+    addRequirements(shooterSubsystem, hoodSubsystem, turretSubsystem);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    // Sets hub position based on the alliance
+    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+      hubPos = FieldConstants.RED_HUB_CENTER;
+    } else {
+      hubPos = FieldConstants.BLUE_HUB_CENTER;
+    }
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    heading = swerveDrive.getOdometryRotation2d();
+
+    // Gets the position of the turret
+    Translation2d turretPos =
+        swerveDrive.getEstimatedPose()
+            .getTranslation()
+            .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
+    super.execute();
+    /**
+     * Our turret angling math works as follows. Assuming the 0 rotations on the turret is facing
+     * the current heading of the robot and the turret rotates positively counterclockwise, we can
+     * approximate the angle it needs to turn in rotations from 0 to the target angle. This is the
+     * desired heading. With arctan we can calulate the angle the turret makes with the hub relative
+     * to the y axis, otherwise known as the field relative angle. The y axis is horizontal and the
+     * x axis is vertical from the driver station pov. We can subtract the heading (and therefore
+     * the zero angle) of the robot from the field relative angle. This will get the radians needed
+     * to turn to face the hub and when converted to rotations becomes the desired heading. *
+     */
+    // Gets the needed angle for the turret to turn to face the hub in radians
+    double turretAngleRad = Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
+
+    // Wrap to [-pi, pi]
+    turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));
+
+    desiredHeading = turretAngleRad / (2.0 * Math.PI);
+
+    // Clamp to turret limits
+    desiredHeading =
+        Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
+
+    turretSubsystem.setTurretAngle(desiredHeading);
+    heading = swerveDrive.getOdometryRotation2d();
+
+    // Gets the position of the turret
+    turretPos =
+        swerveDrive
+            .getEstimatedPose()
+            .getTranslation()
+            .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
+    // Gets y and x distances of the turret to the hub
+    // TODO: translation2d.dist?
+    turretToHubYDist = hubPos.getY() - turretPos.getY();
+    turretToHubXDist = hubPos.getX() - turretPos.getX();
+
+    // Gets the actual distance from the hub, which becomes the paramenter for the lookup tables
+    // of the hood and shooter
+    turretToHubDist = Math.hypot(turretToHubXDist, turretToHubYDist);
+    SmartDashboard.putNumber("hub dist", turretToHubDist);
+
+    // hoodSubsystem.setHoodAngle(turretToHubDist);
+    hoodSubsystem.setHoodAngle(turretToHubDist);
+    new WaitCommand(0.5);
+    shooterSubsystem.setPercentOutput(turretToHubDist);
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    shooterSubsystem.stopShoot();
+    // this will slam it into the thing because we only do the PID one time when theres a lot of
+    // error rather than the whole time its getting closer to 0
+    // but like its fine
+    hoodSubsystem.setAngleWithoutDist(0);
+    shooterSubsystem.setRollerSpeed(0.0);
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
+}
