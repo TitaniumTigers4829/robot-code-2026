@@ -4,17 +4,9 @@
 
 package frc.robot.commands.shooter;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.FieldConstants;
-import frc.robot.subsystems.shooter.ShooterConstants;
+import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
-import frc.robot.subsystems.swerve.SwerveDrive;
-import frc.robot.subsystems.turret.TurretConstants;
-import java.util.Optional;
 
 /* You should consider using the more terse Command factories API instead
 https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -22,50 +14,48 @@ public class PassFuelCommand extends Command {
   /** Creates a new TempManualShooterCommand. */
   ShooterSubsystem shooterSubsystem;
 
-  Translation2d hubPos;
-  public double distance;
-  public double turretToHubDist;
-  SwerveDrive swerveDrive;
-  public Rotation2d heading;
+  AdjustableHoodSubsystem hoodSubsystem;
 
-  public PassFuelCommand(SwerveDrive swerveDrive, ShooterSubsystem shooterSubsystem) {
+  public PassFuelCommand(ShooterSubsystem shooterSubsystem, AdjustableHoodSubsystem hoodSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
-    this.swerveDrive = swerveDrive;
+    this.hoodSubsystem = hoodSubsystem;
     // addRequirements(swerveDrive, shooterSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    // Sets hub position based on the alliance
-    if (alliance.get() == Alliance.Red) {
-      hubPos = FieldConstants.RED_HUB_CENTER;
-    } else {
-      hubPos = FieldConstants.BLUE_HUB_CENTER;
-    }
+    // Optional<Alliance> alliance = DriverStation.getAlliance();
+    // // Sets hub position based on the alliance
+    // if (alliance.get() == Alliance.Red) {
+    //   hubPos = FieldConstants.RED_HUB_CENTER;
+    // } else {
+    //   hubPos = FieldConstants.BLUE_HUB_CENTER;
+    // }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    heading = swerveDrive.getOdometryRotation2d();
+    // heading = swerveDrive.getOdometryRotation2d();
 
-    Translation2d turretPos =
-        swerveDrive
-            .getEstimatedPose()
-            .getTranslation()
-            .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
+    // Translation2d turretPos =
+    //     swerveDrive
+    //         .getEstimatedPose()
+    //         .getTranslation()
+    //         .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
 
-    turretToHubDist = turretPos.getDistance(hubPos);
+    // turretToHubDist = turretPos.getDistance(hubPos);
 
-    shooterSubsystem.passFuel(ShooterConstants.PASS_SHOOTER_SPEED);
+    shooterSubsystem.passFuel();
+    hoodSubsystem.setAngleWithoutDist(0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     shooterSubsystem.stopShoot();
+    hoodSubsystem.setAngleWithoutDist(0.0);
   }
 
   // Returns true when the command should end.

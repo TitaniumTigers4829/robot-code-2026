@@ -133,12 +133,22 @@ public class PhysicalShooter implements ShooterInterface {
     return this.isUpToSpeed;
   }
 
-  public void passFuel(double rps) {
-    spindexerMotor.setControl(rpsRequest.withVelocity(50));
-    kickerMotor.setControl(rpsRequest.withVelocity(50));
-    leaderFlywheelMotor.setControl(rpsRequest.withVelocity(rps));
+  public void passFuel() {
+    leaderFlywheelMotor.setControl(rpsRequest.withVelocity(50));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+    this.isUpToSpeed =
+        Math.abs(50 - currentRPS.refresh().getValueAsDouble())
+            < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
+    SmartDashboard.putNumber("desiredRPS", 50);
+    SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
+    if (isUpToSpeed()) {
+      setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
+      setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
+    } else {
+      setSpindexerSpeed(0.0);
+      setKickerSpeed(0.0);
+    }
   }
 
   public void setSpeed(double rps) {

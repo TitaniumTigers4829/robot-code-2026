@@ -39,7 +39,7 @@ public interface ShooterInterface extends Subsystem {
     return 0.0;
   }
 
-  public default void passFuel(double output) {}
+  public default void passFuel() {}
 
   public default void stopShoot() {}
 

@@ -23,6 +23,7 @@ import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.shooter.ManualHoodDown;
 import frc.robot.commands.shooter.ManualHoodUp;
+import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
 import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
@@ -199,7 +200,7 @@ public class Robot extends LoggedRobot {
                             swerveDrive.getEstimatedPose().getY(),
                             Rotation2d.fromDegrees(swerveDrive.getAllianceAngleOffset())))));
 
-    // driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
+    driverController.y().whileTrue(new PassFuelCommand(shooterSubsystem, hoodSubsystem));
 
     driverController
         .leftTrigger()

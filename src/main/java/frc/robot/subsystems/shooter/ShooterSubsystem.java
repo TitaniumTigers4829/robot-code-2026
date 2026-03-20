@@ -79,8 +79,8 @@ public class ShooterSubsystem implements ShooterInterface {
     return Math.abs(targetRPM - inputs.flywheelRPS) < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
   }
 
-  public void passFuel(double output) {
-    shooterInterface.passFuel(output);
+  public void passFuel() {
+    shooterInterface.passFuel();
   }
 
   public boolean isUpToSpeed() {
