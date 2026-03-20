@@ -60,8 +60,9 @@ public class Autos {
   private Command selectedCommand = Commands.none();
   private boolean selectedOnRed = false;
 
-  public Autos(SwerveDrive swerveDrive) {
+  public Autos(SwerveDrive swerveDrive, VisionSubsystem visionSubsystem) {
     this.swerveDrive = swerveDrive;
+    this.visionSubsystem = visionSubsystem;
     chooser = new LoggedDashboardChooser<>("Auto Chooser");
     chooser.addDefaultOption(NONE_NAME, NONE_NAME);
     routines.put(NONE_NAME, Commands::none);

@@ -16,9 +16,11 @@ import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakePivotBounceHigher;
+import frc.robot.commands.intake.IntakePivotBounceLower;
+import frc.robot.commands.intake.IntakePivotDownCommand;
+import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
-import frc.robot.commands.shooter.HoodDownCommand;
-import frc.robot.commands.shooter.HoodUpCommand;
 import frc.robot.commands.shooter.ManualHoodDown;
 import frc.robot.commands.shooter.ManualHoodUp;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
@@ -65,7 +67,7 @@ public class Robot extends LoggedRobot {
   private AdjustableHoodSubsystem hoodSubsystem;
   private IntakeSubsystem intakeSubsystem;
 
-  // private Autos autos;
+  private Autos autos;
   private Command autoCommand;
 
   public Robot() {
@@ -89,7 +91,7 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
 
     // Updates autos while the robot is enabled
-    // autos.update();
+    autos.update();
 
     // Return to normal thread priority without real time
     Threads.setCurrentThreadPriority(false, HardwareConstants.LOW_THREAD_PRIORITY);
@@ -102,14 +104,14 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-    // autos.update();
+    autos.update();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // autoCommand = autos.getSelectedCommand();
-    // autoCommand.schedule();
+    autoCommand = autos.getSelectedCommand();
+    autoCommand.schedule();
   }
 
   /** This function is called periodically during autonomous. */
@@ -118,8 +120,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousExit() {
-    // autoCommand.cancel();
-    // autos.clear();
+    autoCommand.cancel();
+    autos.clear();
   }
 
   /** This function is called once when teleop is enabled. */
@@ -221,10 +223,10 @@ public class Robot extends LoggedRobot {
         .whileTrue(new OuttakeCommand(intakeSubsystem, shooterSubsystem));
     operatorController.rightTrigger().whileTrue(new IntakeCommand(intakeSubsystem));
 
-    // operatorController.y().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
-    // operatorController.a().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
-    // operatorController.x().whileTrue(new IntakePivotBounceLower(intakeSubsystem));
-    // operatorController.b().whileTrue(new IntakePivotBounceHigher(intakeSubsystem));
+    operatorController.y().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
+    operatorController.a().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
+    operatorController.x().whileTrue(new IntakePivotBounceLower(intakeSubsystem));
+    operatorController.b().whileTrue(new IntakePivotBounceHigher(intakeSubsystem));
 
     operatorController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
     operatorController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
@@ -234,9 +236,6 @@ public class Robot extends LoggedRobot {
 
     operatorController.povLeft().onTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
     operatorController.povRight().onTrue(new InstantCommand(() -> turretSubsystem.rezeroTurret()));
-
-    operatorController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
-    operatorController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
   }
 
   /** Checks the git status and records it to the log */
@@ -385,7 +384,7 @@ public class Robot extends LoggedRobot {
 
   /** Sets up the auto commands */
   private void setupAuto() {
-    // this.autos = new Autos(this.swerveDrive);
+    this.autos = new Autos(this.swerveDrive, this.visionSubsystem);
   }
 
   /** This function is called periodically during operator control. */
