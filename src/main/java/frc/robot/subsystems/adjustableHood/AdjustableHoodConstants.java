@@ -23,10 +23,10 @@ public class AdjustableHoodConstants {
 
   // Distance from hub {Distance (meters), angle}
   public static double[][] hoodLookUpTable = {
-    {1.0, .25},
+    {1.0, .1},
     {2.5, .4},
-    {3.5, .5},
-    {4.5, .6},
-    {5.5, .7}
+    {3.5, .425},
+    {4.5, .45},
+    {5.5, .5}
   };
 }

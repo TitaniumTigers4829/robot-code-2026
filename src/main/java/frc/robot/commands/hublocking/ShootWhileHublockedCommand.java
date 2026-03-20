@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
@@ -115,7 +116,8 @@ public class ShootWhileHublockedCommand extends Command {
     SmartDashboard.putNumber("hub dist", turretToHubDist);
 
     // hoodSubsystem.setHoodAngle(turretToHubDist);
-    hoodSubsystem.setAngleWithoutDist(0.1);
+    hoodSubsystem.setHoodAngle(turretToHubDist);
+    new WaitCommand(0.5);
     shooterSubsystem.setPercentOutput(turretToHubDist);
   }
 
@@ -127,6 +129,7 @@ public class ShootWhileHublockedCommand extends Command {
     // error rather than the whole time its getting closer to 0
     // but like its fine
     hoodSubsystem.setAngleWithoutDist(0);
+    shooterSubsystem.setRollerSpeed(0.0);
   }
 
   // Returns true when the command should end.

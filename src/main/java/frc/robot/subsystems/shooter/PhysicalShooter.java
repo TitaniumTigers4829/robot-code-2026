@@ -21,6 +21,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
+import frc.robot.subsystems.intake.IntakeConstants;
 
 /** Add your docs here. */
 public class PhysicalShooter implements ShooterInterface {
@@ -35,6 +36,8 @@ public class PhysicalShooter implements ShooterInterface {
           ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
   private final TalonFX kickerMotor = new TalonFX(ShooterConstants.KICKER_MOTOR_ID);
   private final TalonFX spindexerMotor = new TalonFX(ShooterConstants.SPINDEXER_MOTOR_ID);
+  private final TalonFX insideRollerMotor =
+      new TalonFX(IntakeConstants.INTAKE_MOTOR_2_ID, HardwareConstants.RIO_CAN_BUS_STRING);
   MotorAlignmentValue motorAlignment = MotorAlignmentValue.Opposed;
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;
@@ -123,9 +126,11 @@ public class PhysicalShooter implements ShooterInterface {
     if (isUpToSpeed()) {
       setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
       setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
+      setRollerSpeed(0.2);
     } else {
       setSpindexerSpeed(0.0);
       setKickerSpeed(0.0);
+      setRollerSpeed(0.0);
     }
   }
 
@@ -145,9 +150,12 @@ public class PhysicalShooter implements ShooterInterface {
     if (isUpToSpeed()) {
       setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
       setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
+      setRollerSpeed(0.2);
+
     } else {
       setSpindexerSpeed(0.0);
       setKickerSpeed(0.0);
+      setRollerSpeed(0.0);
     }
   }
 
@@ -175,5 +183,9 @@ public class PhysicalShooter implements ShooterInterface {
 
   public void setKickerSpeed(double speed) {
     kickerMotor.set(speed);
+  }
+
+  public void setRollerSpeed(double speed) {
+    insideRollerMotor.set(speed);
   }
 }
