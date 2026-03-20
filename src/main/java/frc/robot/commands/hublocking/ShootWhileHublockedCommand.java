@@ -124,6 +124,9 @@ public class ShootWhileHublockedCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     shooterSubsystem.stopShoot();
+    // this will slam it into the thing because we only do the PID one time when theres a lot of
+    // error rather than the whole time its getting closer to 0
+    // but like its fine
     hoodSubsystem.setAngleWithoutDist(0);
   }
 

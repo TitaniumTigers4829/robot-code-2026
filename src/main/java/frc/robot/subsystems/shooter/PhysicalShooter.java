@@ -64,8 +64,10 @@ public class PhysicalShooter implements ShooterInterface {
     leaderFlywheelConfig.Slot0.kS = ShooterConstants.FLYWHEEL_S;
     leaderFlywheelConfig.Slot0.kV = ShooterConstants.FLYWHEEL_V;
     leaderFlywheelConfig.Slot0.kA = ShooterConstants.FLYWHEEL_A;
-    leaderFlywheelConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT;
-    leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT;
+    leaderFlywheelConfig.CurrentLimits.StatorCurrentLimit =
+        IntakeConstants.OUTER_STATOR_CURRENT_LIMIT;
+    leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimit =
+        IntakeConstants.OUTER_SUPPLY_CURRENT_LIMIT;
     leaderFlywheelConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 

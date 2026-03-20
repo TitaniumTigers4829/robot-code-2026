@@ -33,7 +33,8 @@ public class PhysicalIntake implements IntakeInterface {
 
   private MotionMagicVoltage request = new MotionMagicVoltage(0.0);
   private MotorAlignmentValue pivotMotorAlignment = MotorAlignmentValue.Opposed;
-  private TalonFXConfiguration intakeConfig;
+  private TalonFXConfiguration intakeOuterConfig;
+  private TalonFXConfiguration intakeInnerConfig;
   private TalonFXConfiguration pivotConfig;
   private CANcoderConfiguration encoderConfig;
 
@@ -41,7 +42,8 @@ public class PhysicalIntake implements IntakeInterface {
   public StatusSignal<AngularVelocity> intakePivotSpeed;
 
   public PhysicalIntake() {
-    intakeConfig = new TalonFXConfiguration();
+    intakeOuterConfig = new TalonFXConfiguration();
+    intakeInnerConfig = new TalonFXConfiguration();
     pivotConfig = new TalonFXConfiguration();
     encoderConfig = new CANcoderConfiguration();
 
@@ -50,14 +52,31 @@ public class PhysicalIntake implements IntakeInterface {
     encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     pivotEncoder.getConfigurator().apply(encoderConfig, HardwareConstants.TIMEOUT_SECONDS);
 
-    intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    intakeConfig.Slot0.kP = IntakeConstants.INTAKE_P;
-    intakeConfig.Slot0.kI = IntakeConstants.INTAKE_I;
-    intakeConfig.Slot0.kD = IntakeConstants.INTAKE_D;
-    intakeConfig.Slot0.kS = IntakeConstants.INTAKE_S;
-    intakeConfig.Slot0.kV = IntakeConstants.INTAKE_V;
-    intakeConfig.Slot0.kA = IntakeConstants.INTAKE_A;
+    intakeOuterConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    intakeOuterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    intakeOuterConfig.Slot0.kP = IntakeConstants.INTAKE_P;
+    intakeOuterConfig.Slot0.kI = IntakeConstants.INTAKE_I;
+    intakeOuterConfig.Slot0.kD = IntakeConstants.INTAKE_D;
+    intakeOuterConfig.Slot0.kS = IntakeConstants.INTAKE_S;
+    intakeOuterConfig.Slot0.kV = IntakeConstants.INTAKE_V;
+    intakeOuterConfig.Slot0.kA = IntakeConstants.INTAKE_A;
+    intakeOuterConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.OUTER_STATOR_CURRENT_LIMIT;
+    intakeOuterConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.OUTER_SUPPLY_CURRENT_LIMIT;
+    intakeOuterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    intakeOuterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    intakeInnerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    intakeInnerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    intakeInnerConfig.Slot0.kP = IntakeConstants.INTAKE_P;
+    intakeInnerConfig.Slot0.kI = IntakeConstants.INTAKE_I;
+    intakeInnerConfig.Slot0.kD = IntakeConstants.INTAKE_D;
+    intakeInnerConfig.Slot0.kS = IntakeConstants.INTAKE_S;
+    intakeInnerConfig.Slot0.kV = IntakeConstants.INTAKE_V;
+    intakeInnerConfig.Slot0.kA = IntakeConstants.INTAKE_A;
+    intakeInnerConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.INNER_STATOR_CURRENT_LIMIT;
+    intakeInnerConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.INNER_SUPPLY_CURRENT_LIMIT;
+    intakeInnerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    intakeInnerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     pivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -74,10 +93,10 @@ public class PhysicalIntake implements IntakeInterface {
     pivotConfig.Feedback.FeedbackRemoteSensorID = pivotEncoder.getDeviceID();
     pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
-    pivotConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT;
-    pivotConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT;
-    pivotConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-    pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
+    pivotConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.OUTER_STATOR_CURRENT_LIMIT;
+    pivotConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.OUTER_SUPPLY_CURRENT_LIMIT;
+    pivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = IntakeConstants.PIVOT_DOWN_POSITION;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = IntakeConstants.MIN_ANGLE;
@@ -87,8 +106,8 @@ public class PhysicalIntake implements IntakeInterface {
     pivotConfig.MotionMagic.MotionMagicAcceleration = 5.0;
     pivotConfig.MotionMagic.MotionMagicCruiseVelocity = 2.5;
 
-    intakeMotorOuter.getConfigurator().apply(intakeConfig);
-    intakeMotorInside.getConfigurator().apply(intakeConfig);
+    intakeMotorOuter.getConfigurator().apply(intakeOuterConfig);
+    intakeMotorInside.getConfigurator().apply(intakeInnerConfig);
     intakePivotMotorRight.getConfigurator().apply(pivotConfig);
 
     pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;

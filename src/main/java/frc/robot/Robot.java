@@ -235,6 +235,8 @@ public class Robot extends LoggedRobot {
 
     driverController.b().whileTrue(new OuttakeCommand(intakeSubsystem));
 
+    driverController.x().whileTrue(new IntakeCommand(intakeSubsystem));
+
     driverController
         .povLeft()
         .onTrue(
@@ -261,8 +263,6 @@ public class Robot extends LoggedRobot {
     //         new ManualHoodUp(
     //             hoodSubsystem, () -> JoystickUtil.modifyAxis(operatorController::getLeftX, 3)));
     // operatorController.b().onTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
-
-    // operatorController.x().whileTrue(new IntakeCommand(intakeSubsystem));
 
     operatorController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
     operatorController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
