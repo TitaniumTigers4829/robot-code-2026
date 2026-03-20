@@ -177,6 +177,14 @@ public class Robot extends LoggedRobot {
     // Sets the default command for the swerve drive to the drive command
     swerveDrive.setDefaultCommand(driveCommand);
 
+    // Reset robot odometry based on the most recent vision pose measurement from april tags
+    // This should be pressed when looking at an april tag
+    driverController
+        .povLeft()
+        .onTrue(
+            new InstantCommand(
+                () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
+
     // Resets the robot angle in the odometry, factors in which alliance the robot is on
     driverController
         .povRight()
@@ -189,37 +197,12 @@ public class Robot extends LoggedRobot {
                             swerveDrive.getEstimatedPose().getY(),
                             Rotation2d.fromDegrees(swerveDrive.getAllianceAngleOffset())))));
 
-    // Reset robot odometry based on the most recent vision pose measurement from april tags
-    // This should be pressed when looking at an april tag
-    // driverController
-    //     .povLeft()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
-
-    // // Commands for manual turret
-
-    // driverController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
-    // driverController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
-
-    // // Will have to use manual turret to pass
     // driverController.a().whileTrue(new PassFuelCommand(swerveDrive, shooterSubsystem));
-
-    // driverController.y().whileTrue(new SetTurretAngle(turretSubsystem));
-    // driverController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
-    // driverController.y().whileTrue(new InstantCommand(() -> shooterSubsystem.setSpeed(75)));
-    // driverController.y().onFalse(new InstantCommand(() -> shooterSubsystem.stopShoot()));
 
     driverController
         .leftTrigger()
         .whileTrue(
             new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
-
-    driverController.povDown().onTrue(new InstantCommand(() -> hoodSubsystem.setSpeed(-0.3)));
-    driverController.povDown().onFalse(new InstantCommand(() -> hoodSubsystem.setSpeed(0)));
-
-    driverController.povUp().onTrue(new InstantCommand(() -> hoodSubsystem.setSpeed(0.2)));
-    driverController.povUp().onTrue(new InstantCommand(() -> hoodSubsystem.setSpeed(0)));
 
     driverController
         .rightTrigger()
@@ -228,13 +211,6 @@ public class Robot extends LoggedRobot {
                 shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
 
     driverController.a().whileTrue(new IntakeCommand(intakeSubsystem));
-
-    driverController
-        .povLeft()
-        .onTrue(
-            new InstantCommand(
-                () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
-    driverController.povRight().onTrue(new InstantCommand(hoodSubsystem::rezeroHood));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */

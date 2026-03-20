@@ -114,10 +114,8 @@ public class ShootWhileHublockedCommand extends Command {
     turretToHubDist = Math.hypot(turretToHubXDist, turretToHubYDist);
     SmartDashboard.putNumber("hub dist", turretToHubDist);
 
+    hoodSubsystem.setHoodAngle(turretToHubDist);
     shooterSubsystem.setPercentOutput(turretToHubDist);
-
-    // hoodSubsystem.setHoodAngle(turretToHubDist);
-    hoodSubsystem.setAngleWithoutDist(.75);
   }
 
   // Called once the command ends or is interrupted.

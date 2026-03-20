@@ -21,7 +21,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
-import frc.robot.subsystems.intake.IntakeConstants;
 
 /** Add your docs here. */
 public class PhysicalShooter implements ShooterInterface {
@@ -64,10 +63,8 @@ public class PhysicalShooter implements ShooterInterface {
     leaderFlywheelConfig.Slot0.kS = ShooterConstants.FLYWHEEL_S;
     leaderFlywheelConfig.Slot0.kV = ShooterConstants.FLYWHEEL_V;
     leaderFlywheelConfig.Slot0.kA = ShooterConstants.FLYWHEEL_A;
-    leaderFlywheelConfig.CurrentLimits.StatorCurrentLimit =
-        IntakeConstants.OUTER_STATOR_CURRENT_LIMIT;
-    leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimit =
-        IntakeConstants.OUTER_SUPPLY_CURRENT_LIMIT;
+    leaderFlywheelConfig.CurrentLimits.StatorCurrentLimit = 80;
+    leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimit = 40;
     leaderFlywheelConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
@@ -121,8 +118,8 @@ public class PhysicalShooter implements ShooterInterface {
     this.isUpToSpeed =
         Math.abs(desiredSpeed - currentRPS.refresh().getValueAsDouble())
             < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
-    // SmartDashboard.putNumber("desiredRPS", desiredSpeed);
-    // SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
+    SmartDashboard.putNumber("desiredRPS", desiredSpeed);
+    SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
     if (isUpToSpeed()) {
       setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
       setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
@@ -133,7 +130,6 @@ public class PhysicalShooter implements ShooterInterface {
   }
 
   public boolean isUpToSpeed() {
-    SmartDashboard.putBoolean("SAdfdsads", isUpToSpeed);
     return this.isUpToSpeed;
   }
 
@@ -149,7 +145,6 @@ public class PhysicalShooter implements ShooterInterface {
     leaderFlywheelMotor.setControl(rpsRequest.withVelocity(rps));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
-    // SmartDashboard.putNumber("currentRPS", leaderFlywheelMotor.getVelocity().getValueAsDouble());
   }
 
   public void setPercentOuput2(double speed) {

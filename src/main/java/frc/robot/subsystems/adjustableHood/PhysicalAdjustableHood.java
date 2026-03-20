@@ -121,9 +121,8 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
 
   @Override
   public void setHoodAngle(double distance) {
-    // lookupTableStuff = adjustableHoodLookupValues.getLookupValue(distance);
-    // distanceGiven = distance;
-    // hoodMotor.setControl(positionRequest.withPosition(lookupTableStuff));
+    double rots = adjustableHoodLookupValues.getLookupValue(distance);
+    hoodMotor.setControl(mmRequest.withPosition(rots));
   }
 
   @Override
