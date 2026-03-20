@@ -13,7 +13,7 @@ public class IntakePivotBounceLower extends Command {
   /** Creates a new IntakePivotBounceLower. */
   IntakeSubsystem intakeSubsystem;
 
-  private int i = 0;
+  private long i = 0;
 
   public IntakePivotBounceLower(IntakeSubsystem intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
@@ -22,13 +22,15 @@ public class IntakePivotBounceLower extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    i = 0;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     i++;
-    if (i % 20 < 10) {
+    if (i % IntakeConstants.PIVOT_TICS < IntakeConstants.PIVOT_BOUNCE_LIMIT) {
       intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_DOWN_POSITION);
     } else {
       intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_BOUNCE_LOWER_POSITION);
@@ -38,8 +40,7 @@ public class IntakePivotBounceLower extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // TODO maybe don't do this if the intake tries to fall down
-    intakeSubsystem.setPivotSpeed(0);
+    intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_UP_POSITION);
   }
 
   // Returns true when the command should end.
