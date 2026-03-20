@@ -95,7 +95,8 @@ public class HubLockCommand extends DriveCommandBase {
     desiredHeading =
         Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
 
-    turretSubsystem.setTurretAngle(desiredHeading);
+    // TODO: uncomment
+    // turretSubsystem.setTurretAngle(desiredHeading);
 
     // Gets the actual distance from the hub, which becomes the paramenter for the lookup tables
     // of the hood and shooter
@@ -103,7 +104,7 @@ public class HubLockCommand extends DriveCommandBase {
     // turretPos.getDistance(hubPos);
 
     // Locks hood angle on hub
-    // hoodSubsystem.setHoodAngle(turretToHubDist);
+    hoodSubsystem.setAngleWithoutDist(0.5);
     super.execute();
     SmartDashboard.putNumber("dist", turretToHubDist);
     SmartDashboard.putNumber("Y dist", turretToHubYDist);

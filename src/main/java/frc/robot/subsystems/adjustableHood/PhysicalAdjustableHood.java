@@ -15,7 +15,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
@@ -36,8 +35,9 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   public double desiredAngle;
   public double lookupTableStuff = 0.0;
   public double distanceGiven = 0.0;
-  private final PIDController hoodController = new PIDController(0.224829, 0, 0.004829);
-  private final SimpleMotorFeedforward ffHoodController = new SimpleMotorFeedforward(0.0, 0.0);
+  private final PIDController hoodController =
+      new PIDController(0.15, 0, 0.004); // 0.224829    0.004829
+  private final SimpleMotorFeedforward ffHoodController = new SimpleMotorFeedforward(0.035, 0.0);
 
   public PhysicalAdjustableHood() {
 
@@ -123,8 +123,8 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
         hoodController.calculate(hoodAngle.getValueAsDouble(), rots)
             + ffHoodController.calculate(hoodVelocity.refresh().getValueAsDouble()));
 
-    SmartDashboard.putNumber("pos req", positionRequest.Position);
-    SmartDashboard.putNumber("pos req 2", hoodMotor.getPosition().refresh().getValueAsDouble());
+    // SmartDashboard.putNumber("pos req", positionRequest.Position);
+    // SmartDashboard.putNumber("pos req 2", hoodMotor.getPosition().refresh().getValueAsDouble());
   }
 
   @Override

@@ -209,12 +209,19 @@ public class Robot extends LoggedRobot {
 
     // driverController.y().whileTrue(new SetTurretAngle(turretSubsystem));
     // driverController.a().whileTrue(new HoodDownCommand(hoodSubsystem));
-    // driverController.y().whileTrue(new InstantCommand(() -> hoodSubsystem.rezeroHood()));
+    // driverController.y().whileTrue(new InstantCommand(() -> shooterSubsystem.setSpeed(75)));
+    // driverController.y().onFalse(new InstantCommand(() -> shooterSubsystem.stopShoot()));
 
     driverController
         .leftTrigger()
         .whileTrue(
             new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
+
+    driverController.povDown().onTrue(new InstantCommand(() -> hoodSubsystem.setSpeed(-0.3)));
+    driverController.povDown().onFalse(new InstantCommand(() -> hoodSubsystem.setSpeed(0)));
+
+    driverController.povUp().onTrue(new InstantCommand(() -> hoodSubsystem.setSpeed(0.2)));
+    driverController.povUp().onTrue(new InstantCommand(() -> hoodSubsystem.setSpeed(0)));
 
     driverController
         .rightTrigger()
@@ -231,7 +238,7 @@ public class Robot extends LoggedRobot {
         .onTrue(
             new InstantCommand(
                 () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())));
-    driverController.povRight().onTrue(new InstantCommand(() -> turretSubsystem.zeroTurret()));
+    driverController.povRight().onTrue(new InstantCommand(hoodSubsystem::rezeroHood));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */

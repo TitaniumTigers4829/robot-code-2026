@@ -92,8 +92,7 @@ public class ShooterSubsystem implements ShooterInterface {
     shooterInterface.updateInputs(inputs);
     Logger.processInputs("Shooter/", inputs);
 
-    Logger.recordOutput("currentRPS", getFlywheelRPS());
-    SmartDashboard.putNumber("rps", getFlywheelRPS());
+    SmartDashboard.putNumber("currentRPS", inputs.flywheelRPS);
 
     // Update tunable numbers
     if (flywheelS.hasChanged(hashCode())

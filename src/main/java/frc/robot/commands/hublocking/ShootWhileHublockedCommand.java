@@ -46,7 +46,7 @@ public class ShootWhileHublockedCommand extends Command {
     this.hoodSubsystem = hoodSubsystem;
     this.visionSubsystem = visionSubsystem;
     this.turretSubsystem = turretSubsystem;
-    addRequirements(shooterSubsystem, swerveDrive, hoodSubsystem, visionSubsystem, turretSubsystem);
+    addRequirements(shooterSubsystem, hoodSubsystem, visionSubsystem, turretSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -95,7 +95,7 @@ public class ShootWhileHublockedCommand extends Command {
     desiredHeading =
         Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
 
-    turretSubsystem.setTurretAngle(desiredHeading);
+    // turretSubsystem.setTurretAngle(desiredHeading);
     heading = swerveDrive.getOdometryRotation2d();
 
     // Gets the position of the turret
@@ -118,16 +118,8 @@ public class ShootWhileHublockedCommand extends Command {
 
     shooterSubsystem.setPercentOutput(turretToHubDist);
 
-    if (shooterSubsystem.isUpToSpeed()) {
-      shooterSubsystem.setSpindexerSpeed(0.5);
-      shooterSubsystem.setKickerSpeed(0.5);
-    } else {
-      shooterSubsystem.setSpindexerSpeed(0.0);
-      shooterSubsystem.setKickerSpeed(0.0);
-    }
-
-    // TODO: this is never defined
-    hoodSubsystem.setHoodAngle(turretToHubDist);
+    // hoodSubsystem.setHoodAngle(turretToHubDist);
+    hoodSubsystem.setAngleWithoutDist(0.75);
   }
 
   // Called once the command ends or is interrupted.

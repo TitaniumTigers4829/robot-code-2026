@@ -26,8 +26,8 @@ public class IntakeConstants {
 
   public static final double ZERO_ANGLE = -0.35107421875;
 
-  public static final double STATOR_CURRENT_LIMIT = 60;
-  public static final double SUPPLY_CURRENT_LIMIT = 0.1;
+  public static final double STATOR_CURRENT_LIMIT = 20;
+  public static final double SUPPLY_CURRENT_LIMIT = 35;
   public static final double PIVOT_DOWN_POSITION = 0.78;
   public static final double PIVOT_UP_POSITION = 0.12; // -0.33
   public static final double MAX_ANGLE = 1;

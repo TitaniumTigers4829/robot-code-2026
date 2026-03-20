@@ -66,11 +66,27 @@ public class PhysicalShooter implements ShooterInterface {
     leaderFlywheelConfig.Slot0.kA = ShooterConstants.FLYWHEEL_A;
     leaderFlywheelConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT;
     leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT;
-    leaderFlywheelConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-    leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
+    leaderFlywheelConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
+    // TODO: timeouts
+    // TODO: unscuff
+    // TODO: FKJSAHDKJH<EAEA
     leaderFlywheelMotor.getConfigurator().apply(leaderFlywheelConfig);
     followerFlywheelMotor.getConfigurator().apply(leaderFlywheelConfig);
+    // kickerMotor.getConfigurator().apply(leaderFlywheelConfig);
+    // leaderFlywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    // spindexerMotor.inve
+    TalonFXConfiguration ghfkjad = new TalonFXConfiguration();
+    // TODO: tune
+    ghfkjad.CurrentLimits.StatorCurrentLimit = 60;
+    ghfkjad.CurrentLimits.SupplyCurrentLimit = 30;
+    ghfkjad.CurrentLimits.StatorCurrentLimitEnable = true;
+    ghfkjad.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    kickerMotor.getConfigurator().apply(ghfkjad);
+    ghfkjad.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    spindexerMotor.getConfigurator().apply(ghfkjad);
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
 
@@ -96,18 +112,27 @@ public class PhysicalShooter implements ShooterInterface {
 
   // test
   public void setPercentOutput(double distance) {
-    double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
+    // double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
+    double desiredSpeed = 90;
     leaderFlywheelMotor.setControl(rpsRequest.withVelocity(desiredSpeed));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
-    this.isUpToSpeed = Math.abs(desiredSpeed - currentRPS.refresh().getValueAsDouble()) < 10;
-    SmartDashboard.putNumber("desiredRPS", desiredSpeed);
-    SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
-    setKickerSpeed(1);
-    setSpindexerSpeed(1);
+    this.isUpToSpeed =
+        Math.abs(desiredSpeed - currentRPS.refresh().getValueAsDouble())
+            < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
+    // SmartDashboard.putNumber("desiredRPS", desiredSpeed);
+    // SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
+    if (isUpToSpeed()) {
+      setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
+      setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
+    } else {
+      setSpindexerSpeed(0.0);
+      setKickerSpeed(0.0);
+    }
   }
 
   public boolean isUpToSpeed() {
+    SmartDashboard.putBoolean("SAdfdsads", isUpToSpeed);
     return this.isUpToSpeed;
   }
 
@@ -123,6 +148,7 @@ public class PhysicalShooter implements ShooterInterface {
     leaderFlywheelMotor.setControl(rpsRequest.withVelocity(rps));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
+    // SmartDashboard.putNumber("currentRPS", leaderFlywheelMotor.getVelocity().getValueAsDouble());
   }
 
   public void setPercentOuput2(double speed) {
