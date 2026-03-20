@@ -159,12 +159,14 @@ public final class Constants {
     public static final String LEFT_NEUTRAL_AUTO = "left neutral auto";
     public static final String RIGHT_NEUTRAL_AUTO = "right neutral auto";
     public static final String MIDDLE_DEPOT_AUTO = "middle depot auto";
+    public static final String ONE_RAD_AUTO = "one rad auto";
 
     public static final String Y_ONE_METER_TRAJECTORY = "MiscTrajectories/one_point_one_meter";
     public static final String LEFT_NEUTRAL_TRAJECTORY = "MiscTrajectories/blue_neutral_left_auto";
     public static final String RIGHT_NEUTRAL_TRAJECTORY =
         "MiscTrajectories/blue_neutral_right_auto";
     public static final String MIDDLE_DEPOT_TRAJECTORY = "MiscTrajectories/middle_depot_auto";
+    public static final String ONE_RAD_TRAJ = "MiscTrajectories/rotate";
   }
 
   public static final class JoystickConstants {

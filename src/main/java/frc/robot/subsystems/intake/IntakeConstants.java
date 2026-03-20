@@ -43,8 +43,10 @@ public class IntakeConstants {
   public static final double PIVOT_BOUNCE_LIMIT = 25;
 
   public static final double PIVOT_BOUNCE_LOWER_POSITION = 0.5;
-
   public static final double PIVOT_BOUNCE_HIGHER_POSITION = 0.3;
+
+  public static final double PIVOT_TIKS = 50;
+  public static final double PIVOT_BOUNCE_LIMIT = 25;
 
   public static final double MAX_ANGLE = 1;
   public static final double ACCEPTABLE_RANGE = 0.1;

@@ -26,9 +26,9 @@ public class ShooterConstants {
   public static double FLYWHEEL_ERROR_TOLERANCE = 5;
 
   public static double PASS_SHOOTER_SPEED = -1;
-  public static double KICKER_PERCENT_OUTPUT = 0.8;
-  public static double SPINDEXER_INTAKE_SPEED = 0.5; // 0.675
-  public static double SPINDEXER_SHOOT_SPEED = 0.9; // 0.675
+  public static double KICKER_PERCENT_OUTPUT = 0.5;
+  public static double SPINDEXER_INTAKE_SPEED = 0.2; // 0.675
+  public static double SPINDEXER_SHOOT_SPEED = 0.2; // 0.675
 
   public static double FLYWHEEL_STATOR_CURRENT_LIMIT = 80.0;
   public static double FLYWHEEL_SUPPLY_CURRENT_LIMIT = 20.0;
@@ -42,6 +42,12 @@ public class ShooterConstants {
     {4.5, 75},
     {5.5, 95}
 
-    // 20 inches from
+    // 2.5: 45:0.4
+    // TODO: scuff
+    // 2.6: 45:0.4
+    // 2.8: 50:0.5
+    // 3: 53:0.6
+    // 4.1: 60:0.65
+    // 188" (5.3m): 75:0.75
   };
 }

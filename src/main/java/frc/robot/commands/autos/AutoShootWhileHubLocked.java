@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.hublocking;
+package frc.robot.commands.autos;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -10,43 +10,39 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.subsystems.turret.TurretSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.Optional;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ShootWhileHublockedCommand extends Command {
+public class AutoShootWhileHubLocked extends Command {
   /** Creates a new ShootWhileHublockedCommand. */
-  ShooterSubsystem shooterSubsystem;
+  private final ShooterSubsystem shooterSubsystem;
+  private final AdjustableHoodSubsystem hoodSubsystem;
+  private final SwerveDrive swerveDrive;
+  private final TurretSubsystem turretSubsystem;
+  private double desiredHeading;
+  private Rotation2d heading;
+  private Translation2d hubPos;
+  private double turretToHubYDist;
+  private double turretToHubXDist;
+  private double turretToHubDist;
 
-  VisionSubsystem visionSubsystem;
-  AdjustableHoodSubsystem hoodSubsystem;
-  SwerveDrive swerveDrive;
-  TurretSubsystem turretSubsystem;
-  public double desiredHeading;
-  public Rotation2d heading;
-  public Translation2d hubPos;
-  public double turretToHubYDist;
-  public double turretToHubXDist;
-  public double turretToHubDist;
-
-  public ShootWhileHublockedCommand(
+  public AutoShootWhileHubLocked(
       ShooterSubsystem shooterSubsystem,
       SwerveDrive swerveDrive,
-      VisionSubsystem visionSubsystem,
       AdjustableHoodSubsystem hoodSubsystem,
       TurretSubsystem turretSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
     this.swerveDrive = swerveDrive;
     this.hoodSubsystem = hoodSubsystem;
-    this.visionSubsystem = visionSubsystem;
     this.turretSubsystem = turretSubsystem;
-    addRequirements(shooterSubsystem, hoodSubsystem, visionSubsystem, turretSubsystem);
+    addRequirements(shooterSubsystem, hoodSubsystem, turretSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -68,8 +64,7 @@ public class ShootWhileHublockedCommand extends Command {
 
     // Gets the position of the turret
     Translation2d turretPos =
-        visionSubsystem
-            .getLastSeenPose()
+        swerveDrive.getEstimatedPose()
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
     super.execute();
@@ -95,6 +90,7 @@ public class ShootWhileHublockedCommand extends Command {
     desiredHeading =
         Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
 
+    turretSubsystem.setTurretAngle(desiredHeading);
     heading = swerveDrive.getOdometryRotation2d();
 
     // Gets the position of the turret
@@ -114,11 +110,8 @@ public class ShootWhileHublockedCommand extends Command {
     SmartDashboard.putNumber("hub dist", turretToHubDist);
 
     // hoodSubsystem.setHoodAngle(turretToHubDist);
-    // TODO: uncomment
-    // turretSubsystem.setTurretAngle(desiredHeading);
-    // TODO: change back
-    hoodSubsystem.setAngleWithoutDist(.75);
-    // new WaitCommand(0.5);
+    hoodSubsystem.setHoodAngle(turretToHubDist);
+    new WaitCommand(0.5);
     shooterSubsystem.setPercentOutput(turretToHubDist);
   }
 

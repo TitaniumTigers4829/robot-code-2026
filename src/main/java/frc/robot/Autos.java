@@ -10,9 +10,11 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.commands.autos.AutoShootWhileHubLocked;
 import frc.robot.commands.drive.FollowSwerveSampleCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
@@ -60,9 +62,17 @@ public class Autos {
   private Command selectedCommand = Commands.none();
   private boolean selectedOnRed = false;
 
-  public Autos(SwerveDrive swerveDrive, VisionSubsystem visionSubsystem) {
+  public Autos(
+      SwerveDrive swerveDrive,
+      VisionSubsystem visionSubsystem,
+      ShooterSubsystem shooterSubsystem,
+      TurretSubsystem turretSubsystem,
+      AdjustableHoodSubsystem hoodSubsystem) {
     this.swerveDrive = swerveDrive;
     this.visionSubsystem = visionSubsystem;
+    this.hoodSubsystem = hoodSubsystem;
+    this.turretSubsystem = turretSubsystem;
+    this.shooterSubsystem = shooterSubsystem;
     chooser = new LoggedDashboardChooser<>("Auto Chooser");
     chooser.addDefaultOption(NONE_NAME, NONE_NAME);
     routines.put(NONE_NAME, Commands::none);
@@ -89,6 +99,8 @@ public class Autos {
     addRoutine("middle_depot_auto", () -> middleDepotAuto());
 
     addRoutine("fancy things", () -> createRoutine(autoFactory, swerveDrive, Source.L));
+
+    addRoutine("rotate 180", () -> oneradauto());
   }
 
   public AutoRoutine yOneMeterAuto() {
@@ -97,9 +109,15 @@ public class Autos {
     routine
         .active()
         .onTrue(
-            Commands.sequence(
+            new SequentialCommandGroup(
                 autoFactory.resetOdometry(AutoConstants.Y_ONE_METER_TRAJECTORY),
-                yOneMeterTrajectory.cmd()));
+                yOneMeterTrajectory.cmd().withTimeout(5),
+                new AutoShootWhileHubLocked(
+                    shooterSubsystem,
+                    swerveDrive,
+                    hoodSubsystem,
+                    turretSubsystem)));
+
     return routine;
   }
 
@@ -171,7 +189,7 @@ public class Autos {
             Commands.sequence(
                 autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
                 leftNeutralTrajectory.cmd(),
-                Commands.runOnce(() -> new IntakePivotDownCommand(intakeSubsystem)),
+                Commands.run(() -> new IntakePivotDownCommand(intakeSubsystem)),
                 new WaitCommand(2.0),
                 Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),
                 new WaitCommand(5.0),
@@ -187,6 +205,19 @@ public class Autos {
                             visionSubsystem,
                             hoodSubsystem,
                             turretSubsystem))));
+
+    return routine;
+  }
+
+  public AutoRoutine oneradauto() {
+    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.ONE_RAD_AUTO);
+    AutoTrajectory oneRadAuto = routine.trajectory(AutoConstants.ONE_RAD_TRAJ);
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                autoFactory.resetOdometry(AutoConstants.ONE_RAD_TRAJ), oneRadAuto.cmd()));
+
     return routine;
   }
 

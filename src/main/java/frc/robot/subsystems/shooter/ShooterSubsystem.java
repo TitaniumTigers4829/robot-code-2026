@@ -43,6 +43,10 @@ public class ShooterSubsystem implements ShooterInterface {
     return shooterInterface.getFlywheelRPS();
   }
 
+  public void setRollerSpeed(double speed) {
+    shooterInterface.setRollerSpeed(speed);
+  }
+
   public double getVolts() {
     return shooterInterface.getVolts();
   }

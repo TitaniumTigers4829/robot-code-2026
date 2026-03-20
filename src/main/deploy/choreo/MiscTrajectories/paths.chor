@@ -1,5 +1,5 @@
 {
- "name":"one_point_one_meter",
+ "name":"paths",
  "version":2,
  "type":"Swerve",
  "variables":{
@@ -28,8 +28,8 @@
    }
   },
   "mass":{
-   "exp":"150 lbs",
-   "val":68.0388555
+   "exp":"113.5 lbs",
+   "val":51.482733995
   },
   "inertia":{
    "exp":"6 kg m ^ 2",

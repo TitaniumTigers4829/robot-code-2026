@@ -31,6 +31,8 @@ public interface ShooterInterface extends Subsystem {
 
   public default void setVolts(double volts) {}
 
+  public default void setRollerSpeed(double speed) {}
+
   public default void setPercentOutput(double distance) {}
 
   public default void setPercentOutput2(double speed) {}
