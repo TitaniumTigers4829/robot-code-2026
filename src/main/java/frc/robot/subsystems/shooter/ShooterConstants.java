@@ -37,10 +37,13 @@ public class ShooterConstants {
   public static double[][] DISTANCE_TO_FLYWHEEL_RPM = {
     // Distance from hub in meters, needed rps of flywheel
     {1.0, 40},
-    {2.5, 55},
-    {3.5, 62},
-    {4.5, 75},
-    {5.5, 95}
+    {2.5, 45},
+    {2.6, 45},
+    {2.8, 50},
+    {3.0, 53},
+    {4.1, 60},
+    {5.3, 75}
+   
 
     // 2.5: 45:0.4
     // TODO: scuff

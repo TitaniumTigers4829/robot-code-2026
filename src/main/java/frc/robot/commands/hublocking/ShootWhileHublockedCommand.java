@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
@@ -37,6 +38,7 @@ public class ShootWhileHublockedCommand extends Command {
   public double turretToHubDist;
   public double xVelocity;
   public double yVelocity;
+  public SingleLinearInterpolator flywheelLookupTable;
 
   public ShootWhileHublockedCommand(
       ShooterSubsystem shooterSubsystem,
@@ -83,13 +85,15 @@ public class ShootWhileHublockedCommand extends Command {
     double turretToHubXDistInit = hubPos.getX() - turretPos.getX();
     double turretToHubDistInit = Math.hypot(turretToHubXDistInit, turretToHubYDistInit);
 
+    SmartDashboard.putNumber("init hub dist", turretToHubDistInit);
+
     xVelocity = swerveDrive.getChassisSpeeds().vxMetersPerSecond;
     yVelocity = swerveDrive.getChassisSpeeds().vyMetersPerSecond;
 
     double chassisVelocity = Math.hypot(xVelocity, yVelocity);
 
 
-    double fullVelocity = shooterSubsystem.getFlywheelVelocity()*(2*Math.PI*1.5) + chassisVelocity;
+    double fullVelocity = flywheelLookupTable.getLookupValue(turretToHubDistInit)*(2*Math.PI*1.5) + chassisVelocity;
 
     double tAir = turretToHubDistInit/fullVelocity;
 

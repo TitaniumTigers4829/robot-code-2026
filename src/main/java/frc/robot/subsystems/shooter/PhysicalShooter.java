@@ -45,8 +45,8 @@ public class PhysicalShooter implements ShooterInterface {
   private final VelocityVoltage rpsRequest = new VelocityVoltage(0.0);
   private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
 
-  private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new MotionMagicTorqueCurrentFOC(0.0);
-  private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
+  // private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new MotionMagicTorqueCurrentFOC(0.0);
+  // private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
 
   private final TalonFXConfiguration leaderFlywheelConfig = new TalonFXConfiguration();
 
@@ -114,9 +114,7 @@ public class PhysicalShooter implements ShooterInterface {
 
   // test
   public void setPercentOutput(double distance) {
-    // double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
-    // TODO: revert
-    double desiredSpeed = 75;
+    double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
     leaderFlywheelMotor.setControl(rpsRequest.withVelocity(desiredSpeed));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
