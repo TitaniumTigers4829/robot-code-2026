@@ -64,8 +64,8 @@ public class HubLockCommand extends DriveCommandBase {
 
     // Gets the position of the turret
     Translation2d turretPos =
-        visionSubsystem
-            .getLastSeenPose()
+        swerveDrive
+            .getEstimatedPose()
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
     super.execute();

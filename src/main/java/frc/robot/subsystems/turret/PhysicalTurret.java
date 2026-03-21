@@ -101,7 +101,10 @@ public class PhysicalTurret implements TurretInterface {
     configureEncoder();
     configureMotor();
 
+    // turretEncoder.setPosition(turretEncoder.getAbsolutePosition());
+
     motorPosition = turretEncoder.getPosition();
+
     motorVelocity = turretMotor.getVelocity();
     cancoderPosition = turretEncoder.getAbsolutePosition();
 
@@ -230,8 +233,8 @@ public class PhysicalTurret implements TurretInterface {
    */
   @Override
   public void rezeroTurret() {
-    turretEncoder.setPosition(turretEncoder.getAbsolutePosition().refresh().getValueAsDouble());
-    // turretEncoder.setPosition(0);
+    // turretEncoder.setPosition(turretEncoder.getAbsolutePosition().refresh().getValueAsDouble());
+    turretEncoder.setPosition(0);
     Logger.recordOutput("turret/rezero/triggered", true);
     DriverStation.reportWarning("Turret manually re-zeroed to forward position.", false);
   }

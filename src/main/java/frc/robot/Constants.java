@@ -132,25 +132,17 @@ public final class Constants {
     public static final double AUTO_THETA_P = 4.5; // 5
     public static final double AUTO_THETA_D = 0.4;
 
-    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2;
-    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = 2;
+    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 6.176;
+    public static final double MAX_ANGULAR_ACCELERATION = 20.348;
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS =
         new TrapezoidProfile.Constraints(
-            MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
+            MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_ACCELERATION);
 
     public static final double X_TOLERANCE = 0.02;
     public static final double Y_TOLERANCE = 0.02;
     public static final double THETA_TOLERANCE = 1.25;
-
-    public static final double AUTO_ALIGN_TRANSLATIONAL_P = 3;
-    public static final double AUTO_ALIGN_TRANSLATIONAL_I = 0;
-    public static final double AUTO_ALIGN_TRANSLATIONAL_D = 0;
-
-    public static final double AUTO_ALIGN_ROTATIONAL_P = 3;
-    public static final double AUTO_ALIGN_ROTATIONAL_I = 0;
-    public static final double AUTO_ALIGN_ROTATIONAL_D = 0;
   }
 
   public static final class AutoConstants {

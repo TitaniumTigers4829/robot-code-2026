@@ -28,7 +28,7 @@ public class IntakeConstants {
 
   // DONT TOUCH THESE ARE SOMEWHAT GOOD CURRENT LIMIT VALUES
   public static final double OUTER_STATOR_CURRENT_LIMIT = 80;
-  public static final double OUTER_SUPPLY_CURRENT_LIMIT = 60;
+  public static final double OUTER_SUPPLY_CURRENT_LIMIT = 65;
 
   public static final double INNER_STATOR_CURRENT_LIMIT = 80;
   public static final double INNER_SUPPLY_CURRENT_LIMIT = 5;
@@ -36,7 +36,7 @@ public class IntakeConstants {
   public static final double PIVOT_STATOR_CURRENT_LIMIT = 80;
   public static final double PIVOT_SUPPLY_CURRENT_LIMIT = 25;
 
-  public static final double PIVOT_DOWN_POSITION = 0.78;
+  public static final double PIVOT_DOWN_POSITION = 0.9;
   public static final double PIVOT_UP_POSITION = 0.12; // -0.33
 
   public static final double PIVOT_TICS = 50;
@@ -46,7 +46,7 @@ public class IntakeConstants {
   public static final double PIVOT_BOUNCE_HIGHER_POSITION = 0.3;
 
   public static final double MAX_ANGLE = 1;
-  public static final double ACCEPTABLE_RANGE = 0.1;
+  public static final double ACCEPTABLE_RANGE = 0.3;
   public static final double MIN_ANGLE = 0.0; // I HATE THIS SO MUCH
   public static final double INTAKE_SPEED_OUTER = 0.5;
   public static final double INTAKE_SPEED_INNER = 0.35;

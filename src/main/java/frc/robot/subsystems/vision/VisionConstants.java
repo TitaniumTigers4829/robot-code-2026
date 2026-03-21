@@ -114,7 +114,7 @@ public final class VisionConstants {
     {1.5, 0.01, 0.01, Units.degreesToRadians(180000)}, // 0.7
     {3, 0.03, 0.03, Units.degreesToRadians(180000)}, // 4
     {4.5, 0.06, 0.06, Units.degreesToRadians(180000)}, // 30
-    {8, 0.5, 0.5, Units.degreesToRadians(180000)}, // 90
+    {8, 0.1, 0.1, Units.degreesToRadians(180000)}, // 90
     {10, 10.0, 10.0, Units.degreesToRadians(180000)} // 90
   };
 }

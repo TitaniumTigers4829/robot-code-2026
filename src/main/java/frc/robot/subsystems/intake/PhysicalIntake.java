@@ -95,8 +95,8 @@ public class PhysicalIntake implements IntakeInterface {
 
     pivotConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.OUTER_STATOR_CURRENT_LIMIT;
     pivotConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.OUTER_SUPPLY_CURRENT_LIMIT;
-    pivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    pivotConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+    pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
 
     pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = IntakeConstants.PIVOT_DOWN_POSITION;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = IntakeConstants.MIN_ANGLE;

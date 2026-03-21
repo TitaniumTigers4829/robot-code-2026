@@ -4,7 +4,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 import frc.robot.Constants.RobotType;
@@ -208,31 +207,31 @@ public class SwerveConstants {
     public static final double REPULSOR_MAX_VELOCITY = 1.0;
     public static final double REPULSOR_MAX_ACCELERATION = 2.0;
 
-    // Choreo Drive Constants
-    public static final double AUTO_MAX_SPEED_METERS_PER_SECOND = 4.5;
-    public static final double AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3.25;
-    public static final double AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 4 * Math.PI;
-    public static final double AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = 6 * Math.PI;
+    // // Choreo Drive Constants
+    // public static final double AUTO_MAX_SPEED_METERS_PER_SECOND = 4.5;
+    // public static final double AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3.25;
+    // public static final double AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 4 * Math.PI;
+    // public static final double AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = 6 * Math.PI;
 
-    public static final double AUTO_TRANSLATION_P = 1.0; // 1
-    public static final double AUTO_TRANSLATION_I = 0;
-    public static final double AUTO_TRANSLATION_D = 0.0;
+    // public static final double AUTO_TRANSLATION_P = 1.0; // 1
+    // public static final double AUTO_TRANSLATION_I = 0;
+    // public static final double AUTO_TRANSLATION_D = 0.0;
 
-    public static final double AUTO_THETA_P = 0.0; // 5
-    public static final double AUTO_THETA_I = 0;
-    public static final double AUTO_THETA_D = 0;
+    // public static final double AUTO_THETA_P = 0.0; // 5
+    // public static final double AUTO_THETA_I = 0;
+    // public static final double AUTO_THETA_D = 0;
 
-    public static final double AUTO_TRANSLATION_TOLERANCE_METERS = 0.0005;
-    public static final double AUTO_ROTATION_TOLERANCE_RADIANS = 0.001;
+    // public static final double AUTO_TRANSLATION_TOLERANCE_METERS = 0.0005;
+    // public static final double AUTO_ROTATION_TOLERANCE_RADIANS = 0.001;
 
-    public static final TrapezoidProfile.Constraints AUTO_TRANSLATION_CONSTRAINTS =
-        new TrapezoidProfile.Constraints(
-            AUTO_MAX_SPEED_METERS_PER_SECOND, AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
+    // public static final TrapezoidProfile.Constraints AUTO_TRANSLATION_CONSTRAINTS =
+    //     new TrapezoidProfile.Constraints(
+    //         AUTO_MAX_SPEED_METERS_PER_SECOND, AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
 
-    public static final TrapezoidProfile.Constraints AUTO_THETA_CONTROLLER_CONSTRAINTS =
-        new TrapezoidProfile.Constraints(
-            AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
-            AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
+    // public static final TrapezoidProfile.Constraints AUTO_THETA_CONTROLLER_CONSTRAINTS =
+    //     new TrapezoidProfile.Constraints(
+    //         AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
+    //         AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
   }
 
   public class ModuleConstants {

@@ -4,8 +4,6 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import choreo.trajectory.SwerveSample;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,8 +11,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.FieldConstants;
-import frc.robot.commands.autos.AutoShootWhileHubLocked;
 import frc.robot.commands.drive.FollowSwerveSampleCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
@@ -45,18 +41,6 @@ public class Autos {
   private final String NONE_NAME = "Do Nothing";
 
   private final HashMap<String, Supplier<Command>> routines = new HashMap<>();
-
-  private final Pose2d sourceRight = new Pose2d(1.17, 1.23, Rotation2d.fromDegrees(54));
-
-  Pose2d sourceRightFlipped =
-      AllianceFlipper.isRed()
-          ? sourceRight.rotateAround(FieldConstants.FIELD_CENTER, Rotation2d.kPi)
-          : sourceRight;
-  private final Pose2d sourceLeft =
-      new Pose2d(
-          sourceRightFlipped.getX(),
-          FieldConstants.FIELD_WIDTH_METERS - sourceRightFlipped.getY(),
-          sourceRightFlipped.getRotation().unaryMinus());
 
   private String selectedCommandName = NONE_NAME;
   private Command selectedCommand = Commands.none();
@@ -110,13 +94,15 @@ public class Autos {
         .active()
         .onTrue(
             new SequentialCommandGroup(
-                autoFactory.resetOdometry(AutoConstants.Y_ONE_METER_TRAJECTORY),
-                yOneMeterTrajectory.cmd().withTimeout(5),
-                new AutoShootWhileHubLocked(
-                    shooterSubsystem,
-                    swerveDrive,
-                    hoodSubsystem,
-                    turretSubsystem)));
+                    autoFactory.resetOdometry(AutoConstants.Y_ONE_METER_TRAJECTORY),
+                    yOneMeterTrajectory.cmd().withTimeout(5),
+                    new ShootWhileHublockedCommand(
+                        shooterSubsystem,
+                        swerveDrive,
+                        visionSubsystem,
+                        hoodSubsystem,
+                        turretSubsystem))
+                .withTimeout(5));
 
     return routine;
   }

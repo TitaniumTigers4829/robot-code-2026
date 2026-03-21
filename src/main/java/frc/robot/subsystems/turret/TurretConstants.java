@@ -91,7 +91,7 @@ public class TurretConstants {
   // Magnet offset found via Phoenix Tuner X with turret physically at forward (0°).
   // To re-zero: point turret forward, read raw CANcoder absolute position in
   // Tuner X, and update this value.
-  public static final double ANGLE_ZERO = -0.39355;
+  public static final double ANGLE_ZERO = -0.436552734375;
 
   /* -------------------------------------------------------------------------- */
   /*                            CURRENT LIMITS                                  */

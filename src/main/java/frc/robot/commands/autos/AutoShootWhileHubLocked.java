@@ -23,6 +23,7 @@ import java.util.Optional;
 public class AutoShootWhileHubLocked extends Command {
   /** Creates a new ShootWhileHublockedCommand. */
   private final ShooterSubsystem shooterSubsystem;
+
   private final AdjustableHoodSubsystem hoodSubsystem;
   private final SwerveDrive swerveDrive;
   private final TurretSubsystem turretSubsystem;
@@ -64,7 +65,8 @@ public class AutoShootWhileHubLocked extends Command {
 
     // Gets the position of the turret
     Translation2d turretPos =
-        swerveDrive.getEstimatedPose()
+        swerveDrive
+            .getEstimatedPose()
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
     super.execute();
