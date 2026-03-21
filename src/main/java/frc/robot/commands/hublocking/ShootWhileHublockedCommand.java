@@ -6,6 +6,7 @@ package frc.robot.commands.hublocking;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,6 +35,8 @@ public class ShootWhileHublockedCommand extends Command {
   public double turretToHubYDist;
   public double turretToHubXDist;
   public double turretToHubDist;
+  public double xVelocity;
+  public double yVelocity;
 
   public ShootWhileHublockedCommand(
       ShooterSubsystem shooterSubsystem,
@@ -73,6 +76,24 @@ public class ShootWhileHublockedCommand extends Command {
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
     super.execute();
+
+
+    // double initDist = turretPos.getDistance(hubPos);
+    double turretToHubYDistInit = hubPos.getY() - turretPos.getY();
+    double turretToHubXDistInit = hubPos.getX() - turretPos.getX();
+    double turretToHubDistInit = Math.hypot(turretToHubXDistInit, turretToHubYDistInit);
+
+    xVelocity = swerveDrive.getChassisSpeeds().vxMetersPerSecond;
+    yVelocity = swerveDrive.getChassisSpeeds().vyMetersPerSecond;
+
+    double chassisVelocity = Math.hypot(xVelocity, yVelocity);
+
+
+    double fullVelocity = shooterSubsystem.getFlywheelVelocity()*(2*Math.PI*1.5) + chassisVelocity;
+
+    double tAir = turretToHubDistInit/fullVelocity;
+
+
     /**
      * Our turret angling math works as follows. Assuming the 0 rotations on the turret is facing
      * the current heading of the robot and the turret rotates positively counterclockwise, we can
@@ -84,8 +105,20 @@ public class ShootWhileHublockedCommand extends Command {
      * to turn to face the hub and when converted to rotations becomes the desired heading. *
      */
     // Gets the needed angle for the turret to turn to face the hub in radians
-    double turretAngleRad = Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
+    
 
+    double xOffset = xVelocity * tAir;
+    double yOffset = yVelocity * tAir;
+
+
+    heading = swerveDrive.getOdometryRotation2d();
+
+    // Gets y and x distances of the turret to the hub
+    // TODO: translation2d.dist?
+    turretToHubYDist = hubPos.getY() - turretPos.getY() - yOffset;
+    turretToHubXDist = hubPos.getX() - turretPos.getX() - xOffset;
+
+    double turretAngleRad = Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
     // Wrap to [-pi, pi]
     turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));
 
@@ -97,27 +130,15 @@ public class ShootWhileHublockedCommand extends Command {
 
     heading = swerveDrive.getOdometryRotation2d();
 
-    // Gets the position of the turret
-    turretPos =
-        swerveDrive
-            .getEstimatedPose()
-            .getTranslation()
-            .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
-    // Gets y and x distances of the turret to the hub
-    // TODO: translation2d.dist?
-    turretToHubYDist = hubPos.getY() - turretPos.getY();
-    turretToHubXDist = hubPos.getX() - turretPos.getX();
 
     // Gets the actual distance from the hub, which becomes the paramenter for the lookup tables
     // of the hood and shooter
     turretToHubDist = Math.hypot(turretToHubXDist, turretToHubYDist);
+
     SmartDashboard.putNumber("hub dist", turretToHubDist);
 
-    // hoodSubsystem.setHoodAngle(turretToHubDist);
-    // TODO: uncomment
-    // turretSubsystem.setTurretAngle(desiredHeading);
-    // TODO: change back
-    hoodSubsystem.setAngleWithoutDist(.75);
+    hoodSubsystem.setHoodAngle(turretToHubDist);
+    turretSubsystem.setTurretAngle(desiredHeading);
     // new WaitCommand(0.5);
     shooterSubsystem.setPercentOutput(turretToHubDist);
   }
