@@ -108,6 +108,7 @@ public class PhysicalTurret implements TurretInterface {
     motorVelocity = turretMotor.getVelocity();
     cancoderPosition = turretEncoder.getAbsolutePosition();
 
+    turretEncoder.setPosition(0.0);
     // TODO(second-cancoder): Uncomment when second CANcoder is installed.
     // cancoderPosition2 = turretEncoder2.getAbsolutePosition();
 
