@@ -71,6 +71,8 @@ public class PhysicalTurret implements TurretInterface {
   // MOTOR_TO_CANCODER = 44.444 / 16.666 ≈ 2.667
   // This means the CANcoder shaft spins 2.667 times per 1 turret rotation,
   // and the motor spins 2.667 times per 1 CANcoder shaft rotation.
+  // TODO: why in the kentucky fried F is this here, and never used
+  // TODO: please clean up the comments because this code is a mess and hiding important stuff like this imo
   private static final double MOTOR_TO_CANCODER = TOTAL_RATIO / TurretConstants.CANCODER_TO_TURRET;
 
   // TODO(second-cancoder): Add second encoder gear ratio constant in TurretConstants.

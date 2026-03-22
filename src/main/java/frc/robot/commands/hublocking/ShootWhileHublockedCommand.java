@@ -118,17 +118,17 @@ public class ShootWhileHublockedCommand extends Command {
     turretToHubYDist = hubPos.getY() - turretPos.getY();
     turretToHubXDist = hubPos.getX() - turretPos.getX();
 
-    double turretAngleRad = Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
-    // Wrap to [-pi, pi]
-    turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));
-
-    desiredHeading = turretAngleRad / (2.0 * Math.PI);
+    // TODO: figure out lmao
+    // TODO: math.atan2 is from [-pi, pi] and our heading is [0, 2pi] i think? 
+    // TODO: remove the math.pi addition if so
+    double turretAngleRad = (Math.PI + Math.atan2(turretToHubYDist, turretToHubXDist)) - heading.getRadians();
+    // Wrap to [0, 2pi]
+    // TODO: change to just math.PI if our heading is [-pi, pi]
+    turretAngleRad = turretAngleRad % (2 * Math.PI);
 
     // Clamp to turret limits
-    desiredHeading =
-        Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
-
-    heading = swerveDrive.getOdometryRotation2d();
+    // TODO: look at and make sure this makes sense
+    desiredHeading = map(desiredHeading, 0, 2 * Math.PI, TurretConstants.MIN_ANGLE, TurretConstants.MAX_ANGLE);
 
     // Gets the actual distance from the hub, which becomes the paramenter for the lookup tables
     // of the hood and shooter
@@ -157,5 +157,19 @@ public class ShootWhileHublockedCommand extends Command {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  /**
+   * This should just map a value from [origMin, origMax] to [newMin, newMax]
+   * https://www.javathinking.com/blog/convert-a-number-range-to-another-range-maintaining-ratio-java/
+   * @param val value to map
+   * @param origMin value min
+   * @param origMax value max
+   * @param newMin new min
+   * @param newMax new max
+   * @return the mapped value, lmao
+   */
+  private double map(double val, double origMin, double origMax, double newMin, double newMax) {
+    return newMin + ((val - origMin) * (newMax - newMin)) / (origMax - origMin);
   }
 }
