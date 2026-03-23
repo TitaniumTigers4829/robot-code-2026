@@ -11,11 +11,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.commands.drive.DriveNoVision;
 import frc.robot.commands.drive.FollowSwerveSampleCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
+import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.extras.util.AllianceFlipper;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
@@ -94,15 +96,13 @@ public class Autos {
         .active()
         .onTrue(
             new SequentialCommandGroup(
-                    autoFactory.resetOdometry(AutoConstants.Y_ONE_METER_TRAJECTORY),
-                    yOneMeterTrajectory.cmd().withTimeout(5),
-                    new ShootWhileHublockedCommand(
-                        shooterSubsystem,
-                        swerveDrive,
-                        visionSubsystem,
-                        hoodSubsystem,
-                        turretSubsystem))
-                .withTimeout(5));
+                new DriveNoVision(
+                        swerveDrive, () -> 0.05, () -> 0, () -> 0, () -> false, () -> false, null)
+                    .withTimeout(2),
+                new DriveNoVision(
+                        swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
+                    .withTimeout(1),
+                new PassFuelCommand(shooterSubsystem, hoodSubsystem).withTimeout(5)));
 
     return routine;
   }

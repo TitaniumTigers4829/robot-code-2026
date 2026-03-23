@@ -35,8 +35,9 @@ public class TurretConstants {
   /* -------------------------------------------------------------------------- */
 
   // Distance from center of robot to center of turret (turret is at front left)
-  public static final double X_OFFSET = Units.inchesToMeters(7.75);
-  public static final double Y_OFFSET = Units.inchesToMeters(4.68);
+  // TODO: Maybe change back tmr, i flipped this night before elon day 2
+  public static final double Y_OFFSET = Units.inchesToMeters(7.75);
+  public static final double X_OFFSET = Units.inchesToMeters(4.68);
 
   public static final Translation2d TURRET_OFFSET =
       new Translation2d(TurretConstants.X_OFFSET, TurretConstants.Y_OFFSET);

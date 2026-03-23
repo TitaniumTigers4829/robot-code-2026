@@ -16,19 +16,16 @@ import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
-import frc.robot.subsystems.turret.TurretSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.Optional;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ShootWhileHublockedCommand extends Command {
+public class ShootRegression extends Command {
   /** Creates a new ShootWhileHublockedCommand. */
   ShooterSubsystem shooterSubsystem;
 
-  VisionSubsystem visionSubsystem;
   AdjustableHoodSubsystem hoodSubsystem;
   SwerveDrive swerveDrive;
-  TurretSubsystem turretSubsystem;
+
   public double desiredHeading;
   public Rotation2d heading;
   public Translation2d hubPos;
@@ -39,18 +36,15 @@ public class ShootWhileHublockedCommand extends Command {
   public double yVelocity;
   public SingleLinearInterpolator flywheelLookupTable;
 
-  public ShootWhileHublockedCommand(
+  public ShootRegression(
       ShooterSubsystem shooterSubsystem,
       SwerveDrive swerveDrive,
-      VisionSubsystem visionSubsystem,
-      AdjustableHoodSubsystem hoodSubsystem,
-      TurretSubsystem turretSubsystem) {
+      AdjustableHoodSubsystem hoodSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
     this.swerveDrive = swerveDrive;
     this.hoodSubsystem = hoodSubsystem;
-    this.visionSubsystem = visionSubsystem;
-    this.turretSubsystem = turretSubsystem;
-    addRequirements(shooterSubsystem, hoodSubsystem, visionSubsystem, turretSubsystem);
+
+    addRequirements(shooterSubsystem, hoodSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -133,7 +127,6 @@ public class ShootWhileHublockedCommand extends Command {
     SmartDashboard.putNumber("hub dist", turretToHubDist);
 
     hoodSubsystem.setHoodAngle(turretToHubDist);
-    turretSubsystem.setTurretAngle(desiredHeading);
     // new WaitCommand(0.5);
     shooterSubsystem.setPercentOutput(turretToHubDist);
   }
