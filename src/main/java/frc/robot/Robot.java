@@ -15,7 +15,7 @@ import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootRegression;
-import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
+import frc.robot.commands.hublocking.ShootWhileMove;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotBounceHigher;
 import frc.robot.commands.intake.IntakePivotBounceLower;
@@ -167,9 +167,9 @@ public class Robot extends LoggedRobot {
             swerveDrive,
             visionSubsystem,
             // Translation in the X direction
-            driverLeftStick[0],
+            () -> driverLeftStick[0].getAsDouble() * .2,
             // Translation in the Y direction
-            driverLeftStick[1],
+            () -> driverLeftStick[1].getAsDouble() * .2,
             // Rotation
             () -> JoystickUtil.modifyAxis(driverController::getRightX, 3),
             // Robot relative
@@ -211,8 +211,7 @@ public class Robot extends LoggedRobot {
     driverController
         .rightTrigger()
         .whileTrue(
-            new ShootWhileHublockedCommand(
-                shooterSubsystem, swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
+            new ShootWhileMove(swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem));
 
     driverController.a().whileTrue(new IntakeCommand(intakeSubsystem));
 

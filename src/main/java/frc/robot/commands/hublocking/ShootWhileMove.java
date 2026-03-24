@@ -14,9 +14,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.subsystems.turret.TurretSubsystem;
-
 import java.util.Optional;
-
 import org.littletonrobotics.junction.Logger;
 
 public class ShootWhileMove extends Command {
@@ -42,18 +40,24 @@ public class ShootWhileMove extends Command {
   double distance;
   double dampener;
 
-  public SingleLinearInterpolator timeInAirLookupTable = new SingleLinearInterpolator(new double[][]{
-      {2.20, 1.3},
-      {2.59, 1.26},
-      {3.03, 1.3},
-      {3.39, 1.4},
-      {3.88, 1.5},
-      {4.39, 1.6},
-      {5.0, 1.66}
-});
+  public SingleLinearInterpolator timeInAirLookupTable =
+      new SingleLinearInterpolator(
+          new double[][] {
+            {1.5, 0.9183},
+            {2.5, 1.4275},
+            // {3.03, 1.3},
+            // {3.39, 1.4},
+            // TODO: 3.5
+            {3.5, 1.5},
+            // {4.39, 1.6},
+            // {5.0, 1.66}
+          });
 
   public ShootWhileMove(
-      SwerveDrive drive, TurretSubsystem turret, ShooterSubsystem shooter, AdjustableHoodSubsystem hood) {
+      SwerveDrive drive,
+      TurretSubsystem turret,
+      ShooterSubsystem shooter,
+      AdjustableHoodSubsystem hood) {
     this.drive = drive;
     this.turret = turret;
     this.shooter = shooter;
@@ -74,7 +78,7 @@ public class ShootWhileMove extends Command {
 
   @Override
   public void execute() {
-    dampener = 1;
+    dampener = -1;
 
     robotPose = drive.getEstimatedPose();
     turretPose =
@@ -88,23 +92,23 @@ public class ShootWhileMove extends Command {
     iterativeDistance = turretPose.getDistance(targetPosition);
 
     for (int i = 0; i < 20; i++) {
-        tAir = timeInAirLookupTable.getLookupValue(iterativeDistance);
+      tAir = timeInAirLookupTable.getLookupValue(iterativeDistance);
 
-        velocityXOffset = fieldRelative.vxMetersPerSecond * tAir * dampener;
-        velocityYOffset = fieldRelative.vyMetersPerSecond * tAir * dampener;
+      velocityXOffset = fieldRelative.vxMetersPerSecond * tAir * dampener;
+      velocityYOffset = fieldRelative.vyMetersPerSecond * tAir * dampener;
 
-        omegaXOffset =
-            -velocityOmega * turretOffsetPose.rotateBy(robotPose.getRotation()).getY() * tAir;
-        omegaYOffset =
-            velocityOmega * turretOffsetPose.rotateBy(robotPose.getRotation()).getX() * tAir;
+      omegaXOffset =
+          -velocityOmega * turretOffsetPose.rotateBy(robotPose.getRotation()).getY() * tAir;
+      omegaYOffset =
+          velocityOmega * turretOffsetPose.rotateBy(robotPose.getRotation()).getX() * tAir;
 
-        offsettedTarget =
-            new Pose2d(
-                targetPosition.getX() - velocityXOffset - omegaXOffset,
-                targetPosition.getY() - velocityYOffset - omegaYOffset,
-                new Rotation2d());
+      offsettedTarget =
+          new Pose2d(
+              targetPosition.getX() - velocityXOffset - omegaXOffset,
+              targetPosition.getY() - velocityYOffset - omegaYOffset,
+              new Rotation2d());
 
-        iterativeDistance = offsettedTarget.getTranslation().getDistance(turretPose);
+      iterativeDistance = offsettedTarget.getTranslation().getDistance(turretPose);
     }
 
     distance = offsettedTarget.getTranslation().getDistance(turretPose);
@@ -124,7 +128,7 @@ public class ShootWhileMove extends Command {
 
     shooter.setPercentOutput(distance);
     hood.setHoodAngle(distance);
-    
+
     Logger.recordOutput("Shoot on move At Hub/Desired Hub", offsettedTarget);
 
     Logger.recordOutput("Shoot on move At Hub/Distance to Desire Hub", distance);

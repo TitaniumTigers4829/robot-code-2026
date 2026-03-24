@@ -114,6 +114,7 @@ public class PhysicalShooter implements ShooterInterface {
   // test
   public void setPercentOutput(double distance) {
     double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
+    // double desiredSpeed = 70;
     leaderFlywheelMotor.setControl(rpsRequest.withVelocity(desiredSpeed));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
@@ -144,7 +145,7 @@ public class PhysicalShooter implements ShooterInterface {
     this.isUpToSpeed =
         Math.abs(60 - currentRPS.refresh().getValueAsDouble())
             < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
-    SmartDashboard.putNumber("desiredRPS", 50);
+    SmartDashboard.putNumber("desiredRPS", 60);
     SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
     if (isUpToSpeed()) {
       setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
