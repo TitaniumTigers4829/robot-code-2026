@@ -56,12 +56,16 @@ public class SwerveDrive extends SubsystemBase {
   private final PIDController yChoreoController =
       new PIDController(
           TrajectoryConstants.AUTO_TRANSLATION_P, 0, TrajectoryConstants.AUTO_TRANSLATION_D);
-  private final ProfiledPIDController rotationChoreoController =
-      new ProfiledPIDController(
-          TrajectoryConstants.AUTO_THETA_P,
-          0,
-          TrajectoryConstants.AUTO_THETA_D,
-          TrajectoryConstants.THETA_CONTROLLER_CONSTRAINTS);
+
+  private final PIDController rotationChoreoController =
+      new PIDController(TrajectoryConstants.AUTO_THETA_P, 0, TrajectoryConstants.AUTO_THETA_D);
+
+  // private final ProfiledPIDController rotationChoreoController =
+  //     new ProfiledPIDController(
+  //         TrajectoryConstants.AUTO_THETA_P,
+  //         0,
+  //         TrajectoryConstants.AUTO_THETA_D,
+  //         TrajectoryConstants.THETA_CONTROLLER_CONSTRAINTS);
 
   private Rotation2d rawGyroRotation;
   private final SwerveModulePosition[] lastModulePositions;
@@ -309,7 +313,7 @@ public class SwerveDrive extends SubsystemBase {
   public void followSwerveSample(SwerveSample sample) {
     xChoreoController.reset();
     yChoreoController.reset();
-    rotationChoreoController.reset(getOdometryRotation2d().getRadians());
+    rotationChoreoController.reset(); // getOdometryRotation2d().getRadians());
     // Use the summed forces in the drive method
     ChassisSpeeds chassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(

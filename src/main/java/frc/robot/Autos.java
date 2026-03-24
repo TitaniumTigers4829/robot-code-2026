@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.commands.drive.DriveNoVision;
 import frc.robot.commands.drive.FollowSwerveSampleCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
@@ -85,6 +86,8 @@ public class Autos {
     addRoutine("fancy things", () -> createRoutine(autoFactory, swerveDrive, Source.L));
 
     addRoutine("rotate 180", () -> oneradauto());
+
+    addRoutine("back and shoot", () -> backAndShootAuto());
   }
 
   public AutoRoutine yOneMeterAuto() {
@@ -95,10 +98,10 @@ public class Autos {
         .onTrue(
             new SequentialCommandGroup(
                 autoFactory.resetOdometry(AutoConstants.Y_ONE_METER_TRAJECTORY),
-                yOneMeterTrajectory.cmd()
-                // new DriveNoVision(
-                //         swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
-                // .withTimeout(1),
+                yOneMeterTrajectory.cmd(),
+                new DriveNoVision(
+                        swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
+                    .withTimeout(1)
                 // new PassFuelCommand(shooterSubsystem, hoodSubsystem).withTimeout(5)));
                 ));
 
@@ -200,8 +203,27 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
-                autoFactory.resetOdometry(AutoConstants.ONE_RAD_TRAJ), oneRadAuto.cmd()));
+                autoFactory.resetOdometry(AutoConstants.ONE_RAD_TRAJ),
+                oneRadAuto.cmd(),
+                new DriveNoVision(
+                        swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
+                    .withTimeout(1)));
 
+    return routine;
+  }
+
+  public AutoRoutine backAndShootAuto() {
+    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.BACK_AND_SHOOT_AUTO);
+    AutoTrajectory backAndShootTrajectory = routine.trajectory(AutoConstants.BACK_AND_SHOOT_TRAJ);
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                autoFactory.resetOdometry(AutoConstants.BACK_AND_SHOOT_TRAJ),
+                backAndShootTrajectory.cmd(),
+                new DriveNoVision(
+                        swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
+                    .withTimeout(1)));
     return routine;
   }
 

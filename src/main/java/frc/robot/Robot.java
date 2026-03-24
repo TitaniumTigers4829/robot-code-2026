@@ -155,10 +155,10 @@ public class Robot extends LoggedRobot {
         new DoubleSupplier[] {
           () ->
               JoystickUtil.modifyAxisPolar(
-                  driverController::getLeftX, driverController::getLeftY, 2)[1],
+                  driverController::getLeftX, driverController::getLeftY, 3)[1],
           () ->
               JoystickUtil.modifyAxisPolar(
-                  driverController::getLeftX, driverController::getLeftY, 2)[0]
+                  driverController::getLeftX, driverController::getLeftY, 3)[0]
         };
 
     Command driveCommand =
@@ -166,9 +166,9 @@ public class Robot extends LoggedRobot {
             swerveDrive,
             visionSubsystem,
             // Translation in the X direction
-            () -> driverLeftStick[0].getAsDouble() * .5,
+            () -> driverLeftStick[0].getAsDouble() * 1,
             // Translation in the Y direction
-            () -> driverLeftStick[1].getAsDouble() * .5,
+            () -> driverLeftStick[1].getAsDouble() * 1,
             // Rotation
             () -> JoystickUtil.modifyAxis(driverController::getRightX, 3),
             // Robot relative

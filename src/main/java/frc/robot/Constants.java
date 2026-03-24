@@ -124,9 +124,9 @@ public final class Constants {
   }
 
   public static final class TrajectoryConstants {
-    public static final double AUTO_TRANSLATION_P = 0; // 1.5;
+    public static final double AUTO_TRANSLATION_P = 2;
     public static final double AUTO_TRANSLATION_D = 0; // 0.2;
-    public static final double AUTO_THETA_P = 0; // 4.5; // 5
+    public static final double AUTO_THETA_P = .14829; // 5
     public static final double AUTO_THETA_D = 0; // 0.4;
 
     public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 3.088;
@@ -145,6 +145,7 @@ public final class Constants {
     public static final String RIGHT_NEUTRAL_AUTO = "right neutral auto";
     public static final String MIDDLE_DEPOT_AUTO = "middle depot auto";
     public static final String ONE_RAD_AUTO = "one rad auto";
+    public static final String BACK_AND_SHOOT_AUTO = "back and shoot auto";
 
     public static final String Y_ONE_METER_TRAJECTORY = "MiscTrajectories/one_point_one_meter";
     public static final String LEFT_NEUTRAL_TRAJECTORY = "MiscTrajectories/blue_neutral_left_auto";
@@ -152,6 +153,7 @@ public final class Constants {
         "MiscTrajectories/blue_neutral_right_auto";
     public static final String MIDDLE_DEPOT_TRAJECTORY = "MiscTrajectories/middle_depot_auto";
     public static final String ONE_RAD_TRAJ = "MiscTrajectories/rotate";
+    public static final String BACK_AND_SHOOT_TRAJ = "MiscTrajectories/back_and_curve";
   }
 
   public static final class JoystickConstants {
