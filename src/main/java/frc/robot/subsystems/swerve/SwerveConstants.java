@@ -206,32 +206,6 @@ public class SwerveConstants {
 
     public static final double REPULSOR_MAX_VELOCITY = 1.0;
     public static final double REPULSOR_MAX_ACCELERATION = 2.0;
-
-    // // Choreo Drive Constants
-    // public static final double AUTO_MAX_SPEED_METERS_PER_SECOND = 4.5;
-    // public static final double AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3.25;
-    // public static final double AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 4 * Math.PI;
-    // public static final double AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = 6 * Math.PI;
-
-    // public static final double AUTO_TRANSLATION_P = 1.0; // 1
-    // public static final double AUTO_TRANSLATION_I = 0;
-    // public static final double AUTO_TRANSLATION_D = 0.0;
-
-    // public static final double AUTO_THETA_P = 0.0; // 5
-    // public static final double AUTO_THETA_I = 0;
-    // public static final double AUTO_THETA_D = 0;
-
-    // public static final double AUTO_TRANSLATION_TOLERANCE_METERS = 0.0005;
-    // public static final double AUTO_ROTATION_TOLERANCE_RADIANS = 0.001;
-
-    // public static final TrapezoidProfile.Constraints AUTO_TRANSLATION_CONSTRAINTS =
-    //     new TrapezoidProfile.Constraints(
-    //         AUTO_MAX_SPEED_METERS_PER_SECOND, AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
-
-    // public static final TrapezoidProfile.Constraints AUTO_THETA_CONTROLLER_CONSTRAINTS =
-    //     new TrapezoidProfile.Constraints(
-    //         AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND,
-    //         AUTO_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
   }
 
   public class ModuleConstants {
@@ -262,13 +236,13 @@ public class SwerveConstants {
     public static final double MAX_ANGULAR_SPEED_ROTATIONS_PER_SECOND = 15;
     public static final double MAX_ANGULAR_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED = 12;
 
-    public static final double DRIVE_P = .5;
+    public static final double DRIVE_P = 10.4829;
     public static final double DRIVE_I = 0.0;
     public static final double DRIVE_D = 0.0;
 
     // These values were characterized using our characterization commands.
-    public static final double DRIVE_S = 3.0;
-    public static final double DRIVE_V = 0.6;
+    public static final double DRIVE_S = 2.7;
+    public static final double DRIVE_V = 0.1;
     public static final double DRIVE_A = 0.0;
   }
 

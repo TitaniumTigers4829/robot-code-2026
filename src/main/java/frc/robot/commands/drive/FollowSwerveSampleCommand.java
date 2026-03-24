@@ -12,13 +12,11 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 public class FollowSwerveSampleCommand extends DriveCommandBase {
   private final SwerveDrive swerveDrive;
   private final SwerveSample swerveSample;
-  private final VisionSubsystem visionSubsystem;
 
   public FollowSwerveSampleCommand(
       SwerveDrive swerveDrive, VisionSubsystem visionSubsystem, SwerveSample swerveSample) {
     super(swerveDrive, visionSubsystem);
     this.swerveDrive = swerveDrive;
-    this.visionSubsystem = visionSubsystem;
     this.swerveSample = swerveSample;
     addRequirements(swerveDrive);
   }

@@ -20,7 +20,9 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
+import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants.CompConstants;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConfig;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
 
@@ -54,7 +56,10 @@ public class PhysicalModule implements ModuleInterface {
   private final TalonFXConfiguration turnConfig = new TalonFXConfiguration();
   private final CANcoderConfiguration turnEncoderConfig = new CANcoderConfiguration();
 
+  private final ModuleConfig moduleConfig;
+
   public PhysicalModule(ModuleConfig moduleConfig) {
+    this.moduleConfig = moduleConfig;
     driveMotor =
         new TalonFX(moduleConfig.driveMotorChannel(), HardwareConstants.CANIVORE_CAN_BUS_STRING);
     turnMotor =
@@ -215,6 +220,11 @@ public class PhysicalModule implements ModuleInterface {
         desiredState.speedMetersPerSecond
             * ModuleConstants.DRIVE_GEAR_RATIO
             / ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
+
+    if (this.moduleConfig.driveMotorChannel() == CompConstants.FRONT_LEFT_DRIVE_MOTOR_ID) {
+      SmartDashboard.putNumber("desiredDriveRPS", desiredDriveRPS);
+      SmartDashboard.putNumber("currentSwerveRPS", driveMotor.getVelocity().getValueAsDouble());
+    }
 
     driveMotor.setControl(
         velocityTorqueCurrentFOC

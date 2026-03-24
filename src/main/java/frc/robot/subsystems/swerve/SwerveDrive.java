@@ -241,6 +241,7 @@ public class SwerveDrive extends SubsystemBase {
   public void runCharacterizationVoltage(double volts) {
     for (SwerveModule module : swerveModules) {
       module.setVoltage(Volts.of(-volts));
+      SmartDashboard.putNumber("drive volts", volts);
     }
   }
 
