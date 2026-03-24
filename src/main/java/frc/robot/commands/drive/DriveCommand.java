@@ -4,7 +4,7 @@ import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
+// import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
 public class DriveCommand extends DriveCommandBase {
@@ -13,9 +13,9 @@ public class DriveCommand extends DriveCommandBase {
   private final VisionSubsystem visionSubsystem;
 
   private final DoubleSupplier leftJoystickX, leftJoystickY, rightJoystickX;
-  private final BooleanSupplier isFieldRelative, isHighRotation;
+  private final BooleanSupplier isFieldRelative, isHighRotation, rightTrigger;
   private double angularSpeed;
-  private final Consumer<Boolean> isAligned;
+  private double driveScalar;
 
   /**
    * The command for driving the robot using joystick inputs.
@@ -26,7 +26,7 @@ public class DriveCommand extends DriveCommandBase {
    * @param leftJoystickX The joystick input for driving left and right
    * @param rightJoystickX The joystick input for turning
    * @param isFieldRelative The boolean supplier if the robot should drive field relative
-   * @param isHighRotation The boolean supplier for if the robot should drive with a higher rotation
+   * @param rightTrigger The boolean supplier for if the robot should drive with a slower speed
    */
   public DriveCommand(
       SwerveDrive driveSubsystem,
@@ -36,7 +36,7 @@ public class DriveCommand extends DriveCommandBase {
       DoubleSupplier rightJoystickX,
       BooleanSupplier isFieldRelative,
       BooleanSupplier isHighRotation,
-      Consumer<Boolean> isAligned) {
+      BooleanSupplier rightTrigger) {
     super(driveSubsystem, visionSubsystem);
     this.driveSubsystem = driveSubsystem;
     // TODO: comment this back
@@ -47,7 +47,7 @@ public class DriveCommand extends DriveCommandBase {
     // TODO: comment this back
     // TODO: comment this back
     this.visionSubsystem = visionSubsystem;
-    this.isAligned = isAligned;
+    this.rightTrigger = rightTrigger;
     addRequirements(driveSubsystem);
 
     this.leftJoystickY = leftJoystickY;
@@ -71,10 +71,17 @@ public class DriveCommand extends DriveCommandBase {
       angularSpeed = DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND;
     }
 
+    if (rightTrigger.getAsBoolean()) {
+      driveScalar = 0.4;
+    }
+    else {
+      driveScalar = 1;
+    }
+
     // Drives the robot by scaling the joystick inputs
     driveSubsystem.drive(
-        leftJoystickX.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND,
-        leftJoystickY.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND,
+        leftJoystickX.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND * driveScalar,
+        leftJoystickY.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND * driveScalar,
         rightJoystickX.getAsDouble() * angularSpeed,
         isFieldRelative.getAsBoolean());
     // Runs all the code from DriveCommand that estimates pose
