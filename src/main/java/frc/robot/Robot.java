@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
-import frc.robot.commands.hublocking.ShootRegression;
 import frc.robot.commands.hublocking.ShootWhileMove;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotBounceHigher;
@@ -224,9 +223,9 @@ public class Robot extends LoggedRobot {
 
     driverController.a().whileTrue(new IntakeCommand(intakeSubsystem));
 
-    driverController
-        .x()
-        .whileTrue(new ShootRegression(shooterSubsystem, swerveDrive, hoodSubsystem));
+    // driverController
+    // .x()
+    // .whileTrue(new ShootRegression(shooterSubsystem, swerveDrive, hoodSubsystem));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */
@@ -402,9 +401,10 @@ public class Robot extends LoggedRobot {
         new Autos(
             this.swerveDrive,
             this.visionSubsystem,
-            shooterSubsystem,
-            turretSubsystem,
-            hoodSubsystem);
+            this.shooterSubsystem,
+            this.turretSubsystem,
+            this.hoodSubsystem,
+            this.intakeSubsystem);
   }
 
   /** This function is called periodically during operator control. */

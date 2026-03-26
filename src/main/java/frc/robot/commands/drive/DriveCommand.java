@@ -73,8 +73,7 @@ public class DriveCommand extends DriveCommandBase {
 
     if (rightTrigger.getAsBoolean()) {
       driveScalar = 0.4;
-    }
-    else {
+    } else {
       driveScalar = 1;
     }
 

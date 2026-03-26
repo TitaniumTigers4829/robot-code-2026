@@ -15,6 +15,7 @@ import frc.robot.commands.drive.DriveNoVision;
 import frc.robot.commands.drive.FollowSwerveSampleCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
+import frc.robot.commands.hublocking.ShootWhileMove;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.extras.util.AllianceFlipper;
@@ -52,12 +53,14 @@ public class Autos {
       VisionSubsystem visionSubsystem,
       ShooterSubsystem shooterSubsystem,
       TurretSubsystem turretSubsystem,
-      AdjustableHoodSubsystem hoodSubsystem) {
+      AdjustableHoodSubsystem hoodSubsystem,
+      IntakeSubsystem intakeSubsystem) {
     this.swerveDrive = swerveDrive;
     this.visionSubsystem = visionSubsystem;
     this.hoodSubsystem = hoodSubsystem;
     this.turretSubsystem = turretSubsystem;
     this.shooterSubsystem = shooterSubsystem;
+    this.intakeSubsystem = intakeSubsystem;
     chooser = new LoggedDashboardChooser<>("Auto Chooser");
     chooser.addDefaultOption(NONE_NAME, NONE_NAME);
     routines.put(NONE_NAME, Commands::none);
@@ -174,24 +177,18 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
-                autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
-                leftNeutralTrajectory.cmd(),
-                Commands.run(() -> new IntakePivotDownCommand(intakeSubsystem)),
-                new WaitCommand(2.0),
-                Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),
-                new WaitCommand(5.0),
-                Commands.run(
-                    () ->
-                        new HubLockCommand(
-                            swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem)),
-                Commands.run(
-                    () ->
-                        new ShootWhileHublockedCommand(
-                            shooterSubsystem,
-                            swerveDrive,
-                            visionSubsystem,
-                            hoodSubsystem,
-                            turretSubsystem))));
+                    Commands.deadline(
+                        Commands.sequence(
+                            autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
+                            leftNeutralTrajectory.cmd()),
+                        Commands.sequence(
+                            Commands.run(() -> new IntakePivotDownCommand(intakeSubsystem))
+                                .withTimeout(5))),
+                    Commands.run(
+                        () ->
+                            new ShootWhileMove(
+                                swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)))
+                .withTimeout(5));
 
     return routine;
   }
