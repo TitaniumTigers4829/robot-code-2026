@@ -5,11 +5,12 @@
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
-public class ShooterSubsystem implements ShooterInterface {
+public class ShooterSubsystem extends SubsystemBase {
 
   private ShooterInterface shooterInterface;
   private ShooterInputsAutoLogged inputs = new ShooterInputsAutoLogged();
@@ -88,11 +89,19 @@ public class ShooterSubsystem implements ShooterInterface {
   }
 
   public boolean isUpToSpeed() {
-    return this.shooterInterface.isUpToSpeed();
+    return this.shooterInterface.isReadyToShoot();
   }
 
   public void setKickerSpeed(double speed) {
     this.shooterInterface.setKickerSpeed(speed);
+  }
+
+  public void setSpindexerSpeed(double speed) {
+    this.shooterInterface.setSpindexerSpeed(speed);
+  }
+
+  public void setIsAimingProperly(boolean isAimingProperly) {
+    this.shooterInterface.setIsAimingProperly(isAimingProperly);
   }
 
   @Override

@@ -55,7 +55,9 @@ public interface ShooterInterface extends Subsystem {
 
   public default void setKickerSpeed(double speed) {}
 
-  public default boolean isUpToSpeed() {
+  public default boolean isReadyToShoot() {
     return false;
   }
+
+  public default void setIsAimingProperly(boolean isAimingProperly) {}
 }

@@ -14,7 +14,6 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.drive.DriveNoVision;
 import frc.robot.commands.drive.FollowSwerveSampleCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
-import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.hublocking.ShootWhileMove;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
@@ -129,15 +128,12 @@ public class Autos {
                 Commands.run(
                     () ->
                         new HubLockCommand(
-                            swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem)),
-                Commands.run(
-                    () ->
-                        new ShootWhileHublockedCommand(
-                            shooterSubsystem,
-                            swerveDrive,
-                            visionSubsystem,
-                            hoodSubsystem,
-                            turretSubsystem))));
+                            swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem))
+                // Commands.run(
+                //     () ->
+                //        ShootWhileMove(
+                //             swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
+                ));
     return routine;
   }
 
@@ -155,14 +151,10 @@ public class Autos {
                     () ->
                         new HubLockCommand(
                             swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem)),
-                Commands.run(
-                    () ->
-                        new ShootWhileHublockedCommand(
-                            shooterSubsystem,
-                            swerveDrive,
-                            visionSubsystem,
-                            hoodSubsystem,
-                            turretSubsystem)),
+                // Commands.run(
+                //     () ->
+                //         ShootWhileMove(swerveDrive, turretSubsystem, shooterSubsystem,
+                // hoodSubsystem)),
                 Commands.runOnce(() -> new IntakePivotDownCommand(intakeSubsystem)),
                 new WaitCommand(2.0),
                 Commands.run(() -> new IntakeCommand(intakeSubsystem).withTimeout(5.0)),

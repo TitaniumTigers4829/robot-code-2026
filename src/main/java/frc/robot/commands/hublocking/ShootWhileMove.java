@@ -124,7 +124,10 @@ public class ShootWhileMove extends Command {
         Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
 
     turret.setTurretAngle(desiredHeading);
-
+    shooter.setIsAimingProperly(
+        Math.abs(desiredHeading * TurretConstants.CANCODER_TO_TURRET - turret.getTurretAngle())
+            < .1);
+    shooter.setIsAimingProperly(true);
     shooter.setPercentOutput(distance);
     hood.setHoodAngle(distance);
 

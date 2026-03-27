@@ -26,6 +26,7 @@ import frc.robot.subsystems.intake.IntakeConstants;
 public class PhysicalShooter implements ShooterInterface {
 
   private boolean isUpToSpeed = false;
+  private boolean isAimingProperly = false;
 
   LoggedTunableNumber flywheelRPS = new LoggedTunableNumber("Shooter/RPS", 0.0);
 
@@ -81,16 +82,16 @@ public class PhysicalShooter implements ShooterInterface {
     // kickerMotor.getConfigurator().apply(leaderFlywheelConfig);
     // leaderFlywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     // spindexerMotor.inve
-    TalonFXConfiguration ghfkjad = new TalonFXConfiguration();
+    TalonFXConfiguration spindexerAndKickerConfig = new TalonFXConfiguration();
     // TODO: tune
-    ghfkjad.CurrentLimits.StatorCurrentLimit = 60;
-    ghfkjad.CurrentLimits.SupplyCurrentLimit = 30;
-    ghfkjad.CurrentLimits.StatorCurrentLimitEnable = true;
-    ghfkjad.CurrentLimits.SupplyCurrentLimitEnable = true;
+    spindexerAndKickerConfig.CurrentLimits.StatorCurrentLimit = 60;
+    spindexerAndKickerConfig.CurrentLimits.SupplyCurrentLimit = 30;
+    spindexerAndKickerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    spindexerAndKickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    kickerMotor.getConfigurator().apply(ghfkjad);
-    ghfkjad.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    spindexerMotor.getConfigurator().apply(ghfkjad);
+    kickerMotor.getConfigurator().apply(spindexerAndKickerConfig);
+    spindexerAndKickerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    spindexerMotor.getConfigurator().apply(spindexerAndKickerConfig);
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
 
@@ -126,13 +127,14 @@ public class PhysicalShooter implements ShooterInterface {
             < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
     SmartDashboard.putNumber("desiredRPS", desiredSpeed);
     SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
-    if (isUpToSpeed()) {
+    setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
+    if (isUpToSpeed() && this.isAimingProperly) {
       setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
-      setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
+      // setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
       // setRollerSpeed(0.2);
     } else {
       setSpindexerSpeed(0.0);
-      setKickerSpeed(0.0);
+      // setKickerSpeed(0.0);
       // setRollerSpeed(0.0);
     }
   }
@@ -190,5 +192,9 @@ public class PhysicalShooter implements ShooterInterface {
 
   public void setRollerSpeed(double speed) {
     insideRollerMotor.set(speed);
+  }
+
+  public void setIsAimingProperly(boolean isAimingProperly) {
+    this.isAimingProperly = isAimingProperly;
   }
 }

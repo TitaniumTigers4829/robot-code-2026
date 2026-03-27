@@ -36,7 +36,7 @@ public class IntakeConstants {
   public static final double PIVOT_STATOR_CURRENT_LIMIT = 80;
   public static final double PIVOT_SUPPLY_CURRENT_LIMIT = 25;
 
-  public static final double PIVOT_DOWN_POSITION = 0.9;
+  public static final double PIVOT_DOWN_POSITION = 0.777;
   public static final double PIVOT_UP_POSITION = 0.12; // -0.33
 
   public static final double PIVOT_TICS = 50;
