@@ -4,11 +4,9 @@
 
 package frc.robot.subsystems.intake;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
-import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -97,9 +95,9 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     updateInputs();
-    SmartDashboard.putBoolean("intake deployed", inputs.isIntakeDeployed);
-    SmartDashboard.putNumber("intake angle", inputs.intakeAngle);
-    Logger.recordOutput("intake angle reallll", inputs.intakeAngle);
+    // SmartDashboard.putBoolean("intake deployed", inputs.isIntakeDeployed);
+    // SmartDashboard.putNumber("intake angle", inputs.intakeAngle);
+    // Logger.recordOutput("intake angle reallll", inputs.intakeAngle);
     // setIntakeAngle(intakePos);
     // if (isIntakeDeployed()) {
     //   intakeFuel();

@@ -15,6 +15,7 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class ShootWhileMove extends Command {
@@ -22,6 +23,8 @@ public class ShootWhileMove extends Command {
   private final ShooterSubsystem shooter;
   private final AdjustableHoodSubsystem hood;
   private final SwerveDrive drive;
+  private final BooleanSupplier overridingHood;
+
   Pose2d robotPose;
   Translation2d targetPosition;
   Pose2d offsettedTarget;
@@ -56,12 +59,23 @@ public class ShootWhileMove extends Command {
       SwerveDrive drive,
       TurretSubsystem turret,
       ShooterSubsystem shooter,
-      AdjustableHoodSubsystem hood) {
+      AdjustableHoodSubsystem hood,
+      BooleanSupplier overridingHood) {
     this.drive = drive;
     this.turret = turret;
     this.shooter = shooter;
     this.hood = hood;
+    this.overridingHood = overridingHood;
     addRequirements(turret, shooter, hood);
+  }
+
+  // Still lets you make a "normal" one for if you never want to override e.g. autos
+  public ShootWhileMove(
+      SwerveDrive drive,
+      TurretSubsystem turret,
+      ShooterSubsystem shooter,
+      AdjustableHoodSubsystem hood) {
+    this(drive, turret, shooter, hood, () -> false);
   }
 
   @Override
@@ -119,9 +133,8 @@ public class ShootWhileMove extends Command {
     // Wrap to [-pi, pi]
     turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));
     double desiredHeading = turretAngleRad / (2.0 * Math.PI);
-    // TODO: I don't think this is needed
-    desiredHeading =
-        Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
+
+    desiredHeading -= 0.25; // .25 is because we zero it facing left instead of forward
 
     turret.setTurretAngle(desiredHeading);
     shooter.setIsAimingProperly(
@@ -129,7 +142,13 @@ public class ShootWhileMove extends Command {
             < .1);
     shooter.setIsAimingProperly(true);
     shooter.setPercentOutput(distance);
-    hood.setHoodAngle(distance);
+
+    if (this.overridingHood.getAsBoolean()) {
+      shooter.setRollerSpeed(0);
+      shooter.stopShoot();
+    } else {
+      hood.setHoodAngle(distance);
+    }
 
     Logger.recordOutput("Shoot on move At Hub/Desired Hub", offsettedTarget);
 

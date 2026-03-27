@@ -15,6 +15,7 @@ import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileMove;
+import frc.robot.commands.intake.DefenseCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotBounceHigher;
 import frc.robot.commands.intake.IntakePivotBounceLower;
@@ -23,7 +24,6 @@ import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.shooter.ManualHoodDown;
 import frc.robot.commands.shooter.ManualHoodUp;
-import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
 import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
@@ -209,7 +209,8 @@ public class Robot extends LoggedRobot {
                             swerveDrive.getEstimatedPose().getY(),
                             Rotation2d.fromDegrees(swerveDrive.getAllianceAngleOffset())))));
 
-    driverController.y().whileTrue(new PassFuelCommand(shooterSubsystem, hoodSubsystem));
+    // driverController.y().whileTrue(new PassFuelCommand(shooterSubsystem, hoodSubsystem));
+    driverController.a().whileTrue(new DefenseCommand(intakeSubsystem, turretSubsystem));
 
     driverController
         .leftTrigger()
@@ -219,13 +220,12 @@ public class Robot extends LoggedRobot {
     driverController
         .rightTrigger()
         .whileTrue(
-            new ShootWhileMove(swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem));
-
-    driverController.a().whileTrue(new IntakeCommand(intakeSubsystem));
-
-    // driverController
-    // .x()
-    // .whileTrue(new ShootRegression(shooterSubsystem, swerveDrive, hoodSubsystem));
+            new ShootWhileMove(
+                swerveDrive,
+                turretSubsystem,
+                shooterSubsystem,
+                hoodSubsystem,
+                () -> operatorController.povDown().getAsBoolean()));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */

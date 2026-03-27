@@ -20,7 +20,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.HardwareConstants;
@@ -202,8 +201,6 @@ public class SwerveDrive extends SubsystemBase {
 
   @AutoLogOutput(key = "SwerveState/Speeds")
   public ChassisSpeeds getChassisSpeeds() {
-    SmartDashboard.putNumber("x chasis", setpoint.chassisSpeeds().vxMetersPerSecond);
-    SmartDashboard.putNumber("y chasis", setpoint.chassisSpeeds().vyMetersPerSecond);
     return setpoint.chassisSpeeds();
   }
 
@@ -245,7 +242,6 @@ public class SwerveDrive extends SubsystemBase {
   public void runCharacterizationVoltage(double volts) {
     for (SwerveModule module : swerveModules) {
       module.setVoltage(Volts.of(-volts));
-      SmartDashboard.putNumber("drive volts", volts);
     }
   }
 

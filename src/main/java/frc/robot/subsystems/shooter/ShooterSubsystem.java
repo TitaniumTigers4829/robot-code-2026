@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.shooter;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
@@ -109,7 +108,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterInterface.updateInputs(inputs);
     Logger.processInputs("Shooter/", inputs);
 
-    SmartDashboard.putNumber("currentRPS", inputs.flywheelRPS);
+    // SmartDashboard.putNumber("currentRPS", inputs.flywheelRPS);
 
     // Update tunable numbers
     if (flywheelS.hasChanged(hashCode())

@@ -16,7 +16,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.logging.LoggedTunableNumber;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
@@ -88,6 +87,7 @@ public class PhysicalShooter implements ShooterInterface {
     spindexerAndKickerConfig.CurrentLimits.SupplyCurrentLimit = 30;
     spindexerAndKickerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     spindexerAndKickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    spindexerAndKickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     kickerMotor.getConfigurator().apply(spindexerAndKickerConfig);
     spindexerAndKickerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -125,8 +125,8 @@ public class PhysicalShooter implements ShooterInterface {
     this.isUpToSpeed =
         Math.abs(desiredSpeed - currentRPS.refresh().getValueAsDouble())
             < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
-    SmartDashboard.putNumber("desiredRPS", desiredSpeed);
-    SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
+    // SmartDashboard.putNumber("desiredRPS", desiredSpeed);
+    // SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
     setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
     if (isUpToSpeed() && this.isAimingProperly) {
       setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
@@ -150,8 +150,8 @@ public class PhysicalShooter implements ShooterInterface {
     this.isUpToSpeed =
         Math.abs(60 - currentRPS.refresh().getValueAsDouble())
             < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
-    SmartDashboard.putNumber("desiredRPS", 60);
-    SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
+    // SmartDashboard.putNumber("desiredRPS", 60);
+    // SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
     if (isUpToSpeed()) {
       setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
       setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);

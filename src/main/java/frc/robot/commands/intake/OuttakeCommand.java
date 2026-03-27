@@ -32,6 +32,7 @@ public class OuttakeCommand extends Command {
   public void execute() {
     intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_DOWN_POSITION);
     shooterSubsystem.setKickerSpeed(-ShooterConstants.KICKER_PERCENT_OUTPUT);
+    shooterSubsystem.setSpindexerSpeed(-ShooterConstants.SPINDEXER_INTAKE_SPEED);
     if (intakeSubsystem.isIntakeDeployed()) {
       intakeSubsystem.outakeFuel();
     } else {

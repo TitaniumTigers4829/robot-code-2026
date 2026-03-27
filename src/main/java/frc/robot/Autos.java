@@ -16,6 +16,7 @@ import frc.robot.commands.drive.FollowSwerveSampleCommand;
 import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileMove;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakePivotBounceLower;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.extras.util.AllianceFlipper;
@@ -175,9 +176,11 @@ public class Autos {
                         autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
                         leftNeutralTrajectory.cmd()),
                     Commands.sequence(
-                        new WaitCommand(2), new IntakeCommand(intakeSubsystem).withTimeout(5))),
+                        new WaitCommand(2),
+                        new IntakeCommand(intakeSubsystem).withTimeout(5),
+                        new IntakePivotUpCommand(intakeSubsystem).withTimeout(2))),
                 Commands.parallel(
-                    new IntakePivotUpCommand(intakeSubsystem).withTimeout(5),
+                    new IntakePivotBounceLower(intakeSubsystem).withTimeout(5),
                     new ShootWhileMove(
                             swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
                         .withTimeout(5))));

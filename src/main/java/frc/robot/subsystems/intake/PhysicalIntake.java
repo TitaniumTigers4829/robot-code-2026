@@ -132,9 +132,9 @@ public class PhysicalIntake implements IntakeInterface {
     inputs.intakeAngle = intakeAngle.getValueAsDouble();
     inputs.intakePivotSpeed = intakePivotSpeed.getValueAsDouble();
     inputs.isIntakeDeployed = isIntakeDeployed();
-    SmartDashboard.putNumber("intake angle encoder", inputs.intakeAngle);
-    SmartDashboard.putNumber(
-        "real intake position", intakePivotMotorRight.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("intake angle", inputs.intakeAngle);
+    // SmartDashboard.putNumber(
+    //     "real intake position", intakePivotMotorRight.getPosition().getValueAsDouble());
     // System.out.println("WORKING");
   }
 

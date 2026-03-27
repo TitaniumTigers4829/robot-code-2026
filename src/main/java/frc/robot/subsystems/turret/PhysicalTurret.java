@@ -18,7 +18,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -193,7 +192,7 @@ public class PhysicalTurret implements TurretInterface {
     // These values are already in turret output rotations — do NOT divide again.
     inputs.turretAngle = motorPosition.getValueAsDouble();
     inputs.turretAngularVelocity = motorVelocity.getValueAsDouble();
-    SmartDashboard.putNumber("abs pos", cancoderPosition.getValueAsDouble());
+    // SmartDashboard.putNumber("abs pos", cancoderPosition.getValueAsDouble());
   }
 
   /* -------------------------------------------------------------------------- */
