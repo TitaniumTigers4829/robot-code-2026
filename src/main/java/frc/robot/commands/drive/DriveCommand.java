@@ -39,13 +39,6 @@ public class DriveCommand extends DriveCommandBase {
       BooleanSupplier rightTrigger) {
     super(driveSubsystem, visionSubsystem);
     this.driveSubsystem = driveSubsystem;
-    // TODO: comment this back
-    // TODO: comment this back
-    // TODO: comment this back
-    // TODO: comment this back
-    // TODO: comment this back
-    // TODO: comment this back
-    // TODO: comment this back
     this.visionSubsystem = visionSubsystem;
     this.rightTrigger = rightTrigger;
     addRequirements(driveSubsystem);

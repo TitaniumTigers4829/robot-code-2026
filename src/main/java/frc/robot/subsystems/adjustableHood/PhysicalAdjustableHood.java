@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Constants.HardwareConstants;
+import frc.robot.extras.logging.LoggedTunableNumber;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 
 public class PhysicalAdjustableHood implements AdjustableHoodInterface {
@@ -26,6 +27,8 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   private final CANcoderConfiguration hoodEncoderConfig = new CANcoderConfiguration();
   private final SingleLinearInterpolator adjustableHoodLookupValues =
       new SingleLinearInterpolator(AdjustableHoodConstants.hoodLookUpTable);
+
+  public LoggedTunableNumber desiredAngle = new LoggedTunableNumber("Hood/Angle", 0.0);
 
   // private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0.0);
   private final PositionDutyCycle positionRequest = new PositionDutyCycle(0.0);
@@ -130,6 +133,8 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     // hoodMotor.setControl(positionRequest.withPosition(rots));
     // todo use lookup
     this.desiredPosition = rots;
+
+    // rots = desiredAngle.get();
 
     // if (getHoodAngle() < 0 && rots < 0.01) {
     //   hoodMotor.set(0);

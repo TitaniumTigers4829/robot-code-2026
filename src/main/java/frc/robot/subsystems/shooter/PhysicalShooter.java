@@ -18,6 +18,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
+import frc.robot.extras.logging.LoggedTunableNumber;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 import frc.robot.subsystems.intake.IntakeConstants;
 
@@ -25,6 +26,8 @@ import frc.robot.subsystems.intake.IntakeConstants;
 public class PhysicalShooter implements ShooterInterface {
 
   private boolean isUpToSpeed = false;
+
+  LoggedTunableNumber flywheelRPS = new LoggedTunableNumber("Shooter/RPS", 0.0);
 
   private final TalonFX leaderFlywheelMotor =
       new TalonFX(
@@ -114,7 +117,7 @@ public class PhysicalShooter implements ShooterInterface {
   // test
   public void setPercentOutput(double distance) {
     double desiredSpeed = flywheelRPMLookupValues.getLookupValue(distance);
-    // double desiredSpeed = 70;
+    // double desiredSpeed = flywheelRPS.get();
     leaderFlywheelMotor.setControl(rpsRequest.withVelocity(desiredSpeed));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
@@ -126,11 +129,11 @@ public class PhysicalShooter implements ShooterInterface {
     if (isUpToSpeed()) {
       setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
       setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
-      setRollerSpeed(0.2);
+      // setRollerSpeed(0.2);
     } else {
       setSpindexerSpeed(0.0);
       setKickerSpeed(0.0);
-      setRollerSpeed(0.0);
+      // setRollerSpeed(0.0);
     }
   }
 
@@ -150,12 +153,12 @@ public class PhysicalShooter implements ShooterInterface {
     if (isUpToSpeed()) {
       setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
       setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
-      setRollerSpeed(0.2);
+      // setRollerSpeed(0.2);
 
     } else {
       setSpindexerSpeed(0.0);
       setKickerSpeed(0.0);
-      setRollerSpeed(0.0);
+      // setRollerSpeed(0.0);
     }
   }
 

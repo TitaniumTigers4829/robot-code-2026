@@ -24,7 +24,7 @@ public class IntakeConstants {
   public static final double PIVOT_A = 0.0; // THIS IS WORST THAN 9/11
   public static final double PIVOT_G = 0.0; // 0.8;
 
-  public static final double ZERO_ANGLE = -0.35107421875;
+  public static final double ZERO_ANGLE = -0.15087890625;
 
   // DONT TOUCH THESE ARE SOMEWHAT GOOD CURRENT LIMIT VALUES
   public static final double OUTER_STATOR_CURRENT_LIMIT = 80;
@@ -49,7 +49,7 @@ public class IntakeConstants {
   public static final double ACCEPTABLE_RANGE = 0.3;
   public static final double MIN_ANGLE = 0.0; // I HATE THIS SO MUCH
   public static final double INTAKE_SPEED_OUTER = 1;
-  public static final double INTAKE_SPEED_INNER = 0.35;
+  public static final double INTAKE_SPEED_INNER = -1;
 
   public static final double GEAR_RATIO = 1;
 }

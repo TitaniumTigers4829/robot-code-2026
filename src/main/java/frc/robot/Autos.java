@@ -18,6 +18,7 @@ import frc.robot.commands.hublocking.ShootWhileHublockedCommand;
 import frc.robot.commands.hublocking.ShootWhileMove;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakePivotDownCommand;
+import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.extras.util.AllianceFlipper;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
@@ -177,18 +178,17 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
-                    Commands.deadline(
-                        Commands.sequence(
-                            autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
-                            leftNeutralTrajectory.cmd()),
-                        Commands.sequence(
-                            Commands.run(() -> new IntakePivotDownCommand(intakeSubsystem))
-                                .withTimeout(5))),
-                    Commands.run(
-                        () ->
-                            new ShootWhileMove(
-                                swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)))
-                .withTimeout(5));
+                Commands.deadline(
+                    Commands.sequence(
+                        autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
+                        leftNeutralTrajectory.cmd()),
+                    Commands.sequence(
+                        new WaitCommand(2), new IntakeCommand(intakeSubsystem).withTimeout(5))),
+                Commands.parallel(
+                    new IntakePivotUpCommand(intakeSubsystem).withTimeout(5),
+                    new ShootWhileMove(
+                            swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
+                        .withTimeout(5))));
 
     return routine;
   }

@@ -43,14 +43,13 @@ public class ShootWhileMove extends Command {
   public SingleLinearInterpolator timeInAirLookupTable =
       new SingleLinearInterpolator(
           new double[][] {
-            {1.5, 0.9183},
-            {2.5, 1.4275},
-            // {3.03, 1.3},
-            // {3.39, 1.4},
-            // TODO: 3.5
-            {3.5, 1.5},
-            // {4.39, 1.6},
-            // {5.0, 1.66}
+            {1.5, 1.0425},
+            {2.0, 1.115},
+            {2.5, 1.24},
+            {3.0, 1.37},
+            {3.5, 1.42},
+            {4.0, 1.63},
+            {4.5, 1.73}
           });
 
   public ShootWhileMove(

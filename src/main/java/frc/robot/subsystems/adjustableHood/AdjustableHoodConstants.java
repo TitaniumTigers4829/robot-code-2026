@@ -23,11 +23,13 @@ public class AdjustableHoodConstants {
 
   // Distance from hub {Distance (meters), angle}
   public static double[][] hoodLookUpTable = {
-    {1.5, .3},
-    {2.5, .3},
-    {3.5, 0.4},
-    {4.1, .45},
-    {5.3, .5}
+    {1.5, .25},
+    {2.0, .3},
+    {2.5, 0.307},
+    {3.0, .347},
+    {3.5, .4},
+    {4.0, 0.49},
+    {4.5, 0.53}
 
     // 2.5: 45:0.4
     // TODO: scuff
