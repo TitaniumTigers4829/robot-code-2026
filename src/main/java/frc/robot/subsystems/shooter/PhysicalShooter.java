@@ -144,11 +144,11 @@ public class PhysicalShooter implements ShooterInterface {
   }
 
   public void passFuel() {
-    leaderFlywheelMotor.setControl(rpsRequest.withVelocity(60));
+    leaderFlywheelMotor.setControl(rpsRequest.withVelocity(50));
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
     this.isUpToSpeed =
-        Math.abs(60 - currentRPS.refresh().getValueAsDouble())
+        Math.abs(50 - currentRPS.refresh().getValueAsDouble())
             < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
     // SmartDashboard.putNumber("desiredRPS", 60);
     // SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());

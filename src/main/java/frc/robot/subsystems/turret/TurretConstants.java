@@ -81,8 +81,8 @@ public class TurretConstants {
   // soft limits — ContinuousWrap and Phoenix soft limits conflict with each other.
   // public static double MAX_ANGLE = 5.35;
   // public static double MIN_ANGLE = -3.291748;
-  public static double MAX_ANGLE = 3.752441;
-  public static double MIN_ANGLE = -6.016113;
+  public static double MAX_ANGLE = 3.81;
+  public static double MIN_ANGLE = -6.55;
 
   /* -------------------------------------------------------------------------- */
   /*                               CANCODER CONFIG                              */

@@ -22,8 +22,10 @@ import frc.robot.commands.intake.IntakePivotBounceLower;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
+import frc.robot.commands.intake.ReverseSpindexerCommand;
 import frc.robot.commands.shooter.ManualHoodDown;
 import frc.robot.commands.shooter.ManualHoodUp;
+import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
 import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
@@ -155,10 +157,10 @@ public class Robot extends LoggedRobot {
         new DoubleSupplier[] {
           () ->
               JoystickUtil.modifyAxisPolar(
-                  driverController::getLeftX, driverController::getLeftY, 3)[1],
+                  driverController::getLeftX, driverController::getLeftY, 4)[1],
           () ->
               JoystickUtil.modifyAxisPolar(
-                  driverController::getLeftX, driverController::getLeftY, 3)[0]
+                  driverController::getLeftX, driverController::getLeftY, 4)[0]
         };
 
     Command driveCommand =
@@ -209,8 +211,9 @@ public class Robot extends LoggedRobot {
                             swerveDrive.getEstimatedPose().getY(),
                             Rotation2d.fromDegrees(swerveDrive.getAllianceAngleOffset())))));
 
-    // driverController.y().whileTrue(new PassFuelCommand(shooterSubsystem, hoodSubsystem));
+    driverController.y().whileTrue(new PassFuelCommand(shooterSubsystem, hoodSubsystem));
     driverController.a().whileTrue(new DefenseCommand(intakeSubsystem, turretSubsystem));
+    driverController.b().whileTrue(new ReverseSpindexerCommand(shooterSubsystem));
 
     driverController
         .leftTrigger()
@@ -242,6 +245,7 @@ public class Robot extends LoggedRobot {
     operatorController.b().whileTrue(new IntakePivotBounceHigher(intakeSubsystem));
 
     operatorController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
+
     operatorController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
 
     operatorController.leftBumper().whileTrue(new ManualTurretCCWCommand(turretSubsystem));
