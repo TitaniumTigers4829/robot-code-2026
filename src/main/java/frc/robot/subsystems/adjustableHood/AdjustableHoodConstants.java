@@ -25,11 +25,11 @@ public class AdjustableHoodConstants {
   public static double[][] hoodLookUpTable = {
     {1.5, .25},
     {2.0, .3},
-    {2.5, 0.307},
-    {3.0, .347},
-    {3.5, .4},
-    {4.0, 0.49},
-    {4.5, 0.53}
+    {2.5, 0.347},
+    {3.0, .38},
+    {3.5, .4829},
+    {4.0, 0.55},
+    {4.5, 0.59}
 
     // 2.5: 45:0.4
     // TODO: scuff

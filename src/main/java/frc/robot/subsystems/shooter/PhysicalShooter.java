@@ -9,6 +9,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -16,6 +17,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.logging.LoggedTunableNumber;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
@@ -43,7 +45,7 @@ public class PhysicalShooter implements ShooterInterface {
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;
 
-  private final VelocityVoltage rpsRequest = new VelocityVoltage(0.0);
+  private final VelocityTorqueCurrentFOC rpsRequest = new VelocityTorqueCurrentFOC(0.0);
   private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
 
   // private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new
@@ -70,9 +72,13 @@ public class PhysicalShooter implements ShooterInterface {
     leaderFlywheelConfig.Slot0.kA = ShooterConstants.FLYWHEEL_A;
     // TODO: drop down
     leaderFlywheelConfig.CurrentLimits.StatorCurrentLimit = 80;
-    leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    
+    // leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    leaderFlywheelConfig.TorqueCurrent.PeakForwardTorqueCurrent = 80;
+    leaderFlywheelConfig.TorqueCurrent.PeakReverseTorqueCurrent = 0;
+
     leaderFlywheelConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    // leaderFlywheelConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     // TODO: timeouts
     // TODO: unscuff
@@ -128,6 +134,9 @@ public class PhysicalShooter implements ShooterInterface {
     // SmartDashboard.putNumber("desiredRPS", desiredSpeed);
     // SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
     setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
+
+    SmartDashboard.putBoolean("ready to shoot", isUpToSpeed() && this.isAimingProperly);
+
     if (isUpToSpeed() && this.isAimingProperly) {
       setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
       // setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);

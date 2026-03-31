@@ -146,11 +146,17 @@ public final class Constants {
     public static final String MIDDLE_DEPOT_AUTO = "middle depot auto";
     public static final String ONE_RAD_AUTO = "one rad auto";
     public static final String BACK_PICKUP_SHOOT = "back pickup shoot auto";
+    public static final String RED_LEFT_NEUTRAL_AUTO = "red left neutral auto";
+    public static final String BLUE_LEFT_NEUTRAL_AUTO_NEW = "NEW blue left neutral auto";
 
     public static final String Y_ONE_METER_TRAJECTORY = "MiscTrajectories/one_point_one_meter";
     public static final String LEFT_NEUTRAL_TRAJECTORY = "MiscTrajectories/blue_neutral_left_auto";
     public static final String RIGHT_NEUTRAL_TRAJECTORY =
         "MiscTrajectories/blue_neutral_right_auto";
+    public static final String LEFT_NEW_NEUTRAL_TRAJECTORY =
+        "MiscTrajectories/blue_neutral_left_auto_new";
+    public static final String RED_LEFT_NEUTRAL_TRAJECTORY =
+        "MiscTrajectories/red_left_neutral_auto";
     public static final String MIDDLE_DEPOT_TRAJECTORY = "MiscTrajectories/middle_depot_auto";
     public static final String ONE_RAD_TRAJ = "MiscTrajectories/rotate";
     public static final String BACK_PICKUP_SHOOT_TRAJ = "MiscTrajectories/back_pickup_shoot";

@@ -12,6 +12,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 public class ReverseSpindexerCommand extends Command {
   /** Creates a new ReverseSpindexerCommand. */
   ShooterSubsystem shooter;
+
   public ReverseSpindexerCommand(ShooterSubsystem shooter) {
     this.shooter = shooter;
     addRequirements(shooter);

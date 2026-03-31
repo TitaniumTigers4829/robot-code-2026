@@ -22,6 +22,7 @@ import frc.robot.commands.intake.IntakePivotBounceLower;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
+import frc.robot.commands.intake.ReverseKickerAndSpindexer;
 import frc.robot.commands.intake.ReverseSpindexerCommand;
 import frc.robot.commands.shooter.ManualHoodDown;
 import frc.robot.commands.shooter.ManualHoodUp;
@@ -157,10 +158,10 @@ public class Robot extends LoggedRobot {
         new DoubleSupplier[] {
           () ->
               JoystickUtil.modifyAxisPolar(
-                  driverController::getLeftX, driverController::getLeftY, 4)[1],
+                  driverController::getLeftX, driverController::getLeftY, 5)[1],
           () ->
               JoystickUtil.modifyAxisPolar(
-                  driverController::getLeftX, driverController::getLeftY, 4)[0]
+                  driverController::getLeftX, driverController::getLeftY, 5)[0]
         };
 
     Command driveCommand =
@@ -214,6 +215,7 @@ public class Robot extends LoggedRobot {
     driverController.y().whileTrue(new PassFuelCommand(shooterSubsystem, hoodSubsystem));
     driverController.a().whileTrue(new DefenseCommand(intakeSubsystem, turretSubsystem));
     driverController.b().whileTrue(new ReverseSpindexerCommand(shooterSubsystem));
+    driverController.x().whileTrue(new ReverseKickerAndSpindexer(shooterSubsystem));
 
     driverController
         .leftTrigger()
@@ -237,7 +239,7 @@ public class Robot extends LoggedRobot {
     operatorController
         .leftTrigger()
         .whileTrue(new OuttakeCommand(intakeSubsystem, shooterSubsystem));
-    operatorController.rightTrigger().whileTrue(new IntakeCommand(intakeSubsystem));
+    driverController.leftBumper().whileTrue(new IntakeCommand(intakeSubsystem));
 
     operatorController.y().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
     operatorController.a().whileTrue(new IntakePivotDownCommand(intakeSubsystem));

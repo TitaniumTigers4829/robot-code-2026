@@ -16,6 +16,7 @@ public class DriveCommand extends DriveCommandBase {
   private final BooleanSupplier isFieldRelative, isHighRotation, rightTrigger;
   private double angularSpeed;
   private double driveScalar;
+  private double angularScalar;
 
   /**
    * The command for driving the robot using joystick inputs.
@@ -59,22 +60,25 @@ public class DriveCommand extends DriveCommandBase {
     // control
     // but sometimes (e.g. when fighting defense bots) being able to rotate quickly is necessary
     if (isHighRotation.getAsBoolean()) {
-      angularSpeed = DriveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
+      // angularSpeed = DriveConstants.MAX_ANGULAR_SPEED_RADIANS_PER_SECOND;
+      angularSpeed = DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND;
     } else {
       angularSpeed = DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND;
     }
 
     if (rightTrigger.getAsBoolean()) {
-      driveScalar = 0.4;
+      driveScalar = 0.2;
+      angularScalar = 0.2;
     } else {
       driveScalar = 1;
+      angularScalar = 1;
     }
 
     // Drives the robot by scaling the joystick inputs
     driveSubsystem.drive(
         leftJoystickX.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND * driveScalar,
         leftJoystickY.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND * driveScalar,
-        rightJoystickX.getAsDouble() * angularSpeed,
+        rightJoystickX.getAsDouble() * angularSpeed * angularScalar,
         isFieldRelative.getAsBoolean());
     // Runs all the code from DriveCommand that estimates pose
     super.execute();
