@@ -43,6 +43,7 @@ public class ShootWhileMove extends Command {
   double iterativeDistance = 0;
   double distance;
   double dampener;
+  boolean isAimingProperly = false;
 
   public SingleLinearInterpolator timeInAirLookupTable =
       new SingleLinearInterpolator(
@@ -140,10 +141,20 @@ public class ShootWhileMove extends Command {
     desiredHeading -= 0.25; // .25 is because we zero it facing left instead of forward
 
     turret.setTurretAngle(desiredHeading);
-    shooter.setIsAimingProperly(
-        Math.abs(desiredHeading * TurretConstants.CANCODER_TO_TURRET - turret.getTurretAngle())
-            < .1);
-    shooter.setIsAimingProperly(true);
+    if (Math.abs(desiredHeading * TurretConstants.CANCODER_TO_TURRET - turret.getTurretAngle())
+        < .1) {
+      isAimingProperly = true;
+    } else {
+      isAimingProperly = false;
+    }
+
+    SmartDashboard.putBoolean("aiming properly", isAimingProperly);
+
+    if (isAimingProperly) {
+      shooter.setPercentOutput(distance);
+    } else {
+      shooter.stopShoot();
+    }
     shooter.setPercentOutput(distance);
 
     if (this.overridingHood.getAsBoolean()) {

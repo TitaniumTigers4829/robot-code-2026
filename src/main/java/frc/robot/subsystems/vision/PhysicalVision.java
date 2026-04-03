@@ -8,6 +8,7 @@ import com.titaniumtigers4829.utils.NTUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.extras.math.mathutils.GeomUtil;
 import frc.robot.extras.util.Pose2dMovingAverageFilter;
@@ -397,6 +398,7 @@ public class PhysicalVision implements VisionInterface {
    * @return True if the limelight is confident in its pose estimate, false otherwise
    */
   private boolean isConfident(Limelight limelight) {
+    SmartDashboard.putNumber("ambiuity", getAmbiguity(limelight));
     return getAmbiguity(limelight) <= VisionConstants.MAX_AMBIGUITY_THRESHOLD;
   }
 

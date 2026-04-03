@@ -59,5 +59,7 @@ public interface ShooterInterface extends Subsystem {
     return false;
   }
 
-  public default void setIsAimingProperly(boolean isAimingProperly) {}
+  public default boolean setIsAimingProperly(boolean isAimingProperly) {
+    return false;
+  }
 }

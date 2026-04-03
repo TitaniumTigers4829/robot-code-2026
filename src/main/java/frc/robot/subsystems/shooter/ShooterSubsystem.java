@@ -99,8 +99,8 @@ public class ShooterSubsystem extends SubsystemBase {
     this.shooterInterface.setSpindexerSpeed(speed);
   }
 
-  public void setIsAimingProperly(boolean isAimingProperly) {
-    this.shooterInterface.setIsAimingProperly(isAimingProperly);
+  public boolean setIsAimingProperly(boolean isAimingProperly) {
+    return this.shooterInterface.setIsAimingProperly(isAimingProperly);
   }
 
   @Override

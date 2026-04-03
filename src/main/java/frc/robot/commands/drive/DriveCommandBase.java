@@ -19,6 +19,8 @@ public abstract class DriveCommandBase extends Command {
   private final VisionSubsystem vision;
   private final SwerveDrive swerveDrive;
 
+  private double robotSpeedMetersPerSecond = 0;
+
   /**
    * An abstract class that handles pose estimation while driving.
    *
@@ -47,7 +49,7 @@ public abstract class DriveCommandBase extends Command {
   }
 
   private double scaleStandardDeviations(Limelight limelight, double standardDeviation) {
-    return limelight.hasInternalIMU() ? standardDeviation : standardDeviation * 1.5;
+    return standardDeviation * (3 * robotSpeedMetersPerSecond + 1);
   }
 
   /**
@@ -62,6 +64,11 @@ public abstract class DriveCommandBase extends Command {
           "Vision/valid measurement" + limelight.getId(), vision.isValidMeasurement(limelight));
       // Only do pose calculation if the measurement from the limelight is valid
       double distanceFromClosestAprilTag = vision.getLimelightAprilTagDistance(limelight);
+
+      robotSpeedMetersPerSecond =
+          Math.hypot(
+              swerveDrive.getChassisSpeeds().vxMetersPerSecond,
+              swerveDrive.getChassisSpeeds().vyMetersPerSecond);
 
       // Depending on how many april tags we see, we change our confidence as more april tags
       // results in a much more accurate pose estimate

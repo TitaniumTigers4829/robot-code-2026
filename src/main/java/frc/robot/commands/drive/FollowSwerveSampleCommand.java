@@ -30,7 +30,7 @@ public class FollowSwerveSampleCommand extends DriveCommandBase {
   public void execute() {
     swerveDrive.followSwerveSample(swerveSample);
     swerveDrive.addPoseEstimatorSwerveMeasurement();
-    // super.execute();
+    super.execute();
   }
 
   // Called once the command ends or is interrupted.

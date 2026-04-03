@@ -158,10 +158,10 @@ public class Robot extends LoggedRobot {
         new DoubleSupplier[] {
           () ->
               JoystickUtil.modifyAxisPolar(
-                  driverController::getLeftX, driverController::getLeftY, 5)[1],
+                  driverController::getLeftX, driverController::getLeftY, 3)[1],
           () ->
               JoystickUtil.modifyAxisPolar(
-                  driverController::getLeftX, driverController::getLeftY, 5)[0]
+                  driverController::getLeftX, driverController::getLeftY, 3)[0]
         };
 
     Command driveCommand =
