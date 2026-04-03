@@ -165,8 +165,8 @@ public class Autos {
                         new HubLockCommand(
                             swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem)),
                 // Commands.run(
-                //     () ->
-                //         ShootWhileMove(swerveDrive, turretSubsystem, shooterSubsystem,
+                // () ->
+                // ShootWhileMove(swerveDrive, turretSubsystem, shooterSubsystem,
                 // hoodSubsystem)),
                 Commands.runOnce(() -> new IntakePivotDownCommand(intakeSubsystem)),
                 new WaitCommand(2.0),
@@ -179,7 +179,8 @@ public class Autos {
     AutoRoutine routine = autoFactory.newRoutine(AutoConstants.LEFT_NEUTRAL_AUTO);
     AutoTrajectory leftNeutralTrajectory =
         routine.trajectory(AutoConstants.LEFT_NEUTRAL_TRAJECTORY);
-    // AutoTrajectory backPickupShoot = routine.trajectory(AutoConstants.BACK_PICKUP_SHOOT_TRAJ);
+    // AutoTrajectory backPickupShoot =
+    // routine.trajectory(AutoConstants.BACK_PICKUP_SHOOT_TRAJ);
     routine
         .active()
         .onTrue(
@@ -188,30 +189,30 @@ public class Autos {
                     Commands.sequence(
                         autoFactory.resetOdometry(AutoConstants.LEFT_NEUTRAL_TRAJECTORY),
                         leftNeutralTrajectory.cmd()),
-                    //     Commands.sequence(
-                    //         new WaitCommand(3),
-                    //         new IntakeCommand(intakeSubsystem).withTimeout(6),
-                    //         new IntakePivotUpCommand(intakeSubsystem).withTimeout(10))),
+                    // Commands.sequence(
+                    // new WaitCommand(3),
+                    // new IntakeCommand(intakeSubsystem).withTimeout(6),
+                    // new IntakePivotUpCommand(intakeSubsystem).withTimeout(10))),
                     // Commands.parallel(
-                    //     new IntakePivotBounceLower(intakeSubsystem).withTimeout(5),
-                    //     new ShootWhileMove(
-                    //             swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
-                    //         .withTimeout(10)),
+                    // new IntakePivotBounceLower(intakeSubsystem).withTimeout(5),
+                    // new ShootWhileMove(
+                    // swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
+                    // .withTimeout(10)),
                     // Commands.deadline(
-                    //     backPickupShoot.cmd(),
-                    //     Commands.sequence(
-                    //         new WaitCommand(1),
-                    //         new IntakeCommand(intakeSubsystem).withTimeout(5),
-                    //         new InstantCommand(
-                    //             () ->
+                    // backPickupShoot.cmd(),
+                    // Commands.sequence(
+                    // new WaitCommand(1),
+                    // new IntakeCommand(intakeSubsystem).withTimeout(5),
+                    // new InstantCommand(
+                    // () ->
                     //
                     // swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())),
-                    //         Commands.parallel(
-                    //             new IntakePivotUpCommand(intakeSubsystem).withTimeout(2),
+                    // Commands.parallel(
+                    // new IntakePivotUpCommand(intakeSubsystem).withTimeout(2),
                     // new ShootWhileMove(
-                    //         swerveDrive, turretSubsystem, shooterSubsystem,
+                    // swerveDrive, turretSubsystem, shooterSubsystem,
                     // hoodSubsystem)
-                    //     .withTimeout(5),
+                    // .withTimeout(5),
                     new InstantCommand(
                         () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose())))));
 
@@ -232,36 +233,43 @@ public class Autos {
                     Commands.sequence(
                         autoFactory.resetOdometry(AutoConstants.LEFT_NEW_NEUTRAL_TRAJECTORY),
                         blueNewLeftNeutralTrajectory.cmd()),
-                    new WaitCommand(1.2),
-                    new IntakeCommand(intakeSubsystem).withTimeout(2.1),
-                    new IntakePivotUpCommand(intakeSubsystem).withTimeout(1.7)),
+                    Commands.sequence(
+                        new IntakePivotUpCommand(intakeSubsystem).withTimeout(1.2),
+                        new IntakeCommand(intakeSubsystem).withTimeout(2.1),
+                        new IntakePivotUpCommand(intakeSubsystem).withTimeout(1.7))),
                 new DriveNoVision(
                         swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
                     .withTimeout(.1),
-                new ShootWhileMove(swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
-                    .withTimeout(5),
                 Commands.deadline(
-                    secondSweep.cmd()),
+                    new ShootWhileMove(
+                            swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
+                        .withTimeout(5),
+                    new IntakePivotBounceLower(intakeSubsystem)),
+                Commands.deadline(
+                    secondSweep.cmd(),
                     Commands.sequence(
                         new IntakePivotUpCommand(intakeSubsystem).withTimeout(1),
                         new IntakeCommand(intakeSubsystem).withTimeout(1.8),
-                        new IntakePivotUpCommand(intakeSubsystem).withTimeout(1.86)),
+                        new IntakePivotUpCommand(intakeSubsystem).withTimeout(1.86))),
                 new DriveNoVision(
                         swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
                     .withTimeout(.1),
-                new ShootWhileMove(swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
-                    .withTimeout(5)));
-    //     Commands.sequence(
-    //         new WaitCommand(3),
-    //         new IntakeCommand(intakeSubsystem).withTimeout(6),
-    //         new IntakePivotUpCommand(intakeSubsystem).withTimeout(10))),
+                Commands.deadline(
+                    new ShootWhileMove(
+                            swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
+                        .withTimeout(5),
+                    new IntakePivotBounceLower(intakeSubsystem))));
+    // Commands.sequence(
+    // new WaitCommand(3),
+    // new IntakeCommand(intakeSubsystem).withTimeout(6),
+    // new IntakePivotUpCommand(intakeSubsystem).withTimeout(10))),
     // Commands.parallel(
-    //     new IntakePivotBounceLower(intakeSubsystem).withTimeout(5),
-    //     new ShootWhileMove(
-    //             swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
-    //         .withTimeout(10)),
+    // new IntakePivotBounceLower(intakeSubsystem).withTimeout(5),
+    // new ShootWhileMove(
+    // swerveDrive, turretSubsystem, shooterSubsystem, hoodSubsystem)
+    // .withTimeout(10)),
     // new InstantCommand(
-    //     () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose()))));
+    // () -> swerveDrive.resetEstimatedPose(visionSubsystem.getLastSeenPose()))));
 
     return routine;
   }
@@ -310,19 +318,20 @@ public class Autos {
   }
 
   // public AutoRoutine backAndShootAuto() {
-  //   AutoRoutine routine = autoFactory.newRoutine(AutoConstants.BACK_AND_SHOOT_AUTO);
-  //   AutoTrajectory backAndShootTrajectory =
+  // AutoRoutine routine =
+  // autoFactory.newRoutine(AutoConstants.BACK_AND_SHOOT_AUTO);
+  // AutoTrajectory backAndShootTrajectory =
   // routine.trajectory(AutoConstants.BACK_AND_SHOOT_TRAJ);
-  //   routine
-  //       .active()
-  //       .onTrue(
-  //           Commands.sequence(
-  //               autoFactory.resetOdometry(AutoConstants.BACK_AND_SHOOT_TRAJ),
-  //               backAndShootTrajectory.cmd(),
-  //               new DriveNoVision(
-  //                       swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
-  //                   .withTimeout(1)));
-  //   return routine;
+  // routine
+  // .active()
+  // .onTrue(
+  // Commands.sequence(
+  // autoFactory.resetOdometry(AutoConstants.BACK_AND_SHOOT_TRAJ),
+  // backAndShootTrajectory.cmd(),
+  // new DriveNoVision(
+  // swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
+  // .withTimeout(1)));
+  // return routine;
   // }
 
   private AutoRoutine createRoutine(AutoFactory factory, SwerveDrive swerve, Source source) {

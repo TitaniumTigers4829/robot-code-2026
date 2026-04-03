@@ -126,7 +126,7 @@ public final class Constants {
   public static final class TrajectoryConstants {
     public static final double AUTO_TRANSLATION_P = 2;
     public static final double AUTO_TRANSLATION_D = 0; // 0.2;
-    public static final double AUTO_THETA_P = 5; // 5
+    public static final double AUTO_THETA_P = 3; // 5
     public static final double AUTO_THETA_D = 0; // 0.4;
 
     public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 3.088;

@@ -140,7 +140,7 @@ public class ShootWhileMove extends Command {
 
     desiredHeading -= 0.25; // .25 is because we zero it facing left instead of forward
 
-    turret.setTurretAngle(desiredHeading);
+    // turret.setTurretAngle(desiredHeading);
     if (Math.abs(desiredHeading * TurretConstants.CANCODER_TO_TURRET - turret.getTurretAngle())
         < .1) {
       isAimingProperly = true;
