@@ -26,7 +26,7 @@ public class PhysicalIntake implements IntakeInterface {
   private TalonFX intakeMotorInside = new TalonFX(IntakeConstants.INTAKE_MOTOR_2_ID);
   private TalonFX intakePivotMotorRight =
       new TalonFX(IntakeConstants.PIVOT_MOTOR_RIGHT_ID, HardwareConstants.RIO_CAN_BUS_STRING);
-  private TalonFX intakePivotMotorLeft = new TalonFX(IntakeConstants.PIVOT_MOTOR_LEFT_ID);
+  // private TalonFX intakePivotMotorLeft = new TalonFX(IntakeConstants.PIVOT_MOTOR_LEFT_ID);
 
   private final CANcoder pivotEncoder =
       new CANcoder(IntakeConstants.CANCODER_ID, HardwareConstants.RIO_CAN_BUS_STRING);
@@ -110,19 +110,19 @@ public class PhysicalIntake implements IntakeInterface {
     intakeMotorInside.getConfigurator().apply(intakeInnerConfig);
     intakePivotMotorRight.getConfigurator().apply(pivotConfig);
 
-    pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    // pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    intakePivotMotorLeft.getConfigurator().apply(pivotConfig);
+    // intakePivotMotorLeft.getConfigurator().apply(pivotConfig);
 
     intakeAngle = pivotEncoder.getPosition();
     intakePivotSpeed = intakePivotMotorRight.getVelocity();
 
     intakePivotMotorRight.setPosition(0.0);
-    intakePivotMotorLeft.setPosition(0.0);
+    // intakePivotMotorLeft.setPosition(0.0);
 
     BaseStatusSignal.setUpdateFrequencyForAll(100.0, intakeAngle, intakePivotSpeed);
     ParentDevice.optimizeBusUtilizationForAll(
-        intakeMotorOuter, intakeMotorInside, intakePivotMotorRight, intakePivotMotorLeft);
+        intakeMotorOuter, intakeMotorInside, intakePivotMotorRight); // intakePivotMotorLeft
   }
 
   public void updateInputs(IntakeInputs inputs) {
@@ -140,7 +140,7 @@ public class PhysicalIntake implements IntakeInterface {
 
   public void setIntakeAngle(double angle) {
     intakePivotMotorRight.setControl(request.withPosition(angle));
-    intakePivotMotorLeft.setControl(request.withPosition(angle));
+    // intakePivotMotorLeft.setControl(request.withPosition(angle));
   }
 
   public void intakeFuel() {
@@ -160,23 +160,23 @@ public class PhysicalIntake implements IntakeInterface {
 
   public void setPivotSpeed(double speed) {
     intakePivotMotorRight.set(speed);
-    intakePivotMotorLeft.set(speed);
+    // intakePivotMotorLeft.set(speed);
   }
 
   public void setAngle(double angle) {
     intakePivotMotorRight.setControl(request.withPosition(angle));
-    intakePivotMotorLeft.setControl(
-        new Follower(intakePivotMotorLeft.getDeviceID(), pivotMotorAlignment));
+    // intakePivotMotorLeft.setControl(
+    //     new Follower(intakePivotMotorLeft.getDeviceID(), pivotMotorAlignment));
   }
 
   public void setPivotSpeedUp() {
     intakePivotMotorRight.setControl(request.withPosition(IntakeConstants.PIVOT_UP_POSITION));
-    intakePivotMotorLeft.setControl(request.withPosition(IntakeConstants.PIVOT_UP_POSITION));
+    // intakePivotMotorLeft.setControl(request.withPosition(IntakeConstants.PIVOT_UP_POSITION));
   }
 
   public void setPivotSpeedDown() {
     intakePivotMotorRight.setControl(request.withPosition(IntakeConstants.PIVOT_DOWN_POSITION));
-    intakePivotMotorLeft.setControl(request.withPosition(IntakeConstants.PIVOT_DOWN_POSITION));
+    // intakePivotMotorLeft.setControl(request.withPosition(IntakeConstants.PIVOT_DOWN_POSITION));
   }
 
   public double getIntakeAngle() {

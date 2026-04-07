@@ -43,10 +43,6 @@ public class ShooterSubsystem extends SubsystemBase {
     return shooterInterface.getFlywheelRPS();
   }
 
-  public void setRollerSpeed(double speed) {
-    shooterInterface.setRollerSpeed(speed);
-  }
-
   public double getVolts() {
     return shooterInterface.getVolts();
   }
@@ -95,8 +91,8 @@ public class ShooterSubsystem extends SubsystemBase {
     this.shooterInterface.setKickerSpeed(speed);
   }
 
-  public void setSpindexerSpeed(double speed) {
-    this.shooterInterface.setSpindexerSpeed(speed);
+  public void setRollerSpeed(double speed) {
+    this.shooterInterface.setRollerSpeed(speed);
   }
 
   public boolean setIsAimingProperly(boolean isAimingProperly) {

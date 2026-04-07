@@ -26,6 +26,7 @@ import frc.robot.subsystems.intake.IntakeConstants;
 public class PhysicalShooter implements ShooterInterface {
 
   private boolean isUpToSpeed = false;
+  boolean reachedSpeedOnce = false;
   private boolean isAimingProperly = false;
 
   LoggedTunableNumber flywheelRPS = new LoggedTunableNumber("Shooter/RPS", 0.0);
@@ -36,16 +37,16 @@ public class PhysicalShooter implements ShooterInterface {
   private final TalonFX followerFlywheelMotor =
       new TalonFX(
           ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
-  private final TalonFX kickerMotor = new TalonFX(ShooterConstants.KICKER_MOTOR_ID);
-  private final TalonFX spindexerMotor = new TalonFX(ShooterConstants.SPINDEXER_MOTOR_ID);
-  private final TalonFX insideRollerMotor =
-      new TalonFX(IntakeConstants.INTAKE_MOTOR_2_ID, HardwareConstants.RIO_CAN_BUS_STRING);
+  private final TalonFX kickerAndRollerMotor = new TalonFX(ShooterConstants.KICKER_AND_ROLLER_MOTOR_ID);
+  private final TalonFX frontRollerMotor= new TalonFX(ShooterConstants.FRONT_ROLLER_MOTOR_ID);
+  // private final TalonFX backMotor= new TalonFX(ShooterConstants.BACK_ROLLER_MOTOR_ID);
+
   MotorAlignmentValue motorAlignment = MotorAlignmentValue.Opposed;
 
   private final SingleLinearInterpolator flywheelRPMLookupValues;
 
   private final VelocityTorqueCurrentFOC rpsRequest = new VelocityTorqueCurrentFOC(0.0);
-  private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
+  // private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
 
   // private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new
   // MotionMagicTorqueCurrentFOC(0.0);
@@ -57,7 +58,6 @@ public class PhysicalShooter implements ShooterInterface {
 
   // private final TalonFXConfiguration followerFlywheelConfig = new TalonFXConfiguration();
 
-  // TODO: Add configs, and make slav
   public PhysicalShooter() {
 
     leaderFlywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -86,17 +86,17 @@ public class PhysicalShooter implements ShooterInterface {
     // kickerMotor.getConfigurator().apply(leaderFlywheelConfig);
     // leaderFlywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     // spindexerMotor.inve
-    TalonFXConfiguration spindexerAndKickerConfig = new TalonFXConfiguration();
+    TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
     // TODO: tune
-    spindexerAndKickerConfig.CurrentLimits.StatorCurrentLimit = 60;
-    spindexerAndKickerConfig.CurrentLimits.SupplyCurrentLimit = 30;
-    spindexerAndKickerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    spindexerAndKickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    spindexerAndKickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    rollerConfig.CurrentLimits.StatorCurrentLimit = 60;
+    rollerConfig.CurrentLimits.SupplyCurrentLimit = 30;
+    rollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    rollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    kickerMotor.getConfigurator().apply(spindexerAndKickerConfig);
-    spindexerAndKickerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    spindexerMotor.getConfigurator().apply(spindexerAndKickerConfig);
+    kickerAndRollerMotor.getConfigurator().apply(rollerConfig);
+    rollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    frontRollerMotor.getConfigurator().apply(rollerConfig);
     followerFlywheelMotor.setControl(
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
 
@@ -138,19 +138,25 @@ public class PhysicalShooter implements ShooterInterface {
     SmartDashboard.putBoolean("ready to shoot", isUpToSpeed());
 
     if (isUpToSpeed()) {
-      setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
-      // setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
-      // setRollerSpeed(0.2);
+      reachedSpeedOnce = true;
+    }
+
+    if (reachedSpeedOnce) {
+      setRollerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
+      setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
     } else {
-      setSpindexerSpeed(0.0);
-      // setKickerSpeed(0.0);
-      // setRollerSpeed(0.0);
+      setRollerSpeed(0.0);
+      setKickerSpeed(0.0);
     }
   }
 
   public boolean isUpToSpeed() {
     return this.isUpToSpeed;
   }
+
+  // public boolean reachedSpeedOnce() {
+  //   return false;
+  // }
 
   public void passFuel() {
     leaderFlywheelMotor.setControl(rpsRequest.withVelocity(50));
@@ -159,17 +165,18 @@ public class PhysicalShooter implements ShooterInterface {
     this.isUpToSpeed =
         Math.abs(50 - currentRPS.refresh().getValueAsDouble())
             < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
+    if (isUpToSpeed()) {
+      reachedSpeedOnce = true;
+    }
     // SmartDashboard.putNumber("desiredRPS", 60);
     // SmartDashboard.putNumber("currentRPS", currentRPS.refresh().getValueAsDouble());
-    if (isUpToSpeed()) {
-      setSpindexerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
+    if (reachedSpeedOnce) {
+      setRollerSpeed(ShooterConstants.SPINDEXER_SHOOT_SPEED);
       setKickerSpeed(ShooterConstants.KICKER_PERCENT_OUTPUT);
-      // setRollerSpeed(0.2);
 
     } else {
-      setSpindexerSpeed(0.0);
-      setKickerSpeed(0.0);
-      // setRollerSpeed(0.0);
+      setRollerSpeed(0.0);
+      setKickerSpeed(0.0);      
     }
   }
 
@@ -179,28 +186,19 @@ public class PhysicalShooter implements ShooterInterface {
         new Follower(leaderFlywheelMotor.getDeviceID(), motorAlignment));
   }
 
-  public void setPercentOuput2(double speed) {
-    leaderFlywheelMotor.set(speed);
-    followerFlywheelMotor.set(-1 * speed);
-  }
-
   public void stopShoot() {
     leaderFlywheelMotor.set(0);
     followerFlywheelMotor.set(0);
-    kickerMotor.set(0);
-    spindexerMotor.set(0);
-  }
-
-  public void setSpindexerSpeed(double speed) {
-    spindexerMotor.set(speed);
-  }
-
-  public void setKickerSpeed(double speed) {
-    kickerMotor.set(speed);
+    kickerAndRollerMotor.set(0);
+    frontRollerMotor.set(0);
   }
 
   public void setRollerSpeed(double speed) {
-    insideRollerMotor.set(speed);
+    frontRollerMotor.set(speed);
+  }
+
+  public void setKickerSpeed(double speed) {
+    kickerAndRollerMotor.set(speed);
   }
 
   public boolean setIsAimingProperly(boolean isAimingProperly) {

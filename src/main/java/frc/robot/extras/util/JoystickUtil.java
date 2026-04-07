@@ -53,7 +53,7 @@ public class JoystickUtil {
    * @return The modified axises of both joysticks in polar form.
    */
   public static double[] modifyAxisPolar(
-      DoubleSupplier xJoystick, DoubleSupplier yJoystick, int exponent) {
+      DoubleSupplier xJoystick, DoubleSupplier yJoystick, double exponent) {
     double xInput = deadband(xJoystick.getAsDouble(), JoystickConstants.DEADBAND_VALUE);
     double yInput = deadband(yJoystick.getAsDouble(), JoystickConstants.DEADBAND_VALUE);
     if (Math.abs(xInput) > 0 && Math.abs(yInput) > 0) {

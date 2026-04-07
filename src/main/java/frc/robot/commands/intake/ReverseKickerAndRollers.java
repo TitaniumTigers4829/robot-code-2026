@@ -9,11 +9,11 @@ import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ReverseKickerAndSpindexer extends Command {
+public class ReverseKickerAndRollers extends Command {
   /** Creates a new ReverseKickerAndSpindexer. */
   ShooterSubsystem shooter;
 
-  public ReverseKickerAndSpindexer(ShooterSubsystem shooter) {
+  public ReverseKickerAndRollers(ShooterSubsystem shooter) {
     this.shooter = shooter;
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -26,14 +26,14 @@ public class ReverseKickerAndSpindexer extends Command {
   @Override
   public void execute() {
     shooter.setKickerSpeed(-ShooterConstants.KICKER_PERCENT_OUTPUT);
-    shooter.setSpindexerSpeed(-ShooterConstants.SPINDEXER_INTAKE_SPEED);
+    shooter.setRollerSpeed(-ShooterConstants.SPINDEXER_INTAKE_SPEED);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     shooter.setKickerSpeed(0);
-    shooter.setSpindexerSpeed(0);
+    shooter.setRollerSpeed(0);
   }
 
   // Returns true when the command should end.

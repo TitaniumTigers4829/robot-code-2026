@@ -71,6 +71,7 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
 
     // hoodConfig.ClosedLoopGeneral.ContinuousWrap = true;
     hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    hoodConfig.Feedback.SensorToMechanismRatio = AdjustableHoodConstants.GEAR_RATIO;
 
     // hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1.1;
     // hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
@@ -80,15 +81,16 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
     hoodConfig.CurrentLimits.StatorCurrentLimit = 40;
     hoodConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    hoodConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    // hoodConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;
 
     hoodEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     // hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
     // hoodEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     // hoodEncoderConfig.MagnetSensor.
 
-    hoodConfig.MotionMagic.MotionMagicAcceleration = 10;
-    hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
+    hoodConfig.MotionMagic.MotionMagicAcceleration = 20;
+    hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 10;
 
     hoodMotor.getConfigurator().apply(hoodConfig, 0.02);
     hoodEncoder.getConfigurator().apply(hoodEncoderConfig);

@@ -187,7 +187,5 @@ public class ShootWhileMove extends Command {
   public void end(boolean interrupted) {
     shooter.stopShoot();
     hood.setAngleWithoutDist(0);
-    shooter.setRollerSpeed(0.0);
-    shooter.setSpindexerSpeed(0.0);
   }
 }

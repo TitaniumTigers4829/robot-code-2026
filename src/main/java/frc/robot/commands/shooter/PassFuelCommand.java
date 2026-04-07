@@ -56,8 +56,6 @@ public class PassFuelCommand extends Command {
   public void end(boolean interrupted) {
     shooterSubsystem.stopShoot();
     hoodSubsystem.setAngleWithoutDist(0.0);
-    shooterSubsystem.setRollerSpeed(0.0);
-    shooterSubsystem.setSpindexerSpeed(0.0);
   }
 
   // Returns true when the command should end.

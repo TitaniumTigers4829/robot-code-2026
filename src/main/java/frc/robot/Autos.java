@@ -114,7 +114,7 @@ public class Autos {
         .active()
         .onTrue(
             new SequentialCommandGroup(
-                autoFactory.resetOdometry("MiscTrajectories/test_red_path_right"),
+                autoFactory.resetOdometry("MiscTrajectoritest_red_path_right"),
                 yOneMeterTrajectory.cmd(),
                 new DriveNoVision(
                         swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)

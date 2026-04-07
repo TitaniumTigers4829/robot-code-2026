@@ -3,8 +3,8 @@ package frc.robot.subsystems.intake;
 public class IntakeConstants {
   public static final int INTAKE_MOTOR_1_ID = 9;
   public static final int INTAKE_MOTOR_2_ID = 17;
-  public static final int PIVOT_MOTOR_RIGHT_ID = 41;
-  public static final int PIVOT_MOTOR_LEFT_ID = 23;
+  public static final int PIVOT_MOTOR_RIGHT_ID = 23; //41
+  // public static final int PIVOT_MOTOR_LEFT_ID = 23;
   public static final int CANCODER_ID = 19;
 
   public static final double INTAKE_P = 1.0;

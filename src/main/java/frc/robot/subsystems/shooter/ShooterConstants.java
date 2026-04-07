@@ -9,8 +9,8 @@ public class ShooterConstants {
 
   public static int LEADER_FLYWHEEL_MOTOR_ID = 27;
   public static int FOLLOWER_FLYWHEEL_MOTOR_ID = 0;
-  public static int KICKER_MOTOR_ID = 57;
-  public static int SPINDEXER_MOTOR_ID = 61;
+  public static int KICKER_AND_ROLLER_MOTOR_ID = 57;
+  public static int FRONT_ROLLER_MOTOR_ID = 00;
 
   public static double SHOOTER_HEIGHT_FROM_GROUND = 0;
   public static double GEAR_RATIO = 0.95;

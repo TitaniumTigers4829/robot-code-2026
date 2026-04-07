@@ -51,8 +51,6 @@ public interface ShooterInterface extends Subsystem {
 
   public default void setFF(double kS, double kV, double kA) {}
 
-  public default void setSpindexerSpeed(double speed) {}
-
   public default void setKickerSpeed(double speed) {}
 
   public default boolean isReadyToShoot() {
