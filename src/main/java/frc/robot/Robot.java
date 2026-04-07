@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Threads;
@@ -141,6 +140,7 @@ public class Robot extends LoggedRobot {
    *
    * @param isAligned whether the robot is aligned
    */
+  /*
   private void alignCallback(boolean isAligned) {
     if (isAligned) {
       driverController.setRumble(RumbleType.kBothRumble, 0.5);
@@ -150,6 +150,7 @@ public class Robot extends LoggedRobot {
       operatorController.setRumble(RumbleType.kBothRumble, 0.0);
     }
   }
+  */
 
   /** Configures the driver controller buttons and axes to control the robot */
   private void configureDriverController() {

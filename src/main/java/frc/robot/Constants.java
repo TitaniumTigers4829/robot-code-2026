@@ -27,7 +27,6 @@ public final class Constants {
    *
    * @return the currently used RobotType
    */
-  @SuppressWarnings("resource")
   public static RobotType getRobot() {
     // if (RobotBase.isReal() && robotType == RobotType.SIM_ROBOT) {
     //   new Alert("Invalid robot selected, using competition robot as default.", AlertType.kError)

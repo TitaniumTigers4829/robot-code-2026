@@ -31,6 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
         flywheelI.initDefault(ShooterConstants.FLYWHEEL_I);
         flywheelD.initDefault(ShooterConstants.FLYWHEEL_D);
       }
+      default -> {}
     }
   }
 

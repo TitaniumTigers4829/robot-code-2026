@@ -24,7 +24,7 @@ public class TurretSubsystem extends SubsystemBase {
 
   static {
     switch (Constants.getRobot()) {
-      case COMP_ROBOT, DEV_ROBOT -> {
+      case COMP_ROBOT -> {
         turretP.initDefault(TurretConstants.TURRET_P);
         turretI.initDefault(TurretConstants.TURRET_I);
         turretD.initDefault(TurretConstants.TURRET_D);
@@ -32,6 +32,7 @@ public class TurretSubsystem extends SubsystemBase {
         turretV.initDefault(TurretConstants.TURRET_V);
         turretA.initDefault(TurretConstants.TURRET_A);
       }
+      default -> {}
     }
   }
 

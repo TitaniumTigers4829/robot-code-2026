@@ -7,7 +7,6 @@ package frc.robot.subsystems.shooter;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.ParentDevice;
@@ -20,14 +19,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.logging.LoggedTunableNumber;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
-import frc.robot.subsystems.intake.IntakeConstants;
 
 /** Add your docs here. */
 public class PhysicalShooter implements ShooterInterface {
 
   private boolean isUpToSpeed = false;
   boolean reachedSpeedOnce = false;
-  private boolean isAimingProperly = false;
 
   LoggedTunableNumber flywheelRPS = new LoggedTunableNumber("Shooter/RPS", 0.0);
 
@@ -37,8 +34,9 @@ public class PhysicalShooter implements ShooterInterface {
   private final TalonFX followerFlywheelMotor =
       new TalonFX(
           ShooterConstants.FOLLOWER_FLYWHEEL_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
-  private final TalonFX kickerAndRollerMotor = new TalonFX(ShooterConstants.KICKER_AND_ROLLER_MOTOR_ID);
-  private final TalonFX frontRollerMotor= new TalonFX(ShooterConstants.FRONT_ROLLER_MOTOR_ID);
+  private final TalonFX kickerAndRollerMotor =
+      new TalonFX(ShooterConstants.KICKER_AND_ROLLER_MOTOR_ID);
+  private final TalonFX frontRollerMotor = new TalonFX(ShooterConstants.FRONT_ROLLER_MOTOR_ID);
   // private final TalonFX backMotor= new TalonFX(ShooterConstants.BACK_ROLLER_MOTOR_ID);
 
   MotorAlignmentValue motorAlignment = MotorAlignmentValue.Opposed;
@@ -176,7 +174,7 @@ public class PhysicalShooter implements ShooterInterface {
 
     } else {
       setRollerSpeed(0.0);
-      setKickerSpeed(0.0);      
+      setKickerSpeed(0.0);
     }
   }
 

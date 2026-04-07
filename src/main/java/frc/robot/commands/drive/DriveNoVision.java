@@ -18,7 +18,6 @@ public class DriveNoVision extends Command {
 
   private final BooleanSupplier isFieldRelative, isHighRotation;
   private double angularSpeed;
-  private final Consumer<Boolean> isAligned;
   private SwerveDrive driveSubsystem;
 
   public DriveNoVision(
@@ -30,7 +29,6 @@ public class DriveNoVision extends Command {
       BooleanSupplier isHighRotation,
       Consumer<Boolean> isAligned) {
     this.driveSubsystem = driveSubsystem;
-    this.isAligned = isAligned;
     addRequirements(driveSubsystem);
 
     this.leftJoystickY = leftJoystickY;

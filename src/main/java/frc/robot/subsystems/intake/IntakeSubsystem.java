@@ -12,7 +12,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private IntakeInterface intakeInterface;
   private IntakeInputsAutoLogged inputs = new IntakeInputsAutoLogged();
-  private double intakePos = IntakeConstants.PIVOT_UP_POSITION;
+  // private double intakePos = IntakeConstants.PIVOT_UP_POSITION;
 
   private static final LoggedTunableNumber IntakeS = new LoggedTunableNumber("Intake/IntakeS");
   private static final LoggedTunableNumber IntakeV = new LoggedTunableNumber("Intake/IntakeV");
@@ -31,6 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
         IntakeI.initDefault(IntakeConstants.INTAKE_I);
         IntakeD.initDefault(IntakeConstants.INTAKE_D);
       }
+      default -> {}
     }
   }
 

@@ -517,7 +517,7 @@ public class UnitSafeControl {
      * @param goalRateRate the desired angular acceleration.
      * @return the calculated output as a measure in the output unit.
      */
-    @SuppressWarnings({"unchecked", "removal"})
+    @SuppressWarnings({"unchecked"})
     public Measure<O> calculate(AngularVelocity goalRate, AngularAcceleration goalRateRate) {
       return (Measure<O>)
           outputUnit.of(
@@ -604,7 +604,7 @@ public class UnitSafeControl {
      * @param goalRateRate the desired linear acceleration.
      * @return the calculated output as a measure in the output unit.
      */
-    @SuppressWarnings({"unchecked", "removal"})
+    @SuppressWarnings({"unchecked"})
     public Measure<O> calculate(LinearVelocity goalRate, LinearAcceleration goalRateRate) {
       return (Measure<O>)
           outputUnit.of(

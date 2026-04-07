@@ -3,9 +3,7 @@ package frc.robot.subsystems.adjustableHood;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -31,8 +29,8 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   public LoggedTunableNumber desiredAngle = new LoggedTunableNumber("Hood/Angle", 0.0);
 
   // private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0.0);
-  private final PositionDutyCycle positionRequest = new PositionDutyCycle(0.0);
-  private final DutyCycleOut current = new DutyCycleOut(0.0);
+  // private final PositionDutyCycle positionRequest = new PositionDutyCycle(0.0);
+  // private final DutyCycleOut current = new DutyCycleOut(0.0);
   public StatusSignal<Angle> hoodAngle;
   private StatusSignal<AngularVelocity> hoodVelocity;
   public double lookupTableStuff = 0.0;

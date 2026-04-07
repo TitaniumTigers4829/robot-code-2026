@@ -10,7 +10,7 @@ import java.util.function.DoubleSupplier;
 public class DriveCommand extends DriveCommandBase {
 
   private final SwerveDrive driveSubsystem;
-  private final VisionSubsystem visionSubsystem;
+  // private final VisionSubsystem visionSubsystem;
 
   private final DoubleSupplier leftJoystickX, leftJoystickY, rightJoystickX;
   private final BooleanSupplier isFieldRelative, isHighRotation, rightTrigger;
@@ -40,7 +40,7 @@ public class DriveCommand extends DriveCommandBase {
       BooleanSupplier rightTrigger) {
     super(driveSubsystem, visionSubsystem);
     this.driveSubsystem = driveSubsystem;
-    this.visionSubsystem = visionSubsystem;
+    // this.visionSubsystem = visionSubsystem;
     this.rightTrigger = rightTrigger;
     addRequirements(driveSubsystem);
 

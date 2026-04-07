@@ -141,7 +141,9 @@ public class PhysicalModule implements ModuleInterface {
         turnMotorAppliedVolts,
         turnMotorCurrent,
         turnMotorReference,
-        turnMotorTorqueCurrent);
+        turnMotorTorqueCurrent,
+        driveMotorAppliedVoltage,
+        driveMotorCurrent);
     driveMotor.optimizeBusUtilization();
     turnMotor.optimizeBusUtilization();
     turnEncoder.optimizeBusUtilization();

@@ -126,7 +126,7 @@ public abstract class SimArena {
    * <p>This method should be called ONCE in {@link IterativeRobotBase#simulationPeriodic()}
    */
   public void simulationPeriodic() {
-    final long t0 = System.nanoTime();
+    // final long t0 = System.nanoTime();
     competitionPeriodic();
     // move through a few sub-periods in each update
     for (int i = 0; i < timing.ticksPerPeriod; i++) {

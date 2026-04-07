@@ -61,7 +61,7 @@ public class PhysicalTurret implements TurretInterface {
 
   // Total motor-to-turret gear ratio: 26.66667:1
   // i.e. the motor spins 26.666667 times for every 1 full turret rotation.
-  private static final double TOTAL_RATIO = TurretConstants.TOTAL_GEAR_RATIO;
+  // private static final double TOTAL_RATIO = TurretConstants.TOTAL_GEAR_RATIO;
 
   // The CANcoder is NOT on the turret output. It sits on an intermediate shaft:
   //
@@ -70,7 +70,8 @@ public class PhysicalTurret implements TurretInterface {
   // MOTOR_TO_CANCODER = 44.444 / 16.666 ≈ 2.667
   // This means the CANcoder shaft spins 2.667 times per 1 turret rotation,
   // and the motor spins 2.667 times per 1 CANcoder shaft rotation.
-  private static final double MOTOR_TO_CANCODER = TOTAL_RATIO / TurretConstants.CANCODER_TO_TURRET;
+  // private static final double MOTOR_TO_CANCODER = TOTAL_RATIO /
+  // TurretConstants.CANCODER_TO_TURRET;
 
   // TODO(second-cancoder): Add second encoder gear ratio constant in TurretConstants.
   // The ratio must be co-prime with CANCODER_TO_TURRET (currently 16.666).
