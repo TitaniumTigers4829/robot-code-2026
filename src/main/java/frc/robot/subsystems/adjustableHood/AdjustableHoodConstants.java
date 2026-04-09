@@ -8,7 +8,7 @@ public class AdjustableHoodConstants {
   public static final double GEAR_RATIO = 24 / 42;
 
   // Tune G first, increase until hood moves then tune pid and sva
-  public static final double HOOD_P = 75; // 60
+  public static final double HOOD_P = 50; // 75
   public static final double HOOD_I = 0.0;
   public static final double HOOD_D = 0.0;
   public static final double HOOD_S = 0.23;
@@ -20,12 +20,12 @@ public class AdjustableHoodConstants {
 
   // Distance from hub {Distance (meters), angle}
   public static double[][] hoodLookUpTable = {
-    {1.5, .25},
-    {2.0, .3},
-    {2.5, 0.347},
-    {3.0, .38},
-    {3.5, .4829},
-    {4.0, 0.55},
-    {4.5, 0.59}
+    {1.5, .4},
+    {2.0, .4829},
+    {2.5, 0.555},
+    {3.0, .608},
+    {3.5, .4829 * 1.6},
+    {4.0, 0.88},
+    {4.5, 0.944}
   };
 }

@@ -159,10 +159,10 @@ public class Robot extends LoggedRobot {
         new DoubleSupplier[] {
           () ->
               JoystickUtil.modifyAxisPolar(
-                  driverController::getLeftX, driverController::getLeftY, 1)[1],
+                  driverController::getLeftX, driverController::getLeftY, 3)[1],
           () ->
               JoystickUtil.modifyAxisPolar(
-                  driverController::getLeftX, driverController::getLeftY, 1)[0]
+                  driverController::getLeftX, driverController::getLeftY, 3)[0]
         };
 
     Command driveCommand =
@@ -178,9 +178,11 @@ public class Robot extends LoggedRobot {
             // Robot relative
             () -> !driverController.rightBumper().getAsBoolean(),
             // Rotation speed
-            () -> driverController.rightStick().getAsBoolean(),
+            driverController.rightStick(),
             // Drive speed for SWIM
-            () -> driverController.rightTrigger().getAsBoolean());
+            driverController.rightTrigger(),
+            // Trench align
+            driverController.leftBumper());
 
     // Sets the default command for the swerve drive to the drive command
     swerveDrive.setDefaultCommand(driveCommand);
@@ -241,12 +243,13 @@ public class Robot extends LoggedRobot {
     operatorController
         .leftTrigger()
         .whileTrue(new OuttakeCommand(intakeSubsystem, shooterSubsystem));
-    driverController.leftBumper().whileTrue(new IntakeCommand(intakeSubsystem));
 
     operatorController.y().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
     operatorController.a().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
     operatorController.x().whileTrue(new IntakePivotBounceLower(intakeSubsystem));
     operatorController.b().whileTrue(new IntakePivotBounceHigher(intakeSubsystem));
+
+    operatorController.rightTrigger().whileTrue(new IntakeCommand(intakeSubsystem));
 
     operatorController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
 

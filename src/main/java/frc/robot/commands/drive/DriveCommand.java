@@ -1,5 +1,6 @@
 package frc.robot.commands.drive;
 
+import edu.wpi.first.math.controller.PIDController;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.VisionSubsystem;
@@ -10,13 +11,14 @@ import java.util.function.DoubleSupplier;
 public class DriveCommand extends DriveCommandBase {
 
   private final SwerveDrive driveSubsystem;
-  // private final VisionSubsystem visionSubsystem;
+  private final VisionSubsystem visionSubsystem;
 
   private final DoubleSupplier leftJoystickX, leftJoystickY, rightJoystickX;
-  private final BooleanSupplier isFieldRelative, isHighRotation, rightTrigger;
+  private final BooleanSupplier isFieldRelative, isHighRotation, rightTrigger, leftBumper;
+
+  private final PIDController trenchAlignPIDController = new PIDController(10, 0, 0);
+
   private double angularSpeed;
-  private double driveScalar;
-  private double angularScalar;
 
   /**
    * The command for driving the robot using joystick inputs.
@@ -37,12 +39,14 @@ public class DriveCommand extends DriveCommandBase {
       DoubleSupplier rightJoystickX,
       BooleanSupplier isFieldRelative,
       BooleanSupplier isHighRotation,
-      BooleanSupplier rightTrigger) {
+      BooleanSupplier rightTrigger,
+      BooleanSupplier leftBumper) {
     super(driveSubsystem, visionSubsystem);
     this.driveSubsystem = driveSubsystem;
-    // this.visionSubsystem = visionSubsystem;
+    this.visionSubsystem = visionSubsystem;
     this.rightTrigger = rightTrigger;
-    addRequirements(driveSubsystem);
+    this.leftBumper = leftBumper;
+    addRequirements(driveSubsystem, visionSubsystem);
 
     this.leftJoystickY = leftJoystickY;
     this.leftJoystickX = leftJoystickX;
@@ -66,20 +70,34 @@ public class DriveCommand extends DriveCommandBase {
       angularSpeed = DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND;
     }
 
+    double rotationSpeed = rightJoystickX.getAsDouble() * angularSpeed;
+
+    if (leftBumper.getAsBoolean()) {
+      double currentRotation = driveSubsystem.getOdometryRotation2d().getRotations();
+      double targetAngle = currentRotation >= 0 ? 0.25 : -.25;
+      rotationSpeed = trenchAlignPIDController.calculate(targetAngle, currentRotation);
+    }
+
+    double xSpeed = leftJoystickX.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
+    double ySpeed = leftJoystickY.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
+
     if (rightTrigger.getAsBoolean()) {
-      driveScalar = 0.2;
-      angularScalar = 0.2;
-    } else {
-      driveScalar = 1;
-      angularScalar = 1;
+      xSpeed =
+          Math.max(
+              -DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.2,
+              Math.min(DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.2, xSpeed));
+      ySpeed =
+          Math.max(
+              -DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.2,
+              Math.min(DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.2, ySpeed));
+      rotationSpeed =
+          Math.max(
+              -DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND * 0.2,
+              Math.min(DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND * 0.2, rotationSpeed));
     }
 
     // Drives the robot by scaling the joystick inputs
-    driveSubsystem.drive(
-        leftJoystickX.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND * driveScalar,
-        leftJoystickY.getAsDouble() * DriveConstants.MAX_SPEED_METERS_PER_SECOND * driveScalar,
-        rightJoystickX.getAsDouble() * angularSpeed * angularScalar,
-        isFieldRelative.getAsBoolean());
+    driveSubsystem.drive(xSpeed, ySpeed, rotationSpeed, isFieldRelative.getAsBoolean());
     // Runs all the code from DriveCommand that estimates pose
     super.execute();
   }

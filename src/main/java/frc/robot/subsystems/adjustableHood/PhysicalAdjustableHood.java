@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.extras.logging.LoggedTunableNumber;
 import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
@@ -51,11 +52,9 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   public PhysicalAdjustableHood() {
 
     hoodMotor =
-        new TalonFX(
-            AdjustableHoodConstants.HOOD_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
+        new TalonFX(AdjustableHoodConstants.HOOD_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
     hoodEncoder =
-        new CANcoder(
-            AdjustableHoodConstants.CANCODER_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
+        new CANcoder(AdjustableHoodConstants.CANCODER_ID, HardwareConstants.RIO_CAN_BUS_STRING);
 
     // hoodConfig.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
     // hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -125,7 +124,9 @@ public class PhysicalAdjustableHood implements AdjustableHoodInterface {
   @Override
   public void setHoodAngle(double distance) {
     double rots = adjustableHoodLookupValues.getLookupValue(distance);
+    SmartDashboard.putNumber("pos req", rots);
     hoodMotor.setControl(mmRequest.withPosition(rots));
+    // hoodMotor.setControl(mmRequest.withPosition(desiredAngle.get()));
   }
 
   @Override

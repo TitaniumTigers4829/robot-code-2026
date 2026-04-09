@@ -46,7 +46,7 @@ public class PhysicalIntake implements IntakeInterface {
     pivotConfig = new TalonFXConfiguration();
     encoderConfig = new CANcoderConfiguration();
 
-    encoderConfig.MagnetSensor.MagnetOffset = IntakeConstants.ZERO_ANGLE;
+    encoderConfig.MagnetSensor.MagnetOffset = -IntakeConstants.ZERO_ANGLE;
     encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     pivotEncoder.getConfigurator().apply(encoderConfig, HardwareConstants.TIMEOUT_SECONDS);
@@ -78,7 +78,7 @@ public class PhysicalIntake implements IntakeInterface {
     intakeInnerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    pivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     pivotConfig.MotorOutput.DutyCycleNeutralDeadband = 0.00001;
     pivotConfig.Slot0.kP = IntakeConstants.PIVOT_P;
     pivotConfig.Slot0.kI = IntakeConstants.PIVOT_I;
