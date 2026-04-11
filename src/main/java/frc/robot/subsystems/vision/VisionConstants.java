@@ -76,7 +76,7 @@ public final class VisionConstants {
 
   public static final double MAX_TRANSLATION_DELTA_METERS = 0.8;
   public static final double MAX_ROTATION_DELTA_DEGREES = 50.0;
-  public static final double MAX_AMBIGUITY_THRESHOLD = .8;
+  public static final double MAX_AMBIGUITY_THRESHOLD = .7;
 
   public static final double MEGA_TAG_2_DISTANCE_THRESHOLD = 1.5;
   public static final double MEGA_TAG_2_MAX_HEADING_RATE = 100; // degrees/s

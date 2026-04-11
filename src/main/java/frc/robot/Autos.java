@@ -76,9 +76,7 @@ public class Autos {
             false, // If alliance flipping should be enabled
             this.swerveDrive);
 
-    addRoutine("y one meter", () -> yOneMeterAuto());
-
-    addRoutine("blue_new_left_neutral_auto", () -> blueNewLeftNeutralAuto());
+    addRoutine("blue_left_auto", () -> blueLeftAuto());
 
     addRoutine("blue_right_auto", () -> blueRightAuto());
 
@@ -86,50 +84,29 @@ public class Autos {
 
     addRoutine("red_right_auto", () -> redRightAuto());
 
-    addRoutine("blue__left_u_auto_untested", () -> blueLeftUSweepAuto());
+    addRoutine("blue_left_u", () -> blueLeftUSweepAuto());
+
+    addRoutine("blue_depot_auto", () -> blueDepotAuto());
 
     addRoutine("red_depot_auto", () -> redDepotAuto());
 
-    addRoutine("blue_depot_auto", () -> blueDepotAuto());
 
     // addRoutine("back and shoot", () -> backAndShootAuto());
   }
 
-  public AutoRoutine yOneMeterAuto() {
-    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.Y_ONE_METER_AUTO);
-    AutoTrajectory yOneMeterTrajectory = routine.trajectory(AutoConstants.Y_ONE_METER_TRAJECTORY);
-    routine
-        .active()
-        .onTrue(
-            new SequentialCommandGroup(
-                autoFactory.resetOdometry(AutoConstants.Y_ONE_METER_TRAJECTORY),
-                yOneMeterTrajectory.cmd(),
-                new DriveNoVision(
-                        swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
-                    .withTimeout(1),
-                yOneMeterTrajectory.cmd(),
-                new DriveNoVision(
-                        swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
-                    .withTimeout(1)
-                // new PassFuelCommand(shooterSubsystem, hoodSubsystem).withTimeout(5)));
-                ));
-
-    return routine;
-  }
-
-  public AutoRoutine blueNewLeftNeutralAuto() {
-    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.BLUE_LEFT_NEUTRAL_AUTO_NEW);
+  public AutoRoutine blueLeftAuto() {
+    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.BLUE_LEFT_AUTO);
     AutoTrajectory blueNewLeftNeutralTrajectory =
-        routine.trajectory(AutoConstants.LEFT_NEW_NEUTRAL_TRAJECTORY);
+        routine.trajectory(AutoConstants.BLUE_LEFT_FIRST_TRAJ);
     AutoTrajectory secondSweep =
-        routine.trajectory(AutoConstants.BLUE_LEFT_SECOND_SWEEP_TRAJECTORY);
+        routine.trajectory(AutoConstants.BLUE_LEFT_SECOND_TRAJ);
     routine
         .active()
         .onTrue(
             Commands.sequence(
                 Commands.deadline(
                     Commands.sequence(
-                        autoFactory.resetOdometry(AutoConstants.LEFT_NEW_NEUTRAL_TRAJECTORY),
+                        autoFactory.resetOdometry(AutoConstants.BLUE_LEFT_FIRST_TRAJ),
                         blueNewLeftNeutralTrajectory.cmd()),
                     Commands.sequence(
                         new IntakePivotUpCommand(intakeSubsystem).withTimeout(1.2),
@@ -171,7 +148,7 @@ public class Autos {
   }
 
   public AutoRoutine blueLeftUSweepAuto() {
-    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.BLUE_U_LEFT_FIRST);
+    AutoRoutine routine = autoFactory.newRoutine(AutoConstants.BLUE_LEFT_U_AUTO);
     AutoTrajectory blueUSweepFirstTrajectory =
         routine.trajectory(AutoConstants.BLUE_LEFT_U_FIRST_TRAJ);
     AutoTrajectory secondSweep = routine.trajectory(AutoConstants.BLUE_LEFT_U_SECOND_TRAJ);
@@ -181,7 +158,7 @@ public class Autos {
             Commands.sequence(
                 Commands.deadline(
                     Commands.sequence(
-                        autoFactory.resetOdometry(AutoConstants.BLUE_U_LEFT_FIRST),
+                        autoFactory.resetOdometry(AutoConstants.BLUE_LEFT_U_AUTO),
                         blueUSweepFirstTrajectory.cmd()),
                     Commands.sequence(
                         new IntakePivotUpCommand(intakeSubsystem).withTimeout(1.2),

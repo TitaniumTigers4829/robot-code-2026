@@ -80,7 +80,7 @@ public class DriveCommand extends DriveCommandBase {
 
     if (leftBumper.getAsBoolean()) {
       double currentRotation = driveSubsystem.getOdometryRotation2d().getRotations();
-      double targetAngle = currentRotation >= 0.25 || currentRotation <= -0.25 ? 0.5 : -.5;
+      double targetAngle = currentRotation >= 0.25 || currentRotation <= -0.25 ? 0.5 : 0;
       trenchAlignPIDController.enableContinuousInput(-0.5, 0.5);
       rotationSpeed = trenchAlignPIDController.calculate(targetAngle, currentRotation);
     }
