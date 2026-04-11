@@ -27,6 +27,8 @@ public interface IntakeInterface extends Subsystem {
 
   public default void setPivotSpeed(double angle) {}
 
+  public default void zeroAngle() {}
+
   public default void setPivotSpeedUp() {}
 
   public default void setPivotSpeedDown() {}

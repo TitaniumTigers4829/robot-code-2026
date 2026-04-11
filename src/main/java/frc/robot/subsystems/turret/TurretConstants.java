@@ -61,11 +61,11 @@ public class TurretConstants {
   /* -------------------------------------------------------------------------- */
 
   // TODO: Tune these on actual hardware
-  public static double TURRET_P = 9.4829;
+  public static double TURRET_P = 5.4829;
   public static double TURRET_I = 0;
   public static double TURRET_D = 0;
   public static double TURRET_S = 0.22;
-  public static double TURRET_V = 0.1;
+  public static double TURRET_V = 0.12;
   public static double TURRET_A = 0;
 
   /* -------------------------------------------------------------------------- */
@@ -81,8 +81,8 @@ public class TurretConstants {
   // soft limits — ContinuousWrap and Phoenix soft limits conflict with each other.
   // public static double MAX_ANGLE = 5.35;
   // public static double MIN_ANGLE = -3.291748;
-  public static double MAX_ANGLE = 3.81;
-  public static double MIN_ANGLE = -6.55;
+  public static double MAX_ANGLE = 4.3;
+  public static double MIN_ANGLE = -7.3;
 
   /* -------------------------------------------------------------------------- */
   /*                               CANCODER CONFIG                              */
@@ -94,7 +94,7 @@ public class TurretConstants {
   // Magnet offset found via Phoenix Tuner X with turret physically at forward (0°).
   // To re-zero: point turret forward, read raw CANcoder absolute position in
   // Tuner X, and update this value.
-  public static final double ANGLE_ZERO = -0.036376953125;
+  public static final double ANGLE_ZERO = 0.306;
 
   /* -------------------------------------------------------------------------- */
   /*                            CURRENT LIMITS                                  */

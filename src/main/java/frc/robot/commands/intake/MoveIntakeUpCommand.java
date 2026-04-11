@@ -5,15 +5,14 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class IntakeCommand extends Command {
-  /** Creates a new intake. */
+public class MoveIntakeUpCommand extends Command {
+  /** Creates a new IntakePivotUpCommand. */
   IntakeSubsystem intakeSubsystem;
 
-  public IntakeCommand(IntakeSubsystem intakeSubsystem) {
+  public MoveIntakeUpCommand(IntakeSubsystem intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     addRequirements(intakeSubsystem);
   }
@@ -25,20 +24,17 @@ public class IntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_DOWN_POSITION);
-    if (intakeSubsystem.isIntakeDeployed()) {
-      // SmartDashboard.putBoolean("deployed", true);
-      intakeSubsystem.intakeFuel();
-    } else {
-      // SmartDashboard.putBoolean("deployed", false);
-      intakeSubsystem.setSpeed(0);
-    }
+    // if (intakeSubsystem.getIntakeAngle() > IntakeConstants.PIVOT_UP_POSITION) {
+    intakeSubsystem.setPivotSpeed(-.1);
+    // } else {
+    //   intakeSubsystem.setPivotSpeed(0);
+    // }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeSubsystem.setSpeed(0);
+    intakeSubsystem.setPivotSpeed(0);
   }
 
   // Returns true when the command should end.

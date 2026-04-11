@@ -16,7 +16,7 @@ public class DriveCommand extends DriveCommandBase {
   private final DoubleSupplier leftJoystickX, leftJoystickY, rightJoystickX;
   private final BooleanSupplier isFieldRelative, isHighRotation, rightTrigger, leftBumper;
 
-  private final PIDController trenchAlignPIDController = new PIDController(10, 0, 0);
+  private final PIDController trenchAlignPIDController = new PIDController(20, 0, 0);
 
   private double angularSpeed;
 
@@ -72,9 +72,16 @@ public class DriveCommand extends DriveCommandBase {
 
     double rotationSpeed = rightJoystickX.getAsDouble() * angularSpeed;
 
+    // if (leftBumper.getAsBoolean()) {
+    //   double currentRotation = driveSubsystem.getOdometryRotation2d().getRotations();
+    //   double targetAngle = currentRotation >= 0 ? 0.25 : -.25;
+    //   rotationSpeed = trenchAlignPIDController.calculate(targetAngle, currentRotation);
+    // }
+
     if (leftBumper.getAsBoolean()) {
       double currentRotation = driveSubsystem.getOdometryRotation2d().getRotations();
-      double targetAngle = currentRotation >= 0 ? 0.25 : -.25;
+      double targetAngle = currentRotation >= 0.25 || currentRotation <= -0.25 ? 0.5 : -.5;
+      trenchAlignPIDController.enableContinuousInput(-0.5, 0.5);
       rotationSpeed = trenchAlignPIDController.calculate(targetAngle, currentRotation);
     }
 
@@ -84,16 +91,16 @@ public class DriveCommand extends DriveCommandBase {
     if (rightTrigger.getAsBoolean()) {
       xSpeed =
           Math.max(
-              -DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.2,
-              Math.min(DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.2, xSpeed));
+              -DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.15,
+              Math.min(DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.15, xSpeed));
       ySpeed =
           Math.max(
-              -DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.2,
-              Math.min(DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.2, ySpeed));
+              -DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.15,
+              Math.min(DriveConstants.MAX_SPEED_METERS_PER_SECOND * 0.15, ySpeed));
       rotationSpeed =
           Math.max(
-              -DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND * 0.2,
-              Math.min(DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND * 0.2, rotationSpeed));
+              -DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND * 0.15,
+              Math.min(DriveConstants.LOW_ANGULAR_SPEED_RADIANS_PER_SECOND * 0.15, rotationSpeed));
     }
 
     // Drives the robot by scaling the joystick inputs

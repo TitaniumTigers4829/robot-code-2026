@@ -24,7 +24,7 @@ public class IntakeConstants {
   public static final double PIVOT_A = 0.0; // THIS IS WORST THAN 9/11
   public static final double PIVOT_G = 0.0; // 0.8;
 
-  public static final double ZERO_ANGLE = 0.09;
+  public static final double ZERO_ANGLE = 0.427; // 0.09;
 
   // DONT TOUCH THESE ARE SOMEWHAT GOOD CURRENT LIMIT VALUES
   public static final double OUTER_STATOR_CURRENT_LIMIT = 80;
@@ -36,7 +36,7 @@ public class IntakeConstants {
   public static final double PIVOT_STATOR_CURRENT_LIMIT = 80;
   public static final double PIVOT_SUPPLY_CURRENT_LIMIT = 25;
 
-  public static final double PIVOT_DOWN_POSITION = 0.792;
+  public static final double PIVOT_DOWN_POSITION = 0.8;
   public static final double PIVOT_UP_POSITION = 0.12; // -0.33
   public static final double PIVOT_ALL_THE_WAY_UP_POSITION = 0.027;
 

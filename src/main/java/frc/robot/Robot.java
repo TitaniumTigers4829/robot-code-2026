@@ -12,20 +12,19 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.HardwareConstants;
 import frc.robot.commands.drive.DriveCommand;
-import frc.robot.commands.hublocking.HubLockCommand;
 import frc.robot.commands.hublocking.ShootWhileMove;
 import frc.robot.commands.intake.DefenseCommand;
 import frc.robot.commands.intake.IntakeCommand;
-import frc.robot.commands.intake.IntakePivotBounceHigher;
 import frc.robot.commands.intake.IntakePivotBounceLower;
 import frc.robot.commands.intake.IntakePivotDownCommand;
 import frc.robot.commands.intake.IntakePivotUpCommand;
+import frc.robot.commands.intake.MoveIntakeUpCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.intake.ReverseKickerAndRollers;
 // import frc.robot.commands.intake.ReverseSpindexerCommand;
 import frc.robot.commands.shooter.HoodUpCommand;
 import frc.robot.commands.shooter.ManualHoodDown;
-import frc.robot.commands.shooter.ManualHoodUp;
+import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
 import frc.robot.commands.turret.ManualTurretCWCommand;
 import frc.robot.extras.util.JoystickUtil;
@@ -94,7 +93,7 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
 
     // Updates autos while the robot is enabled
-    autos.update();
+    // autos.update();
 
     // Return to normal thread priority without real time
     Threads.setCurrentThreadPriority(false, HardwareConstants.LOW_THREAD_PRIORITY);
@@ -215,16 +214,25 @@ public class Robot extends LoggedRobot {
                             swerveDrive.getEstimatedPose().getY(),
                             Rotation2d.fromDegrees(swerveDrive.getAllianceAngleOffset())))));
 
-    // driverController.y().whileTrue(new PassFuelCommand(shooterSubsystem, hoodSubsystem));
+    driverController
+        .b()
+        .whileTrue(
+            new PassFuelCommand(
+                swerveDrive,
+                turretSubsystem,
+                shooterSubsystem,
+                hoodSubsystem,
+                () -> operatorController.povDown().getAsBoolean()));
     driverController.y().whileTrue(new HoodUpCommand(hoodSubsystem));
     driverController.a().whileTrue(new DefenseCommand(intakeSubsystem, turretSubsystem));
     // driverController.b().whileTrue(new ReverseSpindexerCommand(shooterSubsystem));
-    driverController.x().whileTrue(new ReverseKickerAndRollers(shooterSubsystem));
+    driverController.leftTrigger().whileTrue(new ReverseKickerAndRollers(shooterSubsystem));
 
-    driverController
-        .leftTrigger()
-        .whileTrue(
-            new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
+    // driverController
+    //     .leftTrigger()
+    //     .whileTrue(
+    //         new HubLockCommand(swerveDrive, visionSubsystem, hoodSubsystem, turretSubsystem));
+    // driverController.leftTrigger().whileTrue(new ReverseRollerFloor(shooterSubsystem));
 
     driverController
         .rightTrigger()
@@ -247,11 +255,12 @@ public class Robot extends LoggedRobot {
     operatorController.y().whileTrue(new IntakePivotUpCommand(intakeSubsystem));
     operatorController.a().whileTrue(new IntakePivotDownCommand(intakeSubsystem));
     operatorController.x().whileTrue(new IntakePivotBounceLower(intakeSubsystem));
-    operatorController.b().whileTrue(new IntakePivotBounceHigher(intakeSubsystem));
+    // operatorController.b().whileTrue(new IntakePivotBounceHigher(intakeSubsystem));
+    operatorController.b().whileTrue(new MoveIntakeUpCommand(intakeSubsystem));
 
     operatorController.rightTrigger().whileTrue(new IntakeCommand(intakeSubsystem));
 
-    operatorController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
+    operatorController.povUp().whileTrue(new InstantCommand(() -> intakeSubsystem.zeroAngle()));
 
     operatorController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
 

@@ -63,6 +63,7 @@ public class TurretSubsystem extends SubsystemBase {
         Math.max(
             TurretConstants.MIN_ANGLE * 10,
             Math.min(TurretConstants.MAX_ANGLE * 10, targetAngle * 10));
+    SmartDashboard.putNumber("set turret angle", targetAngle * 10);
     turretInterface.setTurretAngle(clamped);
   }
 

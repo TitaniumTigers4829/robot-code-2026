@@ -76,7 +76,7 @@ public final class VisionConstants {
 
   public static final double MAX_TRANSLATION_DELTA_METERS = 0.8;
   public static final double MAX_ROTATION_DELTA_DEGREES = 50.0;
-  public static final double MAX_AMBIGUITY_THRESHOLD = .1;
+  public static final double MAX_AMBIGUITY_THRESHOLD = .8;
 
   public static final double MEGA_TAG_2_DISTANCE_THRESHOLD = 1.5;
   public static final double MEGA_TAG_2_MAX_HEADING_RATE = 100; // degrees/s
@@ -112,8 +112,8 @@ public final class VisionConstants {
     // {distance in meters, x std deviation, y std deviation, r (in degrees) std deviation}
     {0, 0.01, 0.01, Units.degreesToRadians(180000)}, // 0.5
     {1.5, 0.01, 0.01, Units.degreesToRadians(180000)}, // 0.7
-    {3, 0.06, 0.06, Units.degreesToRadians(180000)}, // 4
-    {4.5, 0.12, 0.12, Units.degreesToRadians(180000)}, // 30
+    {3, 0.03, 0.06, Units.degreesToRadians(180000)}, // 4
+    {4.5, 0.6, 0.12, Units.degreesToRadians(180000)}, // 30
     {8, 0.5, 0.5, Units.degreesToRadians(180000)}, // 90
     {10, 10.0, 10.0, Units.degreesToRadians(180000)} // 90
   };

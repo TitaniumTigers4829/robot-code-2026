@@ -100,6 +100,10 @@ public class ShooterSubsystem extends SubsystemBase {
     return this.shooterInterface.setIsAimingProperly(isAimingProperly);
   }
 
+  public void startingShoot() {
+    this.shooterInterface.startingShoot();
+  }
+
   @Override
   public void periodic() {
     shooterInterface.updateInputs(inputs);

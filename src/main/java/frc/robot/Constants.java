@@ -140,26 +140,46 @@ public final class Constants {
   public static final class AutoConstants {
     // Different Pre-defined Auto Routines
     public static final String Y_ONE_METER_AUTO = "Y-One-Meter-Test";
-    public static final String LEFT_NEUTRAL_AUTO = "left neutral auto";
-    public static final String RIGHT_NEUTRAL_AUTO = "right neutral auto";
-    public static final String MIDDLE_DEPOT_AUTO = "middle depot auto";
-    public static final String ONE_RAD_AUTO = "one rad auto";
-    public static final String BACK_PICKUP_SHOOT = "back pickup shoot auto";
-    public static final String RED_LEFT_NEUTRAL_AUTO = "red left neutral auto";
+    public static final String BLUE_RIGHT_AUTO = "blue right auto";
+    public static final String RED_LEFT_AUTO = "red left auto";
+    public static final String RED_RIGHT_AUTO = "red right auto";
+    public static final String RED_DEPOT_AUTO = "red depot auto";
+    public static final String BLUE_DEPOT_AUTO = "blue depot auto";
+    // public static final String LEFT_NEUTRAL_AUTO = "left neutral auto";
+    // public static final String RIGHT_NEUTRAL_AUTO = "right neutral auto";
+    // public static final String MIDDLE_DEPOT_AUTO = "middle depot auto";
+    // public static final String ONE_RAD_AUTO = "one rad auto";
+    // public static final String BACK_PICKUP_SHOOT = "back pickup shoot auto";
+    // public static final String RED_LEFT_NEUTRAL_AUTO = "red left neutral auto";
     public static final String BLUE_LEFT_NEUTRAL_AUTO_NEW = "NEW blue left neutral auto";
     public static final String BLUE_LEFT_SECOND_SWEEP = "bkue left second sweep";
+    public static final String BLUE_U_LEFT_FIRST = "blue left u auto UNTESTED";
+
+    public static final String RED_DEPOT_TRAJ = "MiscTrajectories/red_depot_auto";
+    public static final String BLUE_DEPOT_TRAJ = "MiscTrajectories/blue_depot_auto";
 
     public static final String Y_ONE_METER_TRAJECTORY = "MiscTrajectories/one_point_one_meter";
-    public static final String LEFT_NEUTRAL_TRAJECTORY = "MiscTrajectories/blue_neutral_left_auto";
-    public static final String RIGHT_NEUTRAL_TRAJECTORY =
-        "MiscTrajectories/blue_neutral_right_auto";
+    public static final String BLUE_LEFT_U_FIRST_TRAJ = "MiscTrajectories/blue_left_u_sweep_auto";
+    public static final String BLUE_LEFT_U_SECOND_TRAJ =
+        "MiscTrajectories/blue_left_u_second_sweep";
+
+    public static final String BLUE_RIGHT_FIRST_TRAJ = "MiscTrajectories/blue_neutral_right_auto";
+    public static final String BLUE_RIGHT_SECOND_TRAJ = "MiscTrajectories/blue_second_sweep_left";
+    public static final String RED_LEFT_FIRST_TRAJ = "MiscTrajectories/red_neutral_left_auto";
+    public static final String RED_LEFT_SECOND_TRAJ = "MiscTrajectories/red_second_sweep_left";
+    public static final String RED_RIGHT_FIRST_TRAJ = "MiscTrajectories/red_neutral_right_auto";
+    public static final String RED_RIGHT_SECOND_TRAJ = "MiscTrajectories/red_second_sweep_right";
+    // public static final String LEFT_NEUTRAL_TRAJECTORY =
+    // "MiscTrajectories/blue_neutral_left_auto";
+    // public static final String RIGHT_NEUTRAL_TRAJECTORY =
+    //     "MiscTrajectories/blue_neutral_right_auto";
     public static final String LEFT_NEW_NEUTRAL_TRAJECTORY =
         "MiscTrajectories/blue_neutral_left_auto_new";
-    public static final String RED_LEFT_NEUTRAL_TRAJECTORY =
-        "MiscTrajectories/red_left_neutral_auto";
-    public static final String MIDDLE_DEPOT_TRAJECTORY = "MiscTrajectories/middle_depot_auto";
-    public static final String ONE_RAD_TRAJ = "MiscTrajectories/rotate";
-    public static final String BACK_PICKUP_SHOOT_TRAJ = "MiscTrajectories/back_pickup_shoot";
+    // public static final String RED_LEFT_NEUTRAL_TRAJECTORY =
+    //     "MiscTrajectories/red_left_neutral_auto";
+    // public static final String MIDDLE_DEPOT_TRAJECTORY = "MiscTrajectories/middle_depot_auto";
+    // public static final String ONE_RAD_TRAJ = "MiscTrajectories/rotate";
+    // public static final String BACK_PICKUP_SHOOT_TRAJ = "MiscTrajectories/back_pickup_shoot";
     public static final String BLUE_LEFT_SECOND_SWEEP_TRAJECTORY =
         "MiscTrajectories/blue_second_sweep_left";
   }

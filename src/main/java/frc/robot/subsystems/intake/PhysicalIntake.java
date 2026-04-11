@@ -109,14 +109,16 @@ public class PhysicalIntake implements IntakeInterface {
     intakeMotorInside.getConfigurator().apply(intakeInnerConfig);
     intakePivotMotorRight.getConfigurator().apply(pivotConfig);
 
-    // pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    // pivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // intakePivotMotorLeft.getConfigurator().apply(pivotConfig);
 
     intakeAngle = pivotEncoder.getPosition();
     intakePivotSpeed = intakePivotMotorRight.getVelocity();
 
-    intakePivotMotorRight.setPosition(0.0);
+    // pivotEncoder.setPosition(pivotEncoder.getAbsolutePosition().getValueAsDouble());
+    pivotEncoder.setPosition(0);
+    // intakePivotMotorRight.setPosition(0.0);
     // intakePivotMotorLeft.setPosition(0.0);
 
     BaseStatusSignal.setUpdateFrequencyForAll(100.0, intakeAngle, intakePivotSpeed);
@@ -181,6 +183,10 @@ public class PhysicalIntake implements IntakeInterface {
   public double getIntakeAngle() {
     intakeAngle.refresh();
     return intakeAngle.getValueAsDouble();
+  }
+
+  public void zeroAngle() {
+    pivotEncoder.setPosition(0);
   }
 
   public double getIntakeSpeed() {

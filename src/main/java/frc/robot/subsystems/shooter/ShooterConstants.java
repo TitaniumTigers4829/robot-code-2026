@@ -15,10 +15,10 @@ public class ShooterConstants {
   public static double SHOOTER_HEIGHT_FROM_GROUND = 0;
   public static double GEAR_RATIO = 0.95;
 
-  public static double FLYWHEEL_S = 0.2;
-  public static double FLYWHEEL_V = 0.111;
+  public static double FLYWHEEL_S = 0; // 0.2;
+  public static double FLYWHEEL_V = 0; // 0.111;
   public static double FLYWHEEL_A = 0;
-  public static double FLYWHEEL_P = 20; // 48294829; // 0.1
+  public static double FLYWHEEL_P = 48294829; // 20
   public static double FLYWHEEL_I = 0;
   public static double FLYWHEEL_D = 0;
 
@@ -26,19 +26,24 @@ public class ShooterConstants {
   public static double FLYWHEEL_ERROR_TOLERANCE = 2;
 
   public static double PASS_SHOOTER_SPEED = -1;
-  public static double KICKER_PERCENT_OUTPUT = 1;
+  public static double KICKER_PERCENT_OUTPUT = 0.8;
   public static double SPINDEXER_INTAKE_SPEED = -0.2; // 0.675
-  public static double SPINDEXER_SHOOT_SPEED = -.7; // 0.675
+  public static double SPINDEXER_SHOOT_SPEED = -.6; // 0.675
 
   // Lookup table for rpms needed for certain distances
   public static double[][] DISTANCE_TO_FLYWHEEL_RPM = {
     // Distance from hub in meters, needed rps of flywheel
-    {1.5, 46.29},
-    {2.0, 50},
-    {2.5, 55},
-    {3.0, 55.4829},
-    {3.5, 61.4829},
-    {4.0, 62.4829},
-    {4.5, 70}
+    {1.5, 42.29},
+    {2.0, 52},
+    {2.5, 57},
+    {3.0, 59},
+    {3.5, 63.4829},
+    {4.0, 63.4829},
+    {4.5, 64.4829},
+    {5.0, 66.4829},
+    {5.5, 66.4829},
+    // FOR PASSING ONLY - GUESSED VALUES:
+    {6, 68},
+    {10, 95}
   };
 }
