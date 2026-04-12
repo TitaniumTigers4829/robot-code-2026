@@ -173,9 +173,9 @@ public class PhysicalShooter implements ShooterInterface {
 
       double rollerSpeed = ShooterConstants.SPINDEXER_SHOOT_SPEED;
 
-      if (isPausingRollerFloor && pauseRollerFloorCounter < 35) {
+      if (isPausingRollerFloor && pauseRollerFloorCounter < 30) {
         rollerSpeed = 0;
-      } else if (isPausingRollerFloor && pauseRollerFloorCounter >= 35) {
+      } else if (isPausingRollerFloor && pauseRollerFloorCounter >= 30) {
         isPausingRollerFloor = false;
         rollerWasUpToSpeed = false;
         pauseRollerFloorCounter = 0;

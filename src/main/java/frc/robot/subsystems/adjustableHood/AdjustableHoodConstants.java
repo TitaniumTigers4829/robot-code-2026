@@ -30,6 +30,7 @@ public class AdjustableHoodConstants {
     {5.0, .85},
     // FOR PASSING ONLY - GUESSED
     {6, .90},
-    {13, 1.6}
+    {10, 1.7},
+    {13, 1.7}
   };
 }

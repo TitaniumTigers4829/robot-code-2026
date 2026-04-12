@@ -238,7 +238,7 @@ public class Robot extends LoggedRobot {
         .rightTrigger()
         .whileTrue(
             new ShootWhileMove(
-                swerveDrive,
+                null,
                 turretSubsystem,
                 shooterSubsystem,
                 hoodSubsystem,

@@ -23,7 +23,7 @@ public class ShootWhileMove extends Command {
   private final TurretSubsystem turret;
   private final ShooterSubsystem shooter;
   private final AdjustableHoodSubsystem hood;
-  private final SwerveDrive drive;
+  // private final SwerveDrive drive;
   private final BooleanSupplier overridingHood;
 
   Pose2d robotPose;
@@ -64,7 +64,7 @@ public class ShootWhileMove extends Command {
       ShooterSubsystem shooter,
       AdjustableHoodSubsystem hood,
       BooleanSupplier overridingHood) {
-    this.drive = drive;
+    // this.drive = drive;
     this.turret = turret;
     this.shooter = shooter;
     this.hood = hood;
@@ -94,16 +94,17 @@ public class ShootWhileMove extends Command {
 
   @Override
   public void execute() {
-    dampener = -1;
-
-    robotPose = drive.getEstimatedPose();
+    dampener = -0.5;
+    robotPose = new Pose2d(); // drive.getEstimatedPose();
     turretPose =
         robotPose.getTranslation().plus(turretOffsetPose.rotateBy(robotPose.getRotation()));
 
-    fieldRelative =
-        ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), robotPose.getRotation());
+    // fieldRelative =
+    //     ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), robotPose.getRotation());
+    fieldRelative = new ChassisSpeeds(0, 0, 0);
 
-    velocityOmega = drive.getChassisSpeeds().omegaRadiansPerSecond;
+    // velocityOmega = drive.getChassisSpeeds().omegaRadiansPerSecond;
+    velocityOmega = 0;
 
     iterativeDistance = turretPose.getDistance(targetPosition);
 

@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.drive.DriveNoVision;
 import frc.robot.commands.drive.FollowSwerveSampleCommand;
@@ -90,7 +89,6 @@ public class Autos {
 
     addRoutine("red_depot_auto", () -> redDepotAuto());
 
-
     // addRoutine("back and shoot", () -> backAndShootAuto());
   }
 
@@ -98,8 +96,7 @@ public class Autos {
     AutoRoutine routine = autoFactory.newRoutine(AutoConstants.BLUE_LEFT_AUTO);
     AutoTrajectory blueNewLeftNeutralTrajectory =
         routine.trajectory(AutoConstants.BLUE_LEFT_FIRST_TRAJ);
-    AutoTrajectory secondSweep =
-        routine.trajectory(AutoConstants.BLUE_LEFT_SECOND_TRAJ);
+    AutoTrajectory secondSweep = routine.trajectory(AutoConstants.BLUE_LEFT_SECOND_TRAJ);
     routine
         .active()
         .onTrue(
@@ -279,8 +276,8 @@ public class Autos {
                         autoFactory.resetOdometry(AutoConstants.RED_RIGHT_FIRST_TRAJ),
                         redFirstTrajectory.cmd()),
                     Commands.sequence(
-                        new IntakePivotUpCommand(intakeSubsystem).withTimeout(1.2),
-                        new IntakeCommand(intakeSubsystem).withTimeout(2.1))),
+                        new IntakePivotUpCommand(intakeSubsystem).withTimeout(1),
+                        new IntakeCommand(intakeSubsystem).withTimeout(2.3))),
                 new DriveNoVision(
                         swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
                     .withTimeout(.1),
@@ -292,8 +289,8 @@ public class Autos {
                 Commands.deadline(
                     secondSweep.cmd(),
                     Commands.sequence(
-                        new IntakePivotUpCommand(intakeSubsystem).withTimeout(0.5),
-                        new IntakeCommand(intakeSubsystem).withTimeout(1.8))),
+                        new IntakePivotUpCommand(intakeSubsystem).withTimeout(0.3),
+                        new IntakeCommand(intakeSubsystem).withTimeout(2))),
                 new DriveNoVision(
                         swerveDrive, () -> 0, () -> 0, () -> 0, () -> false, () -> false, null)
                     .withTimeout(.1),

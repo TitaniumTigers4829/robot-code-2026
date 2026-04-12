@@ -10,15 +10,11 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide
- * numerical or boolean
- * constants. This class should not be used for any other purpose. All constants
- * should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>
- * It is advised to statically import this class (or one of its inner classes)
- * wherever the
+ * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
@@ -42,10 +38,8 @@ public final class Constants {
   }
 
   /**
-   * Gets the mode of the robot based on the RobotType and the state of
-   * {@link RobotBase}, if the
-   * robot isn't real but is also not the SIM_ROBOT, it will set the currently
-   * used mode to REPLAY
+   * Gets the mode of the robot based on the RobotType and the state of {@link RobotBase}, if the
+   * robot isn't real but is also not the SIM_ROBOT, it will set the currently used mode to REPLAY
    *
    * @return the currently used Mode
    */
@@ -91,10 +85,8 @@ public final class Constants {
     public static final String RIO_CAN_BUS_STRING = "rio";
 
     /**
-     * For some reason, falcons normally have a deadband threshold of 4%. This is
-     * incredibly high!
-     * It makes it very hard to do precise movements, so with this constant we set
-     * the threshold to
+     * For some reason, falcons normally have a deadband threshold of 4%. This is incredibly high!
+     * It makes it very hard to do precise movements, so with this constant we set the threshold to
      * the lowest possible value.
      */
     public static final double MIN_DUTY_CYCLE_DEADBAND = 0.001;
@@ -109,7 +101,8 @@ public final class Constants {
     public static final double FIELD_LENGTH_METERS = Units.inchesToMeters(651.2);
     public static final double FIELD_WIDTH_METERS = Units.inchesToMeters(317.7);
 
-    public static final Translation2d FIELD_CENTER = new Translation2d(FIELD_LENGTH_METERS / 2, FIELD_WIDTH_METERS / 2);
+    public static final Translation2d FIELD_CENTER =
+        new Translation2d(FIELD_LENGTH_METERS / 2, FIELD_WIDTH_METERS / 2);
 
     public static final double HUB_HEIGHT_METERS = Units.inchesToMeters(72);
     public static final double HUB_LENGTH_METERS = Units.inchesToMeters(47);
@@ -117,11 +110,13 @@ public final class Constants {
 
     public static final double HUB_WALL_FROM_ALLIANCE_WALL_METERS = Units.inchesToMeters(158.6);
 
-    public static final Translation2d BLUE_HUB_CENTER = new Translation2d(
-        HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2), FIELD_WIDTH_METERS / 2);
-    public static final Translation2d RED_HUB_CENTER = new Translation2d(
-        FIELD_LENGTH_METERS - (HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2)),
-        FIELD_WIDTH_METERS / 2);
+    public static final Translation2d BLUE_HUB_CENTER =
+        new Translation2d(
+            HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2), FIELD_WIDTH_METERS / 2);
+    public static final Translation2d RED_HUB_CENTER =
+        new Translation2d(
+            FIELD_LENGTH_METERS - (HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2)),
+            FIELD_WIDTH_METERS / 2);
 
     // TODO: In addition to this, coordinates for all relevant game structures must
     // be added (ex:
@@ -139,8 +134,9 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = 10.174;
 
     // Constraint for the motion profiled robot angle controller
-    public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
-        MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_ACCELERATION);
+    public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS =
+        new TrapezoidProfile.Constraints(
+            MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_ACCELERATION);
   }
 
   public static final class AutoConstants {
@@ -166,7 +162,8 @@ public final class Constants {
     public static final String RED_RIGHT_SECOND_TRAJ = "MiscTrajectories/red_second_sweep_right";
 
     public static final String BLUE_LEFT_U_FIRST_TRAJ = "MiscTrajectories/blue_left_u_sweep_auto";
-    public static final String BLUE_LEFT_U_SECOND_TRAJ = "MiscTrajectories/blue_left_u_second_sweep";
+    public static final String BLUE_LEFT_U_SECOND_TRAJ =
+        "MiscTrajectories/blue_left_u_second_sweep";
   }
 
   public static final class JoystickConstants {
