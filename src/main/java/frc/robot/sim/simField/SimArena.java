@@ -31,18 +31,19 @@ import org.littletonrobotics.junction.Logger;
 /**
  * Abstract base class for a simulation arena.
  *
- * <p>This class manages the physics world, game pieces, and robots in a simulation environment.
- * It handles:
+ * <p>This class manages the physics world, game pieces, and robots in a simulation environment. It
+ * handles:
+ *
  * <ul>
- *   <li>Physics world initialization and updates</li>
- *   <li>Collision detection between robots, obstacles, and game pieces</li>
- *   <li>Game piece creation and management</li>
- *   <li>Robot registration and simulation ticks</li>
+ *   <li>Physics world initialization and updates
+ *   <li>Collision detection between robots, obstacles, and game pieces
+ *   <li>Game piece creation and management
+ *   <li>Robot registration and simulation ticks
  * </ul>
  *
- * <p>Season-specific implementations (e.g., {@link frc.robot.sim.sim2026.RebuiltSim.RebuiltSimArena})
- * should extend this class and implement {@link #placeGamePiecesOnField()} and
- * {@link #competitionPeriodic()} to provide game-specific behavior.
+ * <p>Season-specific implementations (e.g., {@link
+ * frc.robot.sim.sim2026.RebuiltSim.RebuiltSimArena}) should extend this class and implement {@link
+ * #placeGamePiecesOnField()} and {@link #competitionPeriodic()} to provide game-specific behavior.
  *
  * @see SimGamePiece
  * @see SimRobot
@@ -59,7 +60,7 @@ public abstract class SimArena {
    */
   public record SimEnvTiming(Time period, int ticksPerPeriod, Time dt)
       implements StructSerializable {
-    
+
     /**
      * Creates timing information from robot period and sub-ticks.
      *
@@ -139,8 +140,8 @@ public abstract class SimArena {
   /**
    * Executes an operation with the physics world locked.
    *
-   * <p>This method ensures thread-safe access to the physics world by acquiring
-   * {@link #worldLock} before executing the provided consumer.
+   * <p>This method ensures thread-safe access to the physics world by acquiring {@link #worldLock}
+   * before executing the provided consumer.
    *
    * @param worldModifier operation to perform on the locked world
    */
@@ -156,9 +157,8 @@ public abstract class SimArena {
   /**
    * Creates and registers a new game piece in the simulation.
    *
-   * <p>The created game piece is initially in user-controlled state. The caller must
-   * call appropriate methods (e.g., {@link SimGamePiece#place(Translation2d)}) to
-   * add it to the field.
+   * <p>The created game piece is initially in user-controlled state. The caller must call
+   * appropriate methods (e.g., {@link SimGamePiece#place(Translation2d)}) to add it to the field.
    *
    * @param variant the variant of game piece to create
    * @return the created game piece (in user-controlled state)
@@ -173,11 +173,12 @@ public abstract class SimArena {
   /**
    * Updates the simulation world.
    *
-   * <p>This method should be called ONCE in {@link edu.wpi.first.wpilibj.IterativeRobotBase#simulationPeriodic()}.
-   * It executes:
+   * <p>This method should be called ONCE in {@link
+   * edu.wpi.first.wpilibj.IterativeRobotBase#simulationPeriodic()}. It executes:
+   *
    * <ol>
-   *   <li>Game-specific competition logic via {@link #competitionPeriodic()}</li>
-   *   <li>Multiple physics sub-ticks (as specified by {@link SimEnvTiming#ticksPerPeriod})</li>
+   *   <li>Game-specific competition logic via {@link #competitionPeriodic()}
+   *   <li>Multiple physics sub-ticks (as specified by {@link SimEnvTiming#ticksPerPeriod})
    * </ol>
    */
   public void simulationPeriodic() {
@@ -191,11 +192,12 @@ public abstract class SimArena {
    * Executes a single physics sub-tick.
    *
    * <p>This method:
+   *
    * <ol>
-   *   <li>Updates all robots via {@link SimRobot#simTick()}</li>
-   *   <li>Updates all game pieces via {@link SimGamePiece#simulationSubTick()}</li>
-   *   <li>Advances the physics world by one time step ({@link SimEnvTiming#dt})</li>
-   *   <li>Processes collisions between robots and obstacles</li>
+   *   <li>Updates all robots via {@link SimRobot#simTick()}
+   *   <li>Updates all game pieces via {@link SimGamePiece#simulationSubTick()}
+   *   <li>Advances the physics world by one time step ({@link SimEnvTiming#dt})
+   *   <li>Processes collisions between robots and obstacles
    * </ol>
    */
   private void simulationSubTick() {
@@ -212,17 +214,18 @@ public abstract class SimArena {
    * Processes collisions between robots and field obstacles.
    *
    * <p>This method:
+   *
    * <ul>
-   *   <li>Clears previous collision data from all robots</li>
-   *   <li>Checks each robot against all obstacles using {@link World#isInContact(Body, Body)}</li>
-   *   <li>Checks each robot against other robots</li>
-   *   <li>Updates each robot's collision list via {@link FrcBody#addCollidingBody(Body)}</li>
-   *   <li>Logs collision statistics</li>
+   *   <li>Clears previous collision data from all robots
+   *   <li>Checks each robot against all obstacles using {@link World#isInContact(Body, Body)}
+   *   <li>Checks each robot against other robots
+   *   <li>Updates each robot's collision list via {@link FrcBody#addCollidingBody(Body)}
+   *   <li>Logs collision statistics
    * </ul>
    *
-   * <p>Note: Game piece collision detection is currently a placeholder and should be
-   * implemented by accessing the underlying body from {@link SimGamePiece} when in
-   * {@link SimGamePiece.GamePieceState#ON_FIELD} state.
+   * <p>Note: Game piece collision detection is currently a placeholder and should be implemented by
+   * accessing the underlying body from {@link SimGamePiece} when in {@link
+   * SimGamePiece.GamePieceState#ON_FIELD} state.
    */
   private void processCollisions() {
     // Clear previous collision data for all robots
@@ -288,8 +291,8 @@ public abstract class SimArena {
   /**
    * Resets the field for autonomous mode.
    *
-   * <p>This method clears all existing game pieces and places new ones
-   * in their starting positions via {@link #placeGamePiecesOnField()}.
+   * <p>This method clears all existing game pieces and places new ones in their starting positions
+   * via {@link #placeGamePiecesOnField()}.
    */
   public void resetFieldForAuto() {
     gamePieces.forEach(gp -> gp.withLib(SimGamePiece::delete));
@@ -300,8 +303,8 @@ public abstract class SimArena {
   /**
    * Places game pieces on the field for autonomous mode.
    *
-   * <p>This method should be implemented by season-specific subclasses to place
-   * game pieces in their correct starting positions according to the game manual.
+   * <p>This method should be implemented by season-specific subclasses to place game pieces in
+   * their correct starting positions according to the game manual.
    */
   protected abstract void placeGamePiecesOnField();
 
@@ -309,11 +312,12 @@ public abstract class SimArena {
    * Executes season-specific competition logic each simulation period.
    *
    * <p>Implementations should handle:
+   *
    * <ul>
-   *   <li>Score tracking and updates</li>
-   *   <li>Game element state changes (e.g., HUB active/inactive)</li>
-   *   <li>Human player interactions</li>
-   *   <li>Match timing events</li>
+   *   <li>Score tracking and updates
+   *   <li>Game element state changes (e.g., HUB active/inactive)
+   *   <li>Human player interactions
+   *   <li>Match timing events
    * </ul>
    */
   protected abstract void competitionPeriodic();
@@ -322,14 +326,15 @@ public abstract class SimArena {
    * Abstract field map containing static obstacles.
    *
    * <p>This class provides methods for adding obstacles to the field:
+   *
    * <ul>
-   *   <li>Border lines (walls)</li>
-   *   <li>Rectangular obstacles (BUMPS, TRENCHES, etc.)</li>
-   *   <li>Custom convex shapes</li>
+   *   <li>Border lines (walls)
+   *   <li>Rectangular obstacles (BUMPS, TRENCHES, etc.)
+   *   <li>Custom convex shapes
    * </ul>
    *
-   * <p>Obstacles are created with infinite mass (static) and appropriate
-   * friction and restitution coefficients.
+   * <p>Obstacles are created with infinite mass (static) and appropriate friction and restitution
+   * coefficients.
    */
   public static class FieldMap {
     /** List of static obstacles in the field. */
@@ -376,10 +381,11 @@ public abstract class SimArena {
      * Creates a static obstacle body with the given shape.
      *
      * <p>The obstacle is configured with:
+     *
      * <ul>
-     *   <li>Infinite mass (static)</li>
-     *   <li>Friction coefficient: 0.6</li>
-     *   <li>Restitution coefficient: 0.3</li>
+     *   <li>Infinite mass (static)
+     *   <li>Friction coefficient: 0.6
+     *   <li>Restitution coefficient: 0.3
      * </ul>
      *
      * @param shape the convex shape of the obstacle

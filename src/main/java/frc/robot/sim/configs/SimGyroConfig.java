@@ -40,7 +40,7 @@ public class SimGyroConfig implements StructSerializable {
      * user manual of pigeon 2:
      * https://store.ctr-electronics.com/content/user-manual/Pigeon2%20User's%20Guide.pdf
      */
-    return new SimGyroConfig(0.5, 0.02);
+    return new SimGyroConfig(0.001, 0.004); // velocity std dev is fudged
   }
 
   /**

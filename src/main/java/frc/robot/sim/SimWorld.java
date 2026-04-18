@@ -58,7 +58,7 @@ public class SimWorld {
           Units.inchesToMeters(30.5),
           DriveConstants.MODULE_TRANSLATIONS,
           moduleCfg,
-          SimGyroConfig.ofNavX2());
+          SimGyroConfig.ofPigeon2());
 
   /** Constructs a new simulation world for the 2026 REBUILT game. */
   public SimWorld() {

@@ -3,9 +3,9 @@ package frc.robot.sim.sim2026;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -35,36 +35,24 @@ public class RebuiltSim {
   /** The main simulation arena for the 2026 REBUILT game. */
   public static class RebuiltSimArena extends SimArena {
 
-    // Track HUB active states based on AUTO results
     private boolean blueHubActive = true;
     private boolean redHubActive = true;
-    private int currentShift = 0; // 0 = TRANSITION, 1-4 = ALLIANCE SHIFTS, 5 = END GAME
-    private double previousScoreTimeSeconds = 0;
+    private int currentShift = 0; // 0=TRANSITION, 1-4=ALLIANCE SHIFTS, 5=END GAME
 
-    // AUTO result tracking
     private int blueAutoScore = 0;
     private int redAutoScore = 0;
     private boolean autoComplete = false;
 
-    // Random for tie-breaking
     private final Random random = new Random();
 
-    // Scoring tracking
     private int blueMatchPoints = 0;
     private int redMatchPoints = 0;
     private int blueFuelScored = 0;
     private int redFuelScored = 0;
 
-    // Tower climb tracking
     private final List<Integer> blueTowerLevels = new ArrayList<>();
     private final List<Integer> redTowerLevels = new ArrayList<>();
 
-    /**
-     * Creates a new REBUILT simulation arena.
-     *
-     * @param period The simulation period
-     * @param simulationSubTick The number of sub-ticks per period
-     */
     public RebuiltSimArena(Time period, int simulationSubTick) {
       super(new RebuiltFieldObstacleMap(), period.in(Seconds), simulationSubTick);
       RuntimeLog.info("REBUILT 2026 Simulation Arena initialized");
@@ -72,25 +60,18 @@ public class RebuiltSim {
 
     @Override
     protected void placeGamePiecesOnField() {
-      // Clear any existing game pieces
       gamePieces.forEach(gp -> gp.withLib(SimGamePiece::delete));
       gamePieces.clear();
 
-      // Place FUEL in DEPOTs (24 each)
-      placeFuelInDepot(true); // Blue depot
-      placeFuelInDepot(false); // Red depot
-
-      // Place FUEL in OUTPOST CHUTEs (24 each)
-      placeFuelInOutpostChute(true); // Blue outpost
-      placeFuelInOutpostChute(false); // Red outpost
-
-      // Place remaining FUEL in NEUTRAL ZONE (360-408 pieces)
+      placeFuelInDepot(true);
+      placeFuelInDepot(false);
+      placeFuelInOutpostChute(true);
+      placeFuelInOutpostChute(false);
       placeFuelInNeutralZone();
 
       RuntimeLog.info("REBUILT: Game pieces placed on field");
     }
 
-    /** Places FUEL in a DEPOT. */
     private void placeFuelInDepot(boolean isBlue) {
       Translation2d depotPos =
           isBlue
@@ -100,54 +81,40 @@ public class RebuiltSim {
                   FieldConstants.RED_DEPOT_X_METERS, FieldConstants.RED_DEPOT_Y_METERS);
 
       for (int i = 0; i < FieldConstants.FUEL_PER_DEPOT; i++) {
-        // Add slight random offset within depot
         double xOffset = (random.nextDouble() - 0.5) * 0.3;
         double yOffset = (random.nextDouble() - 0.5) * 0.3;
-        Translation2d fuelPos = depotPos.plus(new Translation2d(xOffset, yOffset));
-
-        Fuel fuel = new Fuel(this, fuelPos);
+        Fuel fuel = new Fuel(this, depotPos.plus(new Translation2d(xOffset, yOffset)));
         fuel.releaseControl();
         gamePieces.add(fuel);
       }
     }
 
-    /** Places FUEL in an OUTPOST CHUTE. */
     private void placeFuelInOutpostChute(boolean isBlue) {
       Translation2d outpostPos =
           isBlue
               ? new Translation2d(
-                  FieldConstants.BLUE_OUTPOST_X_METERS, FieldConstants.BLUE_OUTPOST_Y_METERS)
+                  FieldConstants.BLUE_OUTPOST_X_METERS, FieldConstants.BLUE_OUTPOST_CENTER_Y_METERS)
               : new Translation2d(
-                  FieldConstants.RED_OUTPOST_X_METERS, FieldConstants.RED_OUTPOST_Y_METERS);
+                  FieldConstants.RED_OUTPOST_X_METERS, FieldConstants.RED_OUTPOST_CENTER_Y_METERS);
 
-      // CHUTE opening is at 28.1" height, but we place on ground for simplicity
-      // The human player will "feed" them through the chute during gameplay
       for (int i = 0; i < FieldConstants.FUEL_PER_OUTPOST_CHUTE; i++) {
         double xOffset = (random.nextDouble() - 0.5) * 0.4;
         double yOffset = (random.nextDouble() - 0.5) * 0.4;
-        Translation2d fuelPos = outpostPos.plus(new Translation2d(xOffset, yOffset));
-
-        Fuel fuel = new Fuel(this, fuelPos);
+        Fuel fuel = new Fuel(this, outpostPos.plus(new Translation2d(xOffset, yOffset)));
         fuel.releaseControl();
         gamePieces.add(fuel);
       }
     }
 
-    /** Places FUEL in the NEUTRAL ZONE. */
     private void placeFuelInNeutralZone() {
-      // NEUTRAL ZONE is 283" deep x 317.7" wide
-      double neutralZoneStartX = FieldConstants.ALLIANCE_ZONE_DEPTH_METERS;
-      double neutralZoneEndX =
-          FieldConstants.FIELD_LENGTH_METERS - FieldConstants.ALLIANCE_ZONE_DEPTH_METERS;
-      double neutralZoneWidth = FieldConstants.FIELD_WIDTH_METERS;
+      double startX = FieldConstants.ALLIANCE_ZONE_DEPTH_METERS;
+      double endX = FieldConstants.FIELD_LENGTH_METERS - FieldConstants.ALLIANCE_ZONE_DEPTH_METERS;
+      double width = FieldConstants.FIELD_WIDTH_METERS;
 
-      // Approx 380 fuel in neutral zone
-      int fuelCount = 380 + random.nextInt(49); // 360-408 range
-
+      int fuelCount = 380 + random.nextInt(49);
       for (int i = 0; i < fuelCount; i++) {
-        double x = neutralZoneStartX + random.nextDouble() * (neutralZoneEndX - neutralZoneStartX);
-        double y = random.nextDouble() * neutralZoneWidth;
-
+        double x = startX + random.nextDouble() * (endX - startX);
+        double y = random.nextDouble() * width;
         Fuel fuel = new Fuel(this, new Translation2d(x, y));
         fuel.releaseControl();
         gamePieces.add(fuel);
@@ -160,242 +127,177 @@ public class RebuiltSim {
 
       double matchTime = Timer.getMatchTime();
 
-      // Track AUTO scores to determine HUB status for ALLIANCE SHIFTS
       if (DriverStation.isAutonomous() && !autoComplete) {
         updateAutoScores();
       } else if (DriverStation.isAutonomousEnabled() && !autoComplete && matchTime <= 0.0) {
-        // AUTO just ended
         finalizeAutoResults();
       }
 
-      // Track TELEOP shift timing
       if (DriverStation.isTeleopEnabled()) {
         updateHubStatus(matchTime);
       }
 
-      // Update match points based on scored fuel
       updateMatchPoints();
-
-      // Check for tower climbs
       checkTowerClimbs();
     }
 
-    /** Updates AUTO scores by counting fuel that enters scoring targets. */
+    /**
+     * Updates AUTO scores by counting fuel that enters a scoring target (LIMBO state).
+     *
+     * <p>IMPORTANT: We track which alliance scored at INTAKE time via {@link
+     * Fuel#getScoringAlliance()}, NOT from fuel.pose() at score time. Scored fuel transitions to
+     * LIMBO with pose (-1,-1,-1), making pose-based alliance detection impossible once scored.
+     *
+     * <p>To do this correctly, call {@link Fuel#setScoringAlliance(boolean)} when a robot intakes a
+     * piece, before it is shot. For now we approximate using the fuel's last known field position.
+     */
     private void updateAutoScores() {
       for (SimGamePiece gp : gamePieces) {
-        if (gp instanceof Fuel fuel && fuel.isScored()) {
-          // Determine which alliance scored based on position
-          Pose3d pose = fuel.pose();
-          if (pose.getX() < FieldConstants.CENTER_LINE_X_METERS) {
+        if (gp instanceof Fuel fuel && fuel.isNewlyScored()) {
+          // Use the scoring alliance recorded at intake time, not the LIMBO pose.
+          // See Fuel.getScoringAlliance() — falls back to last known position if not set.
+          boolean isBlue = fuel.getScoringAlliance();
+          if (isBlue) {
             blueAutoScore++;
             blueFuelScored++;
           } else {
             redAutoScore++;
             redFuelScored++;
           }
+          fuel.clearNewlyScoredFlag();
         }
       }
     }
 
-    /** Finalizes AUTO results and sets initial HUB status. */
     private void finalizeAutoResults() {
       autoComplete = true;
+      RuntimeLog.info("REBUILT AUTO Complete — Blue: " + blueAutoScore + "  Red: " + redAutoScore);
 
-      RuntimeLog.info("REBUILT AUTO Complete - Blue: " + blueAutoScore + " Red: " + redAutoScore);
-
-      // Determine HUB status for TELEOP based on AUTO results
-      // The alliance with MORE FUEL in AUTO has their HUB INACTIVE in SHIFT 1
       if (blueAutoScore > redAutoScore) {
-        // Blue scored more - their hub inactive in SHIFT 1
         blueHubActive = false;
         redHubActive = true;
-        RuntimeLog.info("REBUILT: Blue hub inactive in SHIFT 1 (Blue scored more)");
+        RuntimeLog.info("REBUILT: Blue HUB inactive in SHIFT 1 (Blue scored more in AUTO)");
       } else if (redAutoScore > blueAutoScore) {
-        // Red scored more - their hub inactive in SHIFT 1
         blueHubActive = true;
         redHubActive = false;
-        RuntimeLog.info("REBUILT: Red hub inactive in SHIFT 1 (Red scored more)");
+        RuntimeLog.info("REBUILT: Red HUB inactive in SHIFT 1 (Red scored more in AUTO)");
       } else {
-        // Tie - randomly select (simulate FMS random selection)
         boolean randomBlueInactive = random.nextBoolean();
         blueHubActive = !randomBlueInactive;
         redHubActive = randomBlueInactive;
         RuntimeLog.info(
-            "REBUILT: Tie - Random selection: "
+            "REBUILT: AUTO tie — random selection: "
                 + (randomBlueInactive ? "Blue" : "Red")
-                + " hub inactive in SHIFT 1");
+                + " HUB inactive in SHIFT 1");
       }
-
-      currentShift = 0; // TRANSITION SHIFT
+      currentShift = 0;
     }
 
-    /** Updates HUB active status based on current match time. */
     private void updateHubStatus(double matchTime) {
-      // Convert match time (seconds remaining) to match time elapsed
-      double timeElapsed = FieldConstants.MATCH_DURATION_SECONDS - matchTime;
+      double elapsed = FieldConstants.MATCH_DURATION_SECONDS - matchTime;
 
-      // TRANSITION SHIFT: 0-10 seconds (both hubs active)
-      if (timeElapsed < FieldConstants.TRANSITION_SHIFT_DURATION_SECONDS) {
+      if (elapsed < FieldConstants.TRANSITION_SHIFT_DURATION_SECONDS) {
         if (currentShift != 0) {
           currentShift = 0;
           blueHubActive = true;
           redHubActive = true;
-          RuntimeLog.debug("REBUILT: TRANSITION SHIFT - Both hubs active");
+          RuntimeLog.debug("REBUILT: TRANSITION SHIFT — both HUBs active");
         }
-      }
-      // SHIFT 1: 10-35 seconds
-      else if (timeElapsed
+      } else if (elapsed
           < FieldConstants.TRANSITION_SHIFT_DURATION_SECONDS
               + FieldConstants.ALLIANCE_SHIFT_DURATION_SECONDS) {
         if (currentShift != 1) {
           currentShift = 1;
-          // Status already set from AUTO results
-          RuntimeLog.debug(
-              "REBUILT: SHIFT 1 - Blue active: " + blueHubActive + ", Red active: " + redHubActive);
+          RuntimeLog.debug("REBUILT: SHIFT 1 — Blue=" + blueHubActive + " Red=" + redHubActive);
         }
-      }
-      // SHIFT 2: 35-60 seconds
-      else if (timeElapsed
+      } else if (elapsed
           < FieldConstants.TRANSITION_SHIFT_DURATION_SECONDS
               + 2 * FieldConstants.ALLIANCE_SHIFT_DURATION_SECONDS) {
         if (currentShift != 2) {
           currentShift = 2;
-          // Alternate status
           blueHubActive = !blueHubActive;
           redHubActive = !redHubActive;
-          RuntimeLog.debug(
-              "REBUILT: SHIFT 2 - Blue active: " + blueHubActive + ", Red active: " + redHubActive);
+          RuntimeLog.debug("REBUILT: SHIFT 2 — Blue=" + blueHubActive + " Red=" + redHubActive);
         }
-      }
-      // SHIFT 3: 60-85 seconds
-      else if (timeElapsed
+      } else if (elapsed
           < FieldConstants.TRANSITION_SHIFT_DURATION_SECONDS
               + 3 * FieldConstants.ALLIANCE_SHIFT_DURATION_SECONDS) {
         if (currentShift != 3) {
           currentShift = 3;
-          // Alternate status
           blueHubActive = !blueHubActive;
           redHubActive = !redHubActive;
-          RuntimeLog.debug(
-              "REBUILT: SHIFT 3 - Blue active: " + blueHubActive + ", Red active: " + redHubActive);
+          RuntimeLog.debug("REBUILT: SHIFT 3 — Blue=" + blueHubActive + " Red=" + redHubActive);
         }
-      }
-      // SHIFT 4: 85-110 seconds
-      else if (timeElapsed
+      } else if (elapsed
           < FieldConstants.TRANSITION_SHIFT_DURATION_SECONDS
               + 4 * FieldConstants.ALLIANCE_SHIFT_DURATION_SECONDS) {
         if (currentShift != 4) {
           currentShift = 4;
-          // Alternate status
           blueHubActive = !blueHubActive;
           redHubActive = !redHubActive;
-          RuntimeLog.debug(
-              "REBUILT: SHIFT 4 - Blue active: " + blueHubActive + ", Red active: " + redHubActive);
+          RuntimeLog.debug("REBUILT: SHIFT 4 — Blue=" + blueHubActive + " Red=" + redHubActive);
         }
-      }
-      // END GAME: 110-140 seconds (both hubs active)
-      else {
+      } else {
         if (currentShift != 5) {
           currentShift = 5;
           blueHubActive = true;
           redHubActive = true;
-          RuntimeLog.debug("REBUILT: END GAME - Both hubs active");
+          RuntimeLog.debug("REBUILT: END GAME — both HUBs active");
         }
       }
     }
 
-    /** Updates match points based on scored fuel. */
     private void updateMatchPoints() {
       for (SimGamePiece gp : gamePieces) {
-        if (gp instanceof Fuel fuel && fuel.isScored()) {
-          Pose3d pose = fuel.pose();
-          boolean isBlueSide = pose.getX() < FieldConstants.CENTER_LINE_X_METERS;
-
-          // Only count if the hub is active when scored
-          if ((isBlueSide && blueHubActive) || (!isBlueSide && redHubActive)) {
-            if (isBlueSide) {
-              blueMatchPoints += FieldConstants.FUEL_SCORE_ACTIVE_HUB;
-            } else {
-              redMatchPoints += FieldConstants.FUEL_SCORE_ACTIVE_HUB;
-            }
+        if (gp instanceof Fuel fuel && fuel.isNewlyScored()) {
+          boolean isBlue = fuel.getScoringAlliance();
+          if ((isBlue && blueHubActive) || (!isBlue && redHubActive)) {
+            if (isBlue) blueMatchPoints += FieldConstants.FUEL_SCORE_ACTIVE_HUB;
+            else redMatchPoints += FieldConstants.FUEL_SCORE_ACTIVE_HUB;
           }
         }
       }
     }
 
-    /**
-     * Checks for robots climbing the TOWER. In a real simulation, this would interface with robot
-     * simulation.
-     */
     private void checkTowerClimbs() {
-      double matchTime = Timer.getMatchTime();
-
-      // Only check in END GAME (last 30 seconds)
-      if (matchTime > FieldConstants.END_GAME_START_TIME) return;
-
-      // This would normally check robot positions relative to tower rungs
-      // For now, we'll simulate with a simple approach
+      // Only relevant in END GAME (last 30 seconds)
+      if (Timer.getMatchTime() > FieldConstants.END_GAME_START_TIME) return;
+      // TODO: implement robot-position-based climb detection against tower rung heights.
     }
 
-    /** Records a FUEL score during AUTO (called by robot simulation). */
     public void recordAutoScore(boolean isBlue, int count) {
-      if (isBlue) {
-        blueAutoScore += count;
-      } else {
-        redAutoScore += count;
-      }
+      if (isBlue) blueAutoScore += count;
+      else redAutoScore += count;
     }
 
-    /**
-     * @return true if the blue HUB is currently active
-     */
     public boolean isBlueHubActive() {
       return blueHubActive;
     }
 
-    /**
-     * @return true if the red HUB is currently active
-     */
     public boolean isRedHubActive() {
       return redHubActive;
     }
 
-    /**
-     * @return The current SHIFT (0=TRANSITION, 1-4=ALLIANCE SHIFTS, 5=END GAME)
-     */
     public int getCurrentShift() {
       return currentShift;
     }
 
-    /**
-     * @return Blue alliance match points
-     */
     public int getBlueMatchPoints() {
       return blueMatchPoints;
     }
 
-    /**
-     * @return Red alliance match points
-     */
     public int getRedMatchPoints() {
       return redMatchPoints;
     }
 
-    /**
-     * @return Blue alliance fuel scored
-     */
     public int getBlueFuelScored() {
       return blueFuelScored;
     }
 
-    /**
-     * @return Red alliance fuel scored
-     */
     public int getRedFuelScored() {
       return redFuelScored;
     }
 
-    /** Resets scores for a new match. */
     public void resetScores() {
       blueAutoScore = 0;
       redAutoScore = 0;
@@ -409,23 +311,19 @@ public class RebuiltSim {
       blueHubActive = true;
       redHubActive = true;
       currentShift = 0;
-
       RuntimeLog.info("REBUILT: Scores reset for new match");
     }
 
-    /** Creates a new FUEL piece for human player input. */
     public Fuel createFuelForHumanPlayer(boolean isBlue) {
       Translation2d outpostPos =
           isBlue
               ? new Translation2d(
-                  FieldConstants.BLUE_OUTPOST_X_METERS, FieldConstants.BLUE_OUTPOST_Y_METERS)
+                  FieldConstants.BLUE_OUTPOST_X_METERS, FieldConstants.BLUE_OUTPOST_CENTER_Y_METERS)
               : new Translation2d(
-                  FieldConstants.RED_OUTPOST_X_METERS, FieldConstants.RED_OUTPOST_Y_METERS);
-
+                  FieldConstants.RED_OUTPOST_X_METERS, FieldConstants.RED_OUTPOST_CENTER_Y_METERS);
       Fuel fuel = new Fuel(this, outpostPos);
-      fuel.userControlled(); // Give control to human player
+      fuel.userControlled();
       gamePieces.add(fuel);
-
       return fuel;
     }
   }
@@ -435,133 +333,129 @@ public class RebuiltSim {
 
     public RebuiltFieldObstacleMap() {
       super();
-
-      // Add field borders
       addFieldBorders();
-
-      // Add BUMP obstacles
       addBumpObstacles();
-
-      // Add TRENCH obstacles
       addTrenchObstacles();
-
-      // Add HUB obstacles
       addHubObstacles();
-
-      // Add DEPOT obstacles
       addDepotObstacles();
-
-      // Add TOWER obstacles
       addTowerObstacles();
-
-      // Add OUTPOST obstacles
       addOutpostObstacles();
-
       RuntimeLog.info("REBUILT 2026 Field Obstacle Map created");
     }
 
-    /** Adds the field border walls. */
     private void addFieldBorders() {
-      // Blue alliance wall (x = 0)
       addBorderLine(
           new Translation2d(0, 0), new Translation2d(0, FieldConstants.FIELD_WIDTH_METERS));
-
-      // Red alliance wall (x = field length)
       addBorderLine(
           new Translation2d(FieldConstants.FIELD_LENGTH_METERS, 0),
           new Translation2d(FieldConstants.FIELD_LENGTH_METERS, FieldConstants.FIELD_WIDTH_METERS));
-
-      // Upper wall (scoring table side, y = field width)
       addBorderLine(
           new Translation2d(0, FieldConstants.FIELD_WIDTH_METERS),
           new Translation2d(FieldConstants.FIELD_LENGTH_METERS, FieldConstants.FIELD_WIDTH_METERS));
-
-      // Lower wall (audience side, y = 0)
       addBorderLine(
           new Translation2d(0, 0), new Translation2d(FieldConstants.FIELD_LENGTH_METERS, 0));
     }
 
-    /** Adds BUMP obstacles. */
+    /**
+     * Adds BUMP obstacles.
+     *
+     * <p>Each alliance has two BUMPs, one on the audience side and one on the scoring-table side of
+     * their HUB. They are centered on the hub X and offset in Y from the hub faces.
+     *
+     * <p>Source: GE-26100 for dimensions; FE-2026 Sheet 3 ref dims for Y placement.
+     */
     private void addBumpObstacles() {
-      // Blue BUMP left
+      // Blue — audience side
       addRectangularObstacle(
           FieldConstants.BUMP_WIDTH_METERS,
           FieldConstants.BUMP_DEPTH_METERS,
           new Pose2d(
-              FieldConstants.BLUE_BUMP_LEFT_X_METERS + FieldConstants.BUMP_WIDTH_METERS / 2,
-              FieldConstants.BLUE_BUMP_LEFT_Y_METERS + FieldConstants.BUMP_DEPTH_METERS / 2,
+              FieldConstants.BLUE_BUMP_AUDIENCE_CENTER_X_METERS,
+              FieldConstants.BLUE_BUMP_AUDIENCE_CENTER_Y_METERS,
               new Rotation2d()));
 
-      // Blue BUMP right
+      // Blue — scoring-table side
       addRectangularObstacle(
           FieldConstants.BUMP_WIDTH_METERS,
           FieldConstants.BUMP_DEPTH_METERS,
           new Pose2d(
-              FieldConstants.BLUE_BUMP_RIGHT_X_METERS + FieldConstants.BUMP_WIDTH_METERS / 2,
-              FieldConstants.BLUE_BUMP_RIGHT_Y_METERS + FieldConstants.BUMP_DEPTH_METERS / 2,
+              FieldConstants.BLUE_BUMP_SCORINGTABLE_CENTER_X_METERS,
+              FieldConstants.BLUE_BUMP_SCORINGTABLE_CENTER_Y_METERS,
               new Rotation2d()));
 
-      // Red BUMP left
+      // Red — audience side
       addRectangularObstacle(
           FieldConstants.BUMP_WIDTH_METERS,
           FieldConstants.BUMP_DEPTH_METERS,
           new Pose2d(
-              FieldConstants.RED_BUMP_LEFT_X_METERS + FieldConstants.BUMP_WIDTH_METERS / 2,
-              FieldConstants.RED_BUMP_LEFT_Y_METERS + FieldConstants.BUMP_DEPTH_METERS / 2,
+              FieldConstants.RED_BUMP_AUDIENCE_CENTER_X_METERS,
+              FieldConstants.RED_BUMP_AUDIENCE_CENTER_Y_METERS,
               new Rotation2d()));
 
-      // Red BUMP right
+      // Red — scoring-table side
       addRectangularObstacle(
           FieldConstants.BUMP_WIDTH_METERS,
           FieldConstants.BUMP_DEPTH_METERS,
           new Pose2d(
-              FieldConstants.RED_BUMP_RIGHT_X_METERS + FieldConstants.BUMP_WIDTH_METERS / 2,
-              FieldConstants.RED_BUMP_RIGHT_Y_METERS + FieldConstants.BUMP_DEPTH_METERS / 2,
+              FieldConstants.RED_BUMP_SCORINGTABLE_CENTER_X_METERS,
+              FieldConstants.RED_BUMP_SCORINGTABLE_CENTER_Y_METERS,
               new Rotation2d()));
     }
 
-    /** Adds TRENCH obstacles. */
+    /**
+     * Adds TRENCH obstacles.
+     *
+     * <p>Each TRENCH runs in the X direction from the alliance wall to the hub face, at a fixed Y
+     * near the audience or scoring-table wall. The modeled width in Y is small (the beam/rail
+     * cross-section). The clearance height is 22.25" — relevant for future 3D sim, not 2D physics.
+     *
+     * <p>Source: FE-2026 Sheet 11 (AprilTag Y positions) for rail Y locations; Sheet 3 for
+     * approximate X extent.
+     */
     private void addTrenchObstacles() {
-      // Blue TRENCH left
+      // Trench rail Y-extent in the obstacle map — model as a 4" wide beam.
+      // This is a narrow obstacle; the real exclusion is the robot height vs
+      // TRENCH_CLEARANCE_HEIGHT_INCHES = 22.25". Flag for future 3D upgrade.
+      final double TRENCH_RAIL_THICKNESS_METERS = 0.10; // ~4" placeholder
+
+      // Blue — audience side rail
       addRectangularObstacle(
-          FieldConstants.TRENCH_WIDTH_METERS,
-          FieldConstants.TRENCH_DEPTH_METERS,
+          FieldConstants.BLUE_TRENCH_LENGTH_X_METERS,
+          TRENCH_RAIL_THICKNESS_METERS,
           new Pose2d(
-              FieldConstants.BLUE_TRENCH_LEFT_X_METERS + FieldConstants.TRENCH_WIDTH_METERS / 2,
-              FieldConstants.BLUE_TRENCH_LEFT_Y_METERS + FieldConstants.TRENCH_DEPTH_METERS / 2,
+              FieldConstants.BLUE_TRENCH_CENTER_X_METERS,
+              FieldConstants.TRENCH_AUDIENCE_SIDE_Y_METERS,
               new Rotation2d()));
 
-      // Blue TRENCH right
+      // Blue — scoring-table side rail
       addRectangularObstacle(
-          FieldConstants.TRENCH_WIDTH_METERS,
-          FieldConstants.TRENCH_DEPTH_METERS,
+          FieldConstants.BLUE_TRENCH_LENGTH_X_METERS,
+          TRENCH_RAIL_THICKNESS_METERS,
           new Pose2d(
-              FieldConstants.BLUE_TRENCH_RIGHT_X_METERS + FieldConstants.TRENCH_WIDTH_METERS / 2,
-              FieldConstants.BLUE_TRENCH_RIGHT_Y_METERS + FieldConstants.TRENCH_DEPTH_METERS / 2,
+              FieldConstants.BLUE_TRENCH_CENTER_X_METERS,
+              FieldConstants.TRENCH_SCORINGTABLE_SIDE_Y_METERS,
               new Rotation2d()));
 
-      // Red TRENCH left
+      // Red — audience side rail
       addRectangularObstacle(
-          FieldConstants.TRENCH_WIDTH_METERS,
-          FieldConstants.TRENCH_DEPTH_METERS,
+          FieldConstants.RED_TRENCH_LENGTH_X_METERS,
+          TRENCH_RAIL_THICKNESS_METERS,
           new Pose2d(
-              FieldConstants.RED_TRENCH_LEFT_X_METERS + FieldConstants.TRENCH_WIDTH_METERS / 2,
-              FieldConstants.RED_TRENCH_LEFT_Y_METERS + FieldConstants.TRENCH_DEPTH_METERS / 2,
+              FieldConstants.RED_TRENCH_CENTER_X_METERS,
+              FieldConstants.TRENCH_AUDIENCE_SIDE_Y_METERS,
               new Rotation2d()));
 
-      // Red TRENCH right
+      // Red — scoring-table side rail
       addRectangularObstacle(
-          FieldConstants.TRENCH_WIDTH_METERS,
-          FieldConstants.TRENCH_DEPTH_METERS,
+          FieldConstants.RED_TRENCH_LENGTH_X_METERS,
+          TRENCH_RAIL_THICKNESS_METERS,
           new Pose2d(
-              FieldConstants.RED_TRENCH_RIGHT_X_METERS + FieldConstants.TRENCH_WIDTH_METERS / 2,
-              FieldConstants.RED_TRENCH_RIGHT_Y_METERS + FieldConstants.TRENCH_DEPTH_METERS / 2,
+              FieldConstants.RED_TRENCH_CENTER_X_METERS,
+              FieldConstants.TRENCH_SCORINGTABLE_SIDE_Y_METERS,
               new Rotation2d()));
     }
 
-    /** Adds HUB obstacles. */
     private void addHubObstacles() {
-      // Blue HUB
       addRectangularObstacle(
           FieldConstants.HUB_WIDTH_METERS,
           FieldConstants.HUB_DEPTH_METERS,
@@ -570,7 +464,6 @@ public class RebuiltSim {
               FieldConstants.BLUE_HUB_Y_METERS,
               new Rotation2d()));
 
-      // Red HUB
       addRectangularObstacle(
           FieldConstants.HUB_WIDTH_METERS,
           FieldConstants.HUB_DEPTH_METERS,
@@ -578,66 +471,93 @@ public class RebuiltSim {
               FieldConstants.RED_HUB_X_METERS, FieldConstants.RED_HUB_Y_METERS, new Rotation2d()));
     }
 
-    /** Adds DEPOT obstacles. */
     private void addDepotObstacles() {
-      // Blue DEPOT
+      // Depot is an L-shaped weldment. Model as two rectangular arms.
+      // Long arm (along Y)
       addRectangularObstacle(
-          FieldConstants.DEPOT_WIDTH_METERS,
-          FieldConstants.DEPOT_DEPTH_METERS,
+          Units.inchesToMeters(3.0), // thin in X
+          FieldConstants.DEPOT_ARM_LONG_METERS, // 42" along Y
           new Pose2d(
-              FieldConstants.BLUE_DEPOT_X_METERS + FieldConstants.DEPOT_WIDTH_METERS / 2,
-              FieldConstants.BLUE_DEPOT_Y_METERS + FieldConstants.DEPOT_DEPTH_METERS / 2,
+              FieldConstants.BLUE_DEPOT_X_METERS,
+              FieldConstants.BLUE_DEPOT_Y_METERS + FieldConstants.DEPOT_ARM_LONG_METERS / 2,
               new Rotation2d()));
 
-      // Red DEPOT
+      // Short arm (along X)
       addRectangularObstacle(
-          FieldConstants.DEPOT_WIDTH_METERS,
-          FieldConstants.DEPOT_DEPTH_METERS,
+          FieldConstants.DEPOT_ARM_SHORT_METERS, // 27" along X
+          Units.inchesToMeters(3.0), // thin in Y
           new Pose2d(
-              FieldConstants.RED_DEPOT_X_METERS + FieldConstants.DEPOT_WIDTH_METERS / 2,
-              FieldConstants.RED_DEPOT_Y_METERS + FieldConstants.DEPOT_DEPTH_METERS / 2,
+              FieldConstants.BLUE_DEPOT_X_METERS + FieldConstants.DEPOT_ARM_SHORT_METERS / 2,
+              FieldConstants.BLUE_DEPOT_Y_METERS,
+              new Rotation2d()));
+
+      // Red DEPOT (mirror)
+      addRectangularObstacle(
+          Units.inchesToMeters(3.0),
+          FieldConstants.DEPOT_ARM_LONG_METERS,
+          new Pose2d(
+              FieldConstants.RED_DEPOT_X_METERS,
+              FieldConstants.RED_DEPOT_Y_METERS + FieldConstants.DEPOT_ARM_LONG_METERS / 2,
+              new Rotation2d()));
+
+      addRectangularObstacle(
+          FieldConstants.DEPOT_ARM_SHORT_METERS,
+          Units.inchesToMeters(3.0),
+          new Pose2d(
+              FieldConstants.RED_DEPOT_X_METERS - FieldConstants.DEPOT_ARM_SHORT_METERS / 2,
+              FieldConstants.RED_DEPOT_Y_METERS,
               new Rotation2d()));
     }
 
-    /** Adds TOWER obstacles. */
+    /**
+     * Adds TOWER obstacles.
+     *
+     * <p>The TOWER sits against the alliance wall. Modeled as a rectangle. Dimensions from GE-26500
+     * sheet 2: 40" wide (Y) × 32.25" deep (X).
+     */
     private void addTowerObstacles() {
-      // Blue TOWER
+      // Blue TOWER — at Blue wall, centered at BLUE_TOWER_CENTER_Y
       addRectangularObstacle(
-          FieldConstants.TOWER_WIDTH_METERS,
-          FieldConstants.TOWER_DEPTH_METERS,
+          FieldConstants.TOWER_DEPTH_METERS, // 32.25" in X (into field)
+          FieldConstants.TOWER_WIDTH_METERS, // 40.00" in Y (across rungs)
           new Pose2d(
               FieldConstants.BLUE_TOWER_X_METERS + FieldConstants.TOWER_DEPTH_METERS / 2,
-              FieldConstants.BLUE_TOWER_Y_METERS,
+              FieldConstants.BLUE_TOWER_CENTER_Y_METERS,
               new Rotation2d()));
 
-      // Red TOWER
+      // Red TOWER — at Red wall
       addRectangularObstacle(
-          FieldConstants.TOWER_WIDTH_METERS,
           FieldConstants.TOWER_DEPTH_METERS,
+          FieldConstants.TOWER_WIDTH_METERS,
           new Pose2d(
               FieldConstants.RED_TOWER_X_METERS - FieldConstants.TOWER_DEPTH_METERS / 2,
-              FieldConstants.RED_TOWER_Y_METERS,
+              FieldConstants.RED_TOWER_CENTER_Y_METERS,
               new Rotation2d()));
     }
 
-    /** Adds OUTPOST obstacles. */
+    /**
+     * Adds OUTPOST obstacles.
+     *
+     * <p>Modeled as a rectangle for the outpost frame footprint. Blue OUTPOST is near the
+     * scoring-table wall (high Y); Red OUTPOST is near the audience wall (low Y).
+     */
     private void addOutpostObstacles() {
-      // Blue OUTPOST (CORRAL area)
+      // Blue OUTPOST — scoring-table side (high Y)
       addRectangularObstacle(
-          FieldConstants.OUTPOST_CORRAL_WIDTH_METERS,
-          FieldConstants.OUTPOST_CORRAL_DEPTH_METERS,
+          FieldConstants.OUTPOST_DEPTH_METERS, // 17" in X (into field)
+          FieldConstants.OUTPOST_WIDTH_METERS, // 32" in Y (face width)
           new Pose2d(
-              FieldConstants.BLUE_OUTPOST_X_METERS + FieldConstants.OUTPOST_CORRAL_WIDTH_METERS / 2,
-              FieldConstants.BLUE_OUTPOST_Y_METERS + FieldConstants.OUTPOST_CORRAL_DEPTH_METERS / 2,
+              FieldConstants.BLUE_OUTPOST_X_METERS + FieldConstants.OUTPOST_DEPTH_METERS / 2,
+              FieldConstants.BLUE_OUTPOST_CENTER_Y_METERS,
               new Rotation2d()));
 
-      // Red OUTPOST (CORRAL area)
+      // Red OUTPOST — audience side (low Y)
       addRectangularObstacle(
-          FieldConstants.OUTPOST_CORRAL_WIDTH_METERS,
-          FieldConstants.OUTPOST_CORRAL_DEPTH_METERS,
+          FieldConstants.OUTPOST_DEPTH_METERS,
+          FieldConstants.OUTPOST_WIDTH_METERS,
           new Pose2d(
-              FieldConstants.RED_OUTPOST_X_METERS + FieldConstants.OUTPOST_CORRAL_WIDTH_METERS / 2,
-              FieldConstants.RED_OUTPOST_Y_METERS + FieldConstants.OUTPOST_CORRAL_DEPTH_METERS / 2,
+              FieldConstants.RED_OUTPOST_X_METERS - FieldConstants.OUTPOST_DEPTH_METERS / 2,
+              FieldConstants.RED_OUTPOST_CENTER_Y_METERS,
               new Rotation2d()));
     }
   }

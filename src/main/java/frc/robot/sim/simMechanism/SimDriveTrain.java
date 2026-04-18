@@ -50,9 +50,9 @@ public class SimDriveTrain {
    * <p>Since this is an abstract class, the constructor must be called from a subclass.
    *
    * <p>Note that the chassis does not appear on the simulation field upon creation. Refer to {@link
-   * SimArena.ShamArena} for instructions on how to add it to the simulation world.
+   * SimArena.SimArena} for instructions on how to add it to the simulation world.
    *
-   * @param config a {@link ShamDriveTrainConfig} instance containing the configurations of this
+   * @param config a {@link SimDriveTrainConfig} instance containing the configurations of this
    *     drivetrain
    * @param timing the simulation environment timing
    */
