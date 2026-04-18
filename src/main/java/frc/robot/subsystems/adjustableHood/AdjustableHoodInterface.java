@@ -28,5 +28,5 @@ public interface AdjustableHoodInterface extends Subsystem {
 
   public default void rezeroHood() {}
 
-  public void resetHoodPID();
+  public default void resetHoodPID() {}
 }

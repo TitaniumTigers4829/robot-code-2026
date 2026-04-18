@@ -19,11 +19,14 @@ import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.extras.util.JoystickUtil;
 import frc.robot.extras.util.ShotCalculator;
 import frc.robot.sim.SimWorld;
+import frc.robot.subsystems.adjustableHood.AdjustableHoodInterface;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.adjustableHood.PhysicalAdjustableHood;
+import frc.robot.subsystems.intake.IntakeInterface;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.intake.PhysicalIntake;
 import frc.robot.subsystems.shooter.PhysicalShooter;
+import frc.robot.subsystems.shooter.ShooterInterface;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
@@ -32,6 +35,7 @@ import frc.robot.subsystems.swerve.gyro.SimulatedGyro;
 import frc.robot.subsystems.swerve.module.PhysicalModule;
 import frc.robot.subsystems.swerve.module.SimulatedModule;
 import frc.robot.subsystems.turret.PhysicalTurret;
+import frc.robot.subsystems.turret.TurretInterface;
 import frc.robot.subsystems.turret.TurretSubsystem;
 import frc.robot.subsystems.vision.PhysicalVision;
 import frc.robot.subsystems.vision.SimulatedVision;
@@ -364,6 +368,14 @@ public class Robot extends LoggedRobot {
         this.visionSubsystem =
             new VisionSubsystem(new SimulatedVision(() -> simWorld.aprilTagSim()));
         this.swerveDrive.resetEstimatedPose(new Pose2d(7, 4, new Rotation2d()));
+        this.hoodSubsystem = new AdjustableHoodSubsystem(new AdjustableHoodInterface() {});
+
+        this.intakeSubsystem = new IntakeSubsystem(new IntakeInterface() {});
+
+        this.shooterSubsystem = new ShooterSubsystem(new ShooterInterface() {});
+
+        this.turretSubsystem = new TurretSubsystem(new TurretInterface() {});
+
         // this.elevatorSubsystem = new ElevatorSubsystem(new SimulatedElevator());
         // SYNTAX FOR SIM SUBSYSTEMS ^^
       }
