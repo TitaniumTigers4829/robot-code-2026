@@ -1,5 +1,5 @@
 {
- "name":"one_point_one_meter",
+ "name":"paths",
  "version":2,
  "type":"Swerve",
  "variables":{
@@ -28,8 +28,8 @@
    }
   },
   "mass":{
-   "exp":"150 lbs",
-   "val":68.0388555
+   "exp":"114 lbs",
+   "val":51.70953018
   },
   "inertia":{
    "exp":"6 kg m ^ 2",
@@ -44,12 +44,12 @@
    "val":0.0508
   },
   "vmax":{
-   "exp":"6000 RPM",
-   "val":628.3185307179587
+   "exp":"3000 RPM",
+   "val":314.1592653589793
   },
   "tmax":{
-   "exp":"1.2 N * m",
-   "val":1.2
+   "exp":"0.6 N * m",
+   "val":0.6
   },
   "cof":{
    "exp":"1.5",
@@ -57,16 +57,16 @@
   },
   "bumper":{
    "front":{
-    "exp":"19 in",
-    "val":0.4826
+    "exp":"15 in",
+    "val":0.381
    },
    "side":{
-    "exp":"25 in",
-    "val":0.635
+    "exp":"18 in",
+    "val":0.4572
    },
    "back":{
-    "exp":"19 in",
-    "val":0.4826
+    "exp":"15 in",
+    "val":0.381
    }
   },
   "differentialTrackWidth":{

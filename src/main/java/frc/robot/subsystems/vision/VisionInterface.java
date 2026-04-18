@@ -2,6 +2,7 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.subsystems.vision.VisionConstants.Limelight;
+import java.util.Optional;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionInterface {
@@ -41,6 +42,8 @@ public interface VisionInterface {
 
     public Pose2d[] megatag1PoseEstimates = new Pose2d[Limelight.values().length];
     public Pose2d[] megatag2PoseEstimates = new Pose2d[Limelight.values().length];
+
+    public boolean hasResults = false;
 
     public boolean[] isMegaTag2 = new boolean[Limelight.values().length];
   }
@@ -123,7 +126,7 @@ public interface VisionInterface {
    * @return the pose of the robot, if the limelight can't see any April Tags, it will return 0 for
    *     x, y, and theta
    */
-  default Pose2d getPoseFromAprilTags(Limelight limelight) {
+  default Optional<Pose2d> getPoseFromAprilTags(Limelight limelight) {
     return null;
   }
 

@@ -93,6 +93,10 @@ public interface ModuleInterface {
     return 0.0;
   }
 
+  default double getDistanceFromAllianceHub() {
+    return 0.0;
+  }
+
   /**
    * Sets the drive motors' pid gains
    *

@@ -4,16 +4,17 @@
 
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */
-public interface ShooterInterface {
+public interface ShooterInterface extends Subsystem {
   @AutoLog
   public static class ShooterInputs { // For values
-    public double flywheelRPM = 0.0;
+    public double flywheelRPS = 0.0;
     public double flywheelMotorVoltage = 0.0;
     public double flywheelDutyCycle = 0.0;
-    public double flywheelDesiredRPM = 0.0;
+    public double flywheelDesiredRPS = 0.0;
     public double flywheelStatorCurrent = 0.0;
     public double flywheelVelocity = 0.0;
     public double flywheelRPMError = 0.0;
@@ -22,25 +23,43 @@ public interface ShooterInterface {
 
   public default void updateInputs(ShooterInputs inputs) {}
 
-  public default double getFlywheelRPM() {
+  public default double getFlywheelRPS() {
     return 0.0;
   }
 
-  public default void setFlywheelRPM(double targetRPM) {}
+  public default void setSpeed(double targetRPM) {}
 
   public default void setVolts(double volts) {}
 
+  public default void setRollerSpeed(double speed) {}
+
   public default void setPercentOutput(double distance) {}
+
+  public default void setPercentOutput2(double speed) {}
 
   public default double getVolts() {
     return 0.0;
   }
 
-  public default void passFuel(double output) {}
+  public default void passFuel() {}
+
+  public default void stopShoot() {}
 
   public default void openLoop(double output) {}
 
   public default void setPID(double kP, double kI, double kD) {}
 
   public default void setFF(double kS, double kV, double kA) {}
+
+  public default void setKickerSpeed(double speed) {}
+
+  public default void startingShoot() {}
+
+  public default boolean isReadyToShoot() {
+    return false;
+  }
+
+  public default boolean setIsAimingProperly(boolean isAimingProperly) {
+    return false;
+  }
 }

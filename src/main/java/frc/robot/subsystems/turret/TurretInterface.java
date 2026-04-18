@@ -12,12 +12,9 @@ public interface TurretInterface {
   public static class TurretInputs { // For values
     public double turretAngle = 0.0;
     public double turretAngularVelocity = 0.0;
-    public double turretMotorAppliedVoltage = 0.0;
     public double turretDutyCycle = 0.0;
     public double turretDesiredAngle = 0.0;
-    public double turretStatorCurrent = 0.0;
     public double turretAngleError = 0.0;
-    public double turretMotorTemp = 0.0;
   }
 
   public default void updateInputs(TurretInputs inputs) {}
@@ -26,6 +23,8 @@ public interface TurretInterface {
   public default double getTurretAngle() {
     return 0.0;
   }
+
+  public default void rezeroTurret() {}
 
   public default void setTurretAngle(double desiredAngle) {}
 
@@ -36,6 +35,8 @@ public interface TurretInterface {
   public default double getVolts() {
     return 0.0;
   }
+
+  public default void zeroTurret() {}
 
   public default void setSpeed(double speed) {}
 

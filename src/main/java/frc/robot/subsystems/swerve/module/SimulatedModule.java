@@ -53,7 +53,7 @@ public class SimulatedModule implements ModuleInterface {
   @Override
   public void updateInputs(ModuleInputs inputs) {
     // TODO: add drive accel
-    inputs.drivePosition = -driveMotor.position().in(Rotations);
+    inputs.drivePosition = driveMotor.position().in(Rotations);
     inputs.driveVelocity = driveMotor.velocity().in(RotationsPerSecond);
     inputs.driveAppliedVolts = driveMotor.voltage().in(Volts);
     inputs.driveCurrentAmps = driveMotor.current().in(Amps);

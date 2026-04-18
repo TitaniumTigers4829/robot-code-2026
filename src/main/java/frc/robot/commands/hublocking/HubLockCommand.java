@@ -4,26 +4,25 @@
 
 package frc.robot.commands.hublocking;
 
-import java.util.Optional;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.commands.drive.DriveCommandBase;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.turret.TurretConstants;
 import frc.robot.subsystems.turret.TurretSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem;
+import java.util.Optional;
 
-public class HubLockCommand extends Command {
-  
+public class HubLockCommand extends DriveCommandBase {
+
   SwerveDrive swerveDrive;
+  VisionSubsystem visionSubsystem;
   TurretSubsystem turretSubsystem;
   AdjustableHoodSubsystem hoodSubsystem;
-  ShooterSubsystem shooterSubsystem;
   public double desiredHeading;
   public Rotation2d heading;
   public double turretAngleToHub;
@@ -33,22 +32,18 @@ public class HubLockCommand extends Command {
   public double turretToHubDist;
 
   public HubLockCommand(
-    SwerveDrive swerveDrive,
-    TurretSubsystem turretSubsystem,
-    AdjustableHoodSubsystem hoodSubsystem,
-    ShooterSubsystem shooterSubsystem) {
-      this.swerveDrive = swerveDrive;
-      this.turretSubsystem = turretSubsystem;
-      this.hoodSubsystem = hoodSubsystem;
-      this.shooterSubsystem = shooterSubsystem;
-    addRequirements(
-      swerveDrive, 
-      turretSubsystem, 
-      hoodSubsystem, 
-      shooterSubsystem);
+      SwerveDrive swerveDrive,
+      VisionSubsystem visionSubsystem,
+      AdjustableHoodSubsystem hoodSubsystem,
+      TurretSubsystem turretSubsystem) {
+    super(swerveDrive, visionSubsystem);
+    this.swerveDrive = swerveDrive;
+    this.visionSubsystem = visionSubsystem;
+    this.turretSubsystem = turretSubsystem;
+    this.hoodSubsystem = hoodSubsystem;
+    addRequirements(hoodSubsystem, turretSubsystem);
   }
 
-  
   @Override
   public void initialize() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
@@ -58,9 +53,9 @@ public class HubLockCommand extends Command {
     } else {
       hubPos = FieldConstants.BLUE_HUB_CENTER;
     }
+    hoodSubsystem.resetHoodPID();
   }
 
-  
   @Override
   public void execute() {
     // Gets the heading of the robot as a Rotation2d
@@ -72,46 +67,58 @@ public class HubLockCommand extends Command {
             .getEstimatedPose()
             .getTranslation()
             .plus(TurretConstants.TURRET_OFFSET.rotateBy(heading));
-
-    // Our turret angling math works as follows. Assuming the 0 rotations on the turret is
-    // facing the current heading of the robot and the turret rotates positively counterclockwise,
-    // we can approximate the angle it needs to turn in rotations from 0 to the target angle. This 
-    // is the desired heading. With arctan we can calulate the angle the turret makes with the 
-    // hub relative to the y axis, otherwise known as the field relative angle. The y axis is 
-    // horizontal and the x axis is vertical from the driver station pov. We can subtract the 
-    // heading (and therefore the zero angle) of the robot from the field relative angle. This
-    // will get the radians needed to turn to face the hub and when converted to rotations becomes
-    // the desired heading.
+    super.execute();
+    /**
+     * Our turret angling math works as follows. Assuming the 0 rotations on the turret is facing
+     * the current heading of the robot and the turret rotates positively counterclockwise, we can
+     * approximate the angle it needs to turn in rotations from 0 to the target angle. This is the
+     * desired heading. With arctan we can calulate the angle the turret makes with the hub relative
+     * to the y axis, otherwise known as the field relative angle. The y axis is horizontal and the
+     * x axis is vertical from the driver station pov. We can subtract the heading (and therefore
+     * the zero angle) of the robot from the field relative angle. This will get the radians needed
+     * to turn to face the hub and when converted to rotations becomes the desired heading. *
+     */
 
     // Gets y and x distances of the turret to the hub
     turretToHubYDist = hubPos.getY() - turretPos.getY();
     turretToHubXDist = hubPos.getX() - turretPos.getX();
 
     // Gets the needed angle for the turret to turn to face the hub in radians
-    turretAngleToHub = (Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians());
+    double turretAngleRad = Math.atan2(turretToHubYDist, turretToHubXDist) - heading.getRadians();
 
-    // Converts radians to rotations
-    desiredHeading = turretAngleToHub / (2 * Math.PI);
+    // Wrap to [-pi, pi]
+    turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));
 
-    // Sets the turret to that angle
-    turretSubsystem.setTurretAngle(desiredHeading);
+    desiredHeading = turretAngleRad / (2.0 * Math.PI);
+
+    // Clamp to turret limits
+    desiredHeading =
+        Math.max(TurretConstants.MIN_ANGLE, Math.min(TurretConstants.MAX_ANGLE, desiredHeading));
+
+    // TODO: uncomment
+    // turretSubsystem.setTurretAngle(desiredHeading);
 
     // Gets the actual distance from the hub, which becomes the paramenter for the lookup tables
     // of the hood and shooter
-    turretToHubDist = turretPos.getDistance(hubPos);
+    turretToHubDist = Math.hypot(turretToHubXDist, turretToHubYDist);
+    // turretPos.getDistance(hubPos);
 
     // Locks hood angle on hub
-    hoodSubsystem.setHoodAngle(turretToHubDist);
-
-    // Locks shooter to the output needed to reach the hub based on its lookup table
-    shooterSubsystem.setPercentOutput(turretToHubDist);
+    hoodSubsystem.setAngleWithoutDist(0.5);
+    super.execute();
+    // SmartDashboard.putNumber("dist", turretToHubDist);
+    // SmartDashboard.putNumber("Y dist", turretToHubYDist);
+    // SmartDashboard.putNumber("xdist", turretToHubXDist);
   }
 
-  
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    turretSubsystem.setSpeed(0);
+    // hoodSubsystem.setSpeed(0);
+    hoodSubsystem.resetHoodPID();
+    hoodSubsystem.setAngleWithoutDist(0);
+  }
 
-  
   @Override
   public boolean isFinished() {
     return false;

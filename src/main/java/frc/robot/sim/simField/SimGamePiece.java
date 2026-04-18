@@ -497,9 +497,9 @@ public class SimGamePiece implements StructSerializable {
     };
   }
 
-  // public static final ShameGamePieceStruct struct = new ShameGamePieceStruct();
+  // public static final SimGamePieceStruct struct = new SimGamePieceStruct();
 
-  // public static final class ShameGamePieceStruct implements Struct<SimGamePiece> {
+  // public static final class SimGamePieceStruct implements Struct<SimGamePiece> {
   //     @Override
   //     public String getSchema() {
   //         return "Pose3d pose;char type[16];GamePieceState state";
@@ -517,7 +517,7 @@ public class SimGamePiece implements StructSerializable {
 
   //     @Override
   //     public String getTypeName() {
-  //         return "ShamGamePiece";
+  //         return "SimGamePiece";
   //     }
 
   //     @Override
@@ -529,7 +529,7 @@ public class SimGamePiece implements StructSerializable {
 
   //     @Override
   //     public SimGamePiece unpack(ByteBuffer bb) {
-  //         throw new UnsupportedOperationException("Unpacking ShamGamePiece is not supported");
+  //         throw new UnsupportedOperationException("Unpacking SimGamePiece is not supported");
   //     }
   // }
 }

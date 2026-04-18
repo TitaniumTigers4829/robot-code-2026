@@ -7,35 +7,43 @@ package frc.robot.subsystems.shooter;
 /** Add your docs here. */
 public class ShooterConstants {
 
-  public static int LEADER_FLYWHEEL_MOTOR_ID = 23;
-  public static int FOLLOWER_FLYWHEEL_MOTOR_ID = 62;
-  public static int KICKER_MOTOR_ID = 0 - 9;
-  public static int SPINDEXER_MOTOR_ID = 0-9;
+  public static int LEADER_FLYWHEEL_MOTOR_ID = 27;
+  public static int FOLLOWER_FLYWHEEL_MOTOR_ID = 6;
+  public static int KICKER_AND_ROLLER_MOTOR_ID = 57;
+  public static int FRONT_ROLLER_MOTOR_ID = 17;
 
   public static double SHOOTER_HEIGHT_FROM_GROUND = 0;
+  public static double GEAR_RATIO = 0.95;
 
-  public static double FLYWHEEL_S = 0;
-  public static double FLYWHEEL_V = 0;
+  public static double FLYWHEEL_S = 0; // 0.2;
+  public static double FLYWHEEL_V = 0; // 0.111;
   public static double FLYWHEEL_A = 0;
-  public static double FLYWHEEL_P = 1;
+  public static double FLYWHEEL_P = 48294829; // 20
   public static double FLYWHEEL_I = 0;
   public static double FLYWHEEL_D = 0;
 
   // 5 rpm
-  public static double FLYWHEEL_ERROR_TOLERANCE = 5;
+  public static double FLYWHEEL_ERROR_TOLERANCE = 2;
 
-  public static double PASS_SHOOTER_SPEED = 0.7;
-  public static double KICKER_PERCENT_OUTPUT = 0.6;
-  public static double SPINDEXER_PERCENT_OUTPUT = 0.675;
+  public static double PASS_SHOOTER_SPEED = -1;
+  public static double KICKER_PERCENT_OUTPUT = 0.8;
+  public static double SPINDEXER_INTAKE_SPEED = -0.2; // 0.675
+  public static double SPINDEXER_SHOOT_SPEED = -.4; // 0.675
 
   // Lookup table for rpms needed for certain distances
-  // TODO: Add actual tested values
   public static double[][] DISTANCE_TO_FLYWHEEL_RPM = {
-    // Distance from hub in meters, needed rpm of flywheel
-    {0.5, 0.75},
-    {1, 0.8},
-    {1.5, 0.85},
-    {2, 0.9},
-    {2.5, 1}
+    // Distance from hub in meters, needed rps of flywheel
+    {1.5, 47.29},
+    {2.0, 50},
+    {2.5, 54},
+    {3.0, 57},
+    {3.5, 61},
+    {4.0, 63.4829},
+    {4.5, 64.4829},
+    {5.0, 66.4829},
+    {5.5, 66.4829},
+    // FOR PASSING ONLY - GUESSED VALUES:
+    {6, 68},
+    {13, 120}
   };
 }

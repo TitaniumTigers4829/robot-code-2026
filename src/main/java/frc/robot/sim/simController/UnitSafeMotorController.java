@@ -590,9 +590,9 @@ public class UnitSafeMotorController implements SimMotorController {
 
     boolean overStatorLimit = statorCurrent.gt(limits.statorCurrentLimit);
     boolean overSupplyLimit = supplyCurrent.gt(limits.supplyCurrentLimit);
-    boolean overLowerSupplyLimit =
-        supplyCurrent.gt(limits.supplyCurrentLowerLimit)
-            && timeOverSupplyLimit.gt(limits.lowerLimitTriggerTime);
+    /* boolean overLowerSupplyLimit =
+    supplyCurrent.gt(limits.supplyCurrentLowerLimit)
+        && timeOverSupplyLimit.gt(limits.lowerLimitTriggerTime); */
 
     if (overStatorLimit) {
       statorCurrent = limits.statorCurrentLimit;

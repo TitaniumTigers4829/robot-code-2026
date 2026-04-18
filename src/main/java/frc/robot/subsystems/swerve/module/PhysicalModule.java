@@ -21,6 +21,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants.HardwareConstants;
+import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants.CompConstants;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConfig;
 import frc.robot.subsystems.swerve.SwerveConstants.ModuleConstants;
 
@@ -54,7 +55,10 @@ public class PhysicalModule implements ModuleInterface {
   private final TalonFXConfiguration turnConfig = new TalonFXConfiguration();
   private final CANcoderConfiguration turnEncoderConfig = new CANcoderConfiguration();
 
+  private final ModuleConfig moduleConfig;
+
   public PhysicalModule(ModuleConfig moduleConfig) {
+    this.moduleConfig = moduleConfig;
     driveMotor =
         new TalonFX(moduleConfig.driveMotorChannel(), HardwareConstants.CANIVORE_CAN_BUS_STRING);
     turnMotor =
@@ -68,12 +72,19 @@ public class PhysicalModule implements ModuleInterface {
 
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.MotorOutput.Inverted = moduleConfig.driveReversed();
-    driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.01;
+    driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.05;
     driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     driveConfig.CurrentLimits.SupplyCurrentLimit = ModuleConstants.DRIVE_SUPPLY_LIMIT;
     driveConfig.CurrentLimits.StatorCurrentLimit = ModuleConstants.DRIVE_STATOR_LIMIT;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     driveConfig.MotorOutput.ControlTimesyncFreqHz = 250;
+
+    driveConfig.Slot0.kP = ModuleConstants.DRIVE_P;
+    driveConfig.Slot0.kI = ModuleConstants.DRIVE_I;
+    driveConfig.Slot0.kD = ModuleConstants.DRIVE_D;
+    driveConfig.Slot0.kS = ModuleConstants.DRIVE_S;
+    driveConfig.Slot0.kV = ModuleConstants.DRIVE_V;
+    driveConfig.Slot0.kA = ModuleConstants.DRIVE_A;
 
     driveMotor.getConfigurator().apply(driveConfig, HardwareConstants.LOOP_TIME_SECONDS);
 
@@ -90,10 +101,17 @@ public class PhysicalModule implements ModuleInterface {
     turnConfig.MotionMagic.MotionMagicAcceleration =
         ModuleConstants.MAX_ANGULAR_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-    turnConfig.CurrentLimits.SupplyCurrentLimit = 20;
+    turnConfig.CurrentLimits.SupplyCurrentLimit = 15;
     turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     turnConfig.MotorOutput.ControlTimesyncFreqHz = 250;
     turnMotor.getConfigurator().apply(turnConfig, HardwareConstants.LOOP_TIME_SECONDS);
+
+    turnConfig.Slot0.kP = ModuleConstants.TURN_P;
+    turnConfig.Slot0.kI = ModuleConstants.TURN_I;
+    turnConfig.Slot0.kD = ModuleConstants.TURN_D;
+    turnConfig.Slot0.kS = ModuleConstants.TURN_S;
+    turnConfig.Slot0.kV = ModuleConstants.TURN_V;
+    turnConfig.Slot0.kA = ModuleConstants.TURN_A;
 
     drivePosition = driveMotor.getPosition();
     driveVelocity = driveMotor.getVelocity();
@@ -123,7 +141,9 @@ public class PhysicalModule implements ModuleInterface {
         turnMotorAppliedVolts,
         turnMotorCurrent,
         turnMotorReference,
-        turnMotorTorqueCurrent);
+        turnMotorTorqueCurrent,
+        driveMotorAppliedVoltage,
+        driveMotorCurrent);
     driveMotor.optimizeBusUtilization();
     turnMotor.optimizeBusUtilization();
     turnEncoder.optimizeBusUtilization();
@@ -138,17 +158,18 @@ public class PhysicalModule implements ModuleInterface {
 
   @Override
   public void updateInputs(ModuleInputs inputs) {
-    BaseStatusSignal.refreshAll(
-        drivePosition,
-        turnEncoderAbsolutePosition,
-        driveVelocity,
-        driveMotorTorque,
-        driveMotorReference,
-        turnEncoderVelocity,
-        turnMotorAppliedVolts,
-        turnMotorCurrent,
-        turnMotorReference,
-        turnMotorTorqueCurrent);
+    // BaseStatusSignal.refreshAll(
+    drivePosition.refresh();
+    turnEncoderAbsolutePosition.refresh();
+    driveVelocity.refresh();
+    driveMotorTorque.refresh();
+    driveMotorReference.refresh();
+    turnEncoderVelocity.refresh();
+    turnMotorAppliedVolts.refresh();
+    turnMotorCurrent.refresh();
+    turnMotorReference.refresh();
+    turnMotorTorqueCurrent.refresh();
+    // );
 
     inputs.isDriveConnected =
         BaseStatusSignal.isAllGood(
@@ -200,6 +221,11 @@ public class PhysicalModule implements ModuleInterface {
         desiredState.speedMetersPerSecond
             * ModuleConstants.DRIVE_GEAR_RATIO
             / ModuleConstants.WHEEL_CIRCUMFERENCE_METERS;
+
+    if (this.moduleConfig.driveMotorChannel() == CompConstants.FRONT_LEFT_DRIVE_MOTOR_ID) {
+      // SmartDashboard.putNumber("desiredDriveRPS", desiredDriveRPS);
+      // SmartDashboard.putNumber("currentSwerveRPS", driveMotor.getVelocity().getValueAsDouble());
+    }
 
     driveMotor.setControl(
         velocityTorqueCurrentFOC

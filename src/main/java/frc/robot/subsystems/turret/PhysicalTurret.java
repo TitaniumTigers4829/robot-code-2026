@@ -4,12 +4,11 @@
 
 package frc.robot.subsystems.turret;
 
-import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -18,174 +17,247 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.HardwareConstants;
+import org.littletonrobotics.junction.Logger;
 
-/** Add your docs here. */
 public class PhysicalTurret implements TurretInterface {
 
+  /* -------------------------------------------------------------------------- */
+  /*                                  HARDWARE                                  */
+  /* -------------------------------------------------------------------------- */
+
   private final TalonFX turretMotor =
-      new TalonFX(TurretConstants.TURRET_MOTOR_ID, HardwareConstants.CANIVORE_CAN_BUS_STRING);
+      new TalonFX(TurretConstants.TURRET_MOTOR_ID, HardwareConstants.RIO_CAN_BUS_STRING);
+
   private final CANcoder turretEncoder = new CANcoder(TurretConstants.TURRET_CANCODER_ID);
 
-  // Commented out because torqueFOC is in theory easier to tune
-  // private final MotionMagicVoltage mmPositionRequest = new MotionMagicVoltage(0.0);
-  // private final DutyCycleOut dutyCyleOut = new DutyCycleOut(0.0);
+  // TODO(second-cancoder): Uncomment when second CANcoder is physically installed.
+  // Mount this encoder on a separate gear with a different ratio to the turret ring
+  // so that its gear ratio is co-prime with the first encoder's gear ratio.
+  // See Team SCREAM 4522's write-up for gear tooth selection guidance.
+  //
+  // private final CANcoder turretEncoder2 =
+  //     new CANcoder(TurretConstants.TURRET_CANCODER_2_ID);
 
-  private final MotionMagicTorqueCurrentFOC mmTorqueRequest = new
-MotionMagicTorqueCurrentFOC(0.0);
-  private final TorqueCurrentFOC currentOut = new TorqueCurrentFOC(0.0);
+  /* -------------------------------------------------------------------------- */
+  /*                                CONFIG OBJECTS                              */
+  /* -------------------------------------------------------------------------- */
 
-  private final StatusSignal<Voltage> turretMotorAppliedVoltage;
-  private final StatusSignal<Double> desiredAngle;
-  private final StatusSignal<AngularVelocity> turretAngularVelocity;
-  private final StatusSignal<Angle> turretAngle;
-  private final StatusSignal<Double> dutyCycle;
-  private final StatusSignal<Current> statorCurrent;
-  private final StatusSignal<Temperature> motorTemp;
-  private final double angleError;
+  private final TalonFXConfiguration motorConfig = new TalonFXConfiguration();
 
-  private final TalonFXConfiguration turretConfig = new TalonFXConfiguration();
+  private final CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
 
-  private final CANcoderConfiguration turretEncoderConfig = new CANcoderConfiguration();
+  // TODO(second-cancoder): Uncomment when second CANcoder is installed.
+  // private final CANcoderConfiguration encoderConfig2 = new CANcoderConfiguration();
+
+  private final MotionMagicVoltage mmRequest = new MotionMagicVoltage(0.0);
+
+  private final DutyCycleOut dutyRequest = new DutyCycleOut(0.0);
+
+  /* -------------------------------------------------------------------------- */
+  /*                                GEAR RATIOS                                 */
+  /* -------------------------------------------------------------------------- */
+
+  // Total motor-to-turret gear ratio: 26.66667:1
+  // i.e. the motor spins 26.666667 times for every 1 full turret rotation.
+  // private static final double TOTAL_RATIO = TurretConstants.TOTAL_GEAR_RATIO;
+
+  // The CANcoder is NOT on the turret output. It sits on an intermediate shaft:
+  //
+  //   Motor ──(2.667:1)──► CANcoder shaft ──(16.666:1)──► Turret output
+  //
+  // MOTOR_TO_CANCODER = 44.444 / 16.666 ≈ 2.667
+  // This means the CANcoder shaft spins 2.667 times per 1 turret rotation,
+  // and the motor spins 2.667 times per 1 CANcoder shaft rotation.
+  // private static final double MOTOR_TO_CANCODER = TOTAL_RATIO /
+  // TurretConstants.CANCODER_TO_TURRET;
+
+  // TODO(second-cancoder): Add second encoder gear ratio constant in TurretConstants.
+  // The ratio must be co-prime with CANCODER_TO_TURRET (currently 16.666).
+  // Example: if you use a 17T gear on the encoder and a 77T turret ring,
+  // ratio = 77.0 / 17.0 ≈ 4.529. Check that gcd(numerator1, numerator2) = 1.
+  //
+  // private static final double MOTOR_TO_CANCODER_2 =
+  //     TOTAL_RATIO / TurretConstants.CANCODER_2_TO_TURRET;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                STATUS SIGNALS                              */
+  /* -------------------------------------------------------------------------- */
+
+  private final StatusSignal<Angle> motorPosition;
+  private final StatusSignal<AngularVelocity> motorVelocity;
+  private final StatusSignal<Angle> cancoderPosition;
+
+  // TODO(second-cancoder): Uncomment when second CANcoder is installed.
+  // private final StatusSignal<Angle> cancoderPosition2;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 CONSTRUCTOR                                */
+  /* -------------------------------------------------------------------------- */
 
   public PhysicalTurret() {
 
-    turretConfig.Feedback.SensorToMechanismRatio = TurretConstants.GEAR_RATIO;
+    configureEncoder();
+    configureMotor();
 
-    turretEncoderConfig.MagnetSensor.MagnetOffset = TurretConstants.ANGLE_ZERO;
-    turretEncoderConfig.MagnetSensor.SensorDirection = TurretConstants.ENCODER_REVERSED;
+    // turretEncoder.setPosition(turretEncoder.getAbsolutePosition());
 
-    turretEncoder.getConfigurator().apply(turretEncoderConfig);
+    motorPosition = turretEncoder.getPosition();
 
-    turretConfig.Slot0.kP = TurretConstants.TURRET_P;
-    turretConfig.Slot0.kI = TurretConstants.TURRET_I;
-    turretConfig.Slot0.kD = TurretConstants.TURRET_D;
-    turretConfig.Slot0.kS = TurretConstants.TURRET_S;
-    turretConfig.Slot0.kV = TurretConstants.TURRET_V;
-    turretConfig.Slot0.kA = TurretConstants.TURRET_A;
+    motorVelocity = turretMotor.getVelocity();
+    cancoderPosition = turretEncoder.getAbsolutePosition();
 
-    turretConfig.MotionMagic.MotionMagicAcceleration =
-        TurretConstants.MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
-    turretConfig.MotionMagic.MotionMagicCruiseVelocity =
-        TurretConstants.MAX_VELOCITY_ROTATIONS_PER_SECOND;
+    // turretEncoder.setPosition(0.0);
+    // TODO(second-cancoder): Uncomment when second CANcoder is installed.
+    // cancoderPosition2 = turretEncoder2.getAbsolutePosition();
 
-    turretConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    motorPosition.setUpdateFrequency(250);
+    motorVelocity.setUpdateFrequency(250);
 
-    // Set current limits
-    turretConfig.CurrentLimits.StatorCurrentLimit = TurretConstants.STATOR_CURRENT_LIMIT;
-    turretConfig.CurrentLimits.SupplyCurrentLimit = TurretConstants.SUPPLY_CURRENT_LIMIT;
-    turretConfig.CurrentLimits.StatorCurrentLimitEnable =
-        TurretConstants.STATOR_CURRENT_LIMIT_ENABLE;
-    turretConfig.CurrentLimits.SupplyCurrentLimitEnable =
-        TurretConstants.SUPPLY_CURRENT_LIMIT_ENABLE;
-
-    turretConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    turretConfig.MotorOutput.DutyCycleNeutralDeadband = TurretConstants.TURRET_DEADBAND;
-
-    turretConfig.ClosedLoopGeneral.ContinuousWrap = true;
-
-    turretConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    turretConfig.Feedback.FeedbackRemoteSensorID = turretEncoder.getDeviceID();
-
-    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TurretConstants.MAX_ANGLE;
-    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TurretConstants.MIN_ANGLE;
-    turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-
-    turretConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-    turretMotor.getConfigurator().apply(turretConfig);
-    turretAngle = turretEncoder.getAbsolutePosition();
-    turretMotorAppliedVoltage = turretMotor.getMotorVoltage();
-    turretAngularVelocity = turretMotor.getVelocity();
-    dutyCycle = turretMotor.getDutyCycle();
-    statorCurrent = turretMotor.getStatorCurrent();
-    motorTemp = turretMotor.getDeviceTemp();
-    desiredAngle = turretMotor.getClosedLoopReference();
-    angleError =
-        turretMotor.getClosedLoopReference().getValueAsDouble()
-            - turretMotor.getPosition().getValueAsDouble();
-
-    // Higher frequency for turret angle and its change over time (angular velocity) because
-    // its more important that the other signals
-    turretAngle.setUpdateFrequency(250.0);
-    turretAngularVelocity.setUpdateFrequency(250.0);
-    desiredAngle.setUpdateFrequency(250.0);
-
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0, turretMotorAppliedVoltage, dutyCycle, statorCurrent, motorTemp);
+    // TODO(second-cancoder): Add turretEncoder2 to optimizeBusUtilizationForAll.
     ParentDevice.optimizeBusUtilizationForAll(turretMotor, turretEncoder);
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                               CONFIGURATION                                */
+  /* -------------------------------------------------------------------------- */
+
+  private void configureEncoder() {
+    encoderConfig.MagnetSensor.MagnetOffset = -TurretConstants.ANGLE_ZERO;
+    encoderConfig.MagnetSensor.SensorDirection = TurretConstants.ENCODER_REVERSED;
+    turretEncoder.getConfigurator().apply(encoderConfig);
+  }
+
+  // TODO(second-cancoder): Add configureEncoder2() when second CANcoder is installed.
+  // Set ANGLE_ZERO_2 and ENCODER_2_REVERSED in TurretConstants.
+  // The zero offset should be found the same way as the first — Phoenix Tuner X
+  // with the turret physically at the hard stop / known reference position.
+  //
+  // private void configureEncoder2() {
+  //   encoderConfig2.MagnetSensor.MagnetOffset = TurretConstants.ANGLE_ZERO_2;
+  //   encoderConfig2.MagnetSensor.SensorDirection = TurretConstants.ENCODER_2_REVERSED;
+  //   turretEncoder2.getConfigurator().apply(encoderConfig2);
+  // }
+
+  private void configureMotor() {
+
+    // SensorToMechanismRatio = TOTAL_RATIO tells Phoenix 6 to automatically
+    // divide all motor position/velocity signals by TOTAL_RATIO, so that
+    // getPosition() returns turret output rotations, not raw motor rotations.
+    // Do NOT divide by TOTAL_RATIO again anywhere when reading these signals.
+    motorConfig.Feedback.FeedbackRemoteSensorID = turretEncoder.getDeviceID();
+    motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TurretConstants.MAX_ANGLE;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TurretConstants.MIN_ANGLE;
+    motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+
+    // ContinuousWrap lets the motor always take the shortest path to target.
+    // NOTE: do not use Phoenix soft limits alongside ContinuousWrap — they conflict.
+    // Enforce turret angle limits in TurretSubsystem.setTurretAngle() instead.
+    // motorConfig.ClosedLoopGeneral.ContinuousWrap = true;
+
+    motorConfig.Slot0.kP = TurretConstants.TURRET_P;
+    motorConfig.Slot0.kI = TurretConstants.TURRET_I;
+    motorConfig.Slot0.kD = TurretConstants.TURRET_D;
+    motorConfig.Slot0.kS = TurretConstants.TURRET_S;
+    motorConfig.Slot0.kV = TurretConstants.TURRET_V;
+    motorConfig.Slot0.kA = TurretConstants.TURRET_A;
+
+    motorConfig.MotionMagic.MotionMagicAcceleration =
+        TurretConstants.MAX_ACCELERATION_ROTATIONS_PER_SECOND_SQUARED;
+    motorConfig.MotionMagic.MotionMagicCruiseVelocity =
+        TurretConstants.MAX_VELOCITY_ROTATIONS_PER_SECOND;
+
+    turretMotor.getConfigurator().apply(motorConfig);
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 IO UPDATE                                  */
+  /* -------------------------------------------------------------------------- */
+
+  @Override
   public void updateInputs(TurretInputs inputs) {
-    BaseStatusSignal.refreshAll(
-        turretAngle,
-        turretAngularVelocity,
-        turretMotorAppliedVoltage,
-        dutyCycle,
-        statorCurrent,
-        motorTemp,
-        desiredAngle);
 
-    inputs.turretAngle =
-        turretAngle.getValueAsDouble()
-            + BaseStatusSignal.getLatencyCompensatedValueAsDouble(
-                turretAngle, turretAngularVelocity);
-    inputs.turretAngularVelocity = turretAngularVelocity.getValueAsDouble();
-    inputs.turretMotorAppliedVoltage = turretMotorAppliedVoltage.getValueAsDouble();
-    inputs.turretDutyCycle = dutyCycle.getValueAsDouble();
-    inputs.turretStatorCurrent = statorCurrent.getValueAsDouble();
-    inputs.turretMotorTemp = motorTemp.getValueAsDouble();
+    // BaseStatusSignal.refreshAll(
+    //     motorPosition, motorVelocity, motorVoltage, motorCurrent, motorTemp);
+
+    motorPosition.refresh();
+    motorVelocity.refresh();
+    cancoderPosition.refresh();
+
+    // Phoenix 6 already divides by SensorToMechanismRatio (TOTAL_RATIO) internally.
+    // These values are already in turret output rotations — do NOT divide again.
+    inputs.turretAngle = motorPosition.getValueAsDouble();
+    inputs.turretAngularVelocity = motorVelocity.getValueAsDouble();
+    // SmartDashboard.putNumber("abs pos", cancoderPosition.getValueAsDouble());
   }
 
-  public double getTurretAngle(double angle) {
-    turretAngle.refresh();
-    return turretAngle.getValueAsDouble();
+  /* -------------------------------------------------------------------------- */
+  /*                                CONTROL API                                 */
+  /* -------------------------------------------------------------------------- */
+
+  @Override
+  public void setTurretAngle(double turretRotations) {
+    // mmRequest takes mechanism rotations (turret rotations) directly.
+    // Phoenix converts to motor rotations internally using TOTAL_RATIO.
+    turretMotor.setControl(mmRequest.withPosition(turretRotations));
   }
 
-  // Assumes facing the front of the robot is 0 rotations
-  // Normalizes angle
-  public void setTurretAngle(double desiredAngle) {
-    if (Math.abs(desiredAngle - getTurretAngle()) < 0.5) {
-      turretMotor.setControl(mmTorqueRequest.withPosition(desiredAngle));
-    } else {
-      turretMotor.setControl(mmTorqueRequest.withPosition(Math.abs(Math.abs(desiredAngle) - 1)));
-    }
+  @Override
+  public void setSpeed(double output) {
+    turretMotor.setControl(dutyRequest.withOutput(output));
   }
 
-  // For manual in case turret angling fucks up
-  public void setSpeed(double speed) {
-    turretMotor.set(speed);
-  }
-
-  public void openLoop(double output) {
-    turretMotor.setControl(currentOut.withOutput(output));
-  }
-
+  @Override
   public void setVolts(double volts) {
     turretMotor.setVoltage(volts);
   }
 
-  public double getVolts() {
-    return turretMotorAppliedVoltage.getValueAsDouble();
+  @Override
+  public double getTurretAngle() {
+    motorPosition.refresh();
+    // Already in turret rotations due to SensorToMechanismRatio — do NOT divide again.
+    return motorPosition.getValueAsDouble();
+  }
+
+  /**
+   * Call this when the turret is physically pointing forward (zero position). Resets the encoder to
+   * 0.0 regardless of what it currently reads. Use this during teleop to recover from a bad boot
+   * seed.
+   *
+   * <p>NOTE: After calling this, also command setTurretAngle(0.0) to prevent MotionMagic from
+   * immediately driving to a stale target position.
+   */
+  @Override
+  public void rezeroTurret() {
+    turretEncoder.setPosition(turretEncoder.getAbsolutePosition().refresh().getValueAsDouble());
+    // turretEncoder.setPosition(0);
+    Logger.recordOutput("turret/rezero/triggered", true);
+    DriverStation.reportWarning("Turret manually re-zeroed to forward position.", false);
+  }
+
+  @Override
+  public void zeroTurret() {
+    turretMotor.setControl(mmRequest.withPosition(0));
   }
 
   @Override
   public void setPID(double kP, double kI, double kD) {
-    turretConfig.Slot0.kP = kP;
-    turretConfig.Slot0.kI = kI;
-    turretConfig.Slot0.kD = kD;
-    turretMotor.getConfigurator().apply(turretConfig);
+    motorConfig.Slot0.kP = kP;
+    motorConfig.Slot0.kI = kI;
+    motorConfig.Slot0.kD = kD;
+    turretMotor.getConfigurator().apply(motorConfig);
   }
 
   @Override
   public void setFF(double kS, double kV, double kA) {
-    turretConfig.Slot0.kS = kS;
-    turretConfig.Slot0.kV = kV;
-    turretConfig.Slot0.kA = kA;
-    turretMotor.getConfigurator().apply(turretConfig);
+    motorConfig.Slot0.kS = kS;
+    motorConfig.Slot0.kV = kV;
+    motorConfig.Slot0.kA = kA;
+    turretMotor.getConfigurator().apply(motorConfig);
   }
 }

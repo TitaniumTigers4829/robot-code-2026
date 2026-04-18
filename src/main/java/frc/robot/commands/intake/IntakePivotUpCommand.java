@@ -12,6 +12,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 public class IntakePivotUpCommand extends Command {
   /** Creates a new IntakePivotUpCommand. */
   IntakeSubsystem intakeSubsystem;
+
   public IntakePivotUpCommand(IntakeSubsystem intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     addRequirements(intakeSubsystem);
@@ -24,12 +25,15 @@ public class IntakePivotUpCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.setIntakeAngle(IntakeConstants.MIN_ANGLE);
+    intakeSubsystem.setIntakeAngle(IntakeConstants.PIVOT_UP_POSITION);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    // TODO maybe don't do this if the intake tries to fall down
+    intakeSubsystem.setPivotSpeed(0);
+  }
 
   // Returns true when the command should end.
   @Override

@@ -85,10 +85,12 @@ public class SimGyro {
   public void updateSimulationSubTick(Angle angleThisTick, Twist2d twistThisTick) {
     AngularVelocity actualAngularVelocity = Radians.of(twistThisTick.dtheta).div(timing.dt());
 
+    boolean isStationary = MeasureMath.abs(actualAngularVelocity).lt(RadiansPerSecond.of(0.001));
+
     AngularVelocity omegaV =
         actualAngularVelocity
-            .plus(averageDriftingMotionless)
-            // .plus(getDriftingDueToImpact(actualAngularVelocity))
+            .plus(isStationary ? RadiansPerSecond.zero() : averageDriftingMotionless)
+            .plus(getDriftingDueToImpact(actualAngularVelocity))
             .plus(actualAngularVelocity.times(SimMath.generateRandomNormal(0.0, veloStdDev)));
 
     LinearVelocity lastXV = Meters.of(lastTwist.dx).div(timing.dt());
@@ -102,11 +104,12 @@ public class SimGyro {
     if (updateConsumer != null) {
       updateConsumer.accept(Pair.of(angleThisTick, omegaV), new XY<>(xA, yA));
     }
+
+    lastTwist = twistThisTick;
   }
 
   private AngularVelocity getDriftingDueToImpact(AngularVelocity actualAngularVelocity) {
-    AngularVelocity lastAngularVelocity =
-        RadiansPerSecond.of(lastTwist.dtheta * timing.dt().in(Seconds));
+    AngularVelocity lastAngularVelocity = Radians.of(lastTwist.dtheta).div(timing.dt());
     AngularAcceleration angularAcceleration =
         actualAngularVelocity.minus(lastAngularVelocity).div(timing.dt());
     if (MeasureMath.abs(angularAcceleration).gt(START_DRIFTING)) {

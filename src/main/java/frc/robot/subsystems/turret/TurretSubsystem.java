@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.turret;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
@@ -23,7 +24,7 @@ public class TurretSubsystem extends SubsystemBase {
 
   static {
     switch (Constants.getRobot()) {
-      case COMP_ROBOT, DEV_ROBOT -> {
+      case COMP_ROBOT -> {
         turretP.initDefault(TurretConstants.TURRET_P);
         turretI.initDefault(TurretConstants.TURRET_I);
         turretD.initDefault(TurretConstants.TURRET_D);
@@ -31,6 +32,7 @@ public class TurretSubsystem extends SubsystemBase {
         turretV.initDefault(TurretConstants.TURRET_V);
         turretA.initDefault(TurretConstants.TURRET_A);
       }
+      default -> {}
     }
   }
 
@@ -38,6 +40,14 @@ public class TurretSubsystem extends SubsystemBase {
   public TurretSubsystem(TurretInterface turretInterface) {
     this.turretInterface = turretInterface;
   }
+
+  // public void stopWhenMinLimitReached() {
+  //   turretInterface.stopWhenMinLimitReached();
+  // }
+
+  // public void stopWhenMaxLimitReached() {
+  //   turretInterface.stopWhenMaxLimitReached();
+  // }
 
   public double getTurretAngle() {
     return turretInterface.getTurretAngle();
@@ -49,7 +59,12 @@ public class TurretSubsystem extends SubsystemBase {
 
   // In rotations
   public void setTurretAngle(double targetAngle) {
-    turretInterface.setTurretAngle(targetAngle);
+    double clamped =
+        Math.max(
+            TurretConstants.MIN_ANGLE * 10,
+            Math.min(TurretConstants.MAX_ANGLE * 10, targetAngle * 10));
+    SmartDashboard.putNumber("set turret angle", targetAngle * 10);
+    turretInterface.setTurretAngle(clamped);
   }
 
   public void setVolts(double volts) {
@@ -68,6 +83,14 @@ public class TurretSubsystem extends SubsystemBase {
     turretInterface.setSpeed(speed);
   }
 
+  public void rezeroTurret() {
+    turretInterface.rezeroTurret();
+  }
+
+  public void zeroTurret() {
+    turretInterface.zeroTurret();
+  }
+
   public boolean iAtSetpointAngle(double targetAngle) {
     return Math.abs(targetAngle - inputs.turretAngle) < TurretConstants.TURRET_ERROR_TOLERANCE;
   }
@@ -76,21 +99,9 @@ public class TurretSubsystem extends SubsystemBase {
   public void periodic() {
     turretInterface.updateInputs(inputs);
     Logger.processInputs("turret/", inputs);
-
-    // Update tunable numbers
-    if (turretP.hasChanged(hashCode())
-        || turretI.hasChanged(hashCode())
-        || turretD.hasChanged(hashCode())) {
-      turretInterface.setPID(turretP.get(), turretI.get(), turretD.get());
-    }
-
-    if (turretS.hasChanged(hashCode())
-        || turretV.hasChanged(hashCode())
-        || turretA.hasChanged(hashCode())) {
-      turretInterface.setFF(turretS.get(), turretV.get(), turretA.get());
-    }
-
-    // SmartDashboard.putNumber("turret angle", inputs.turretAngle);
-    // SmartDashboard.putNumber("error")
+    SmartDashboard.putNumber("turret angle", inputs.turretAngle);
+    // Logger.recordOutput("Red Hub", Constants.FieldConstants.RED_HUB_CENTER);
+    // Logger.recordOutput("Blue Hub", Constants.FieldConstants.BLUE_HUB_CENTER);
+    // SmartDashboard.putNumber("error", Math.abs(inputs.turretDesiredAngle - inputs.turretAngle));
   }
 }
