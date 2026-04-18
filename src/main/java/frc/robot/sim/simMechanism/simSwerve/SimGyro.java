@@ -12,6 +12,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.extras.logging.RuntimeLog;
+import frc.robot.extras.math.mathutils.MeasureMath;
 import frc.robot.extras.math.mathutils.MeasureMath.XY;
 import frc.robot.extras.math.mathutils.SimMath;
 import frc.robot.sim.configs.SimGyroConfig;
@@ -104,7 +105,6 @@ public class SimGyro {
     lastTwist = twistThisTick;
   }
 
-  /*
   private AngularVelocity getDriftingDueToImpact(AngularVelocity actualAngularVelocity) {
     AngularVelocity lastAngularVelocity = Radians.of(lastTwist.dtheta).div(timing.dt());
     AngularAcceleration angularAcceleration =
@@ -118,5 +118,5 @@ public class SimGyro {
       return RadiansPerSecond.of(0);
     }
   }
-  */
+
 }

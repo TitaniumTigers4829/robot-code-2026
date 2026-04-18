@@ -65,7 +65,7 @@ public class SimulatedVision extends PhysicalVision {
 
       // Create a PhotonCameraSim which will update the linked PhotonCamera's values
       // with visible targets.
-      PhotonCamera camera = getSimulationCamera(Limelight.FRONT_LEFT);
+      PhotonCamera camera = getSimulationCamera(Limelight.FRONT);
       if (camera != null) {
         shooterCameraSim = new PhotonCameraSim(camera, cameraProperties);
         visionSim.addCamera(shooterCameraSim, VisionConstants.BACK_TRANSFORM);
@@ -244,8 +244,8 @@ public class SimulatedVision extends PhysicalVision {
   private PhotonCamera getSimulationCamera(Limelight limelight) {
     try {
       return switch (limelight) {
-        case FRONT_LEFT -> VisionConstants.FRONT_LEFT;
-        case FRONT_RIGHT -> VisionConstants.FRONT_RIGHT;
+        case FRONT -> VisionConstants.FRONT_CAMERA;
+        case SIDE -> VisionConstants.SIDE_CAMERA;
 
         default -> null;
       };
@@ -265,8 +265,8 @@ public class SimulatedVision extends PhysicalVision {
   private NetworkTable getLimelightTable(Limelight limelight) {
     try {
       return switch (limelight) {
-        case FRONT_LEFT -> NTUtils.getLimelightNetworkTable(Limelight.FRONT_LEFT.getName());
-        case FRONT_RIGHT -> NTUtils.getLimelightNetworkTable(Limelight.FRONT_RIGHT.getName());
+        case FRONT -> NTUtils.getLimelightNetworkTable(Limelight.FRONT.getName());
+        case SIDE -> NTUtils.getLimelightNetworkTable(Limelight.SIDE.getName());
         default -> null;
       };
     } catch (Exception e) {

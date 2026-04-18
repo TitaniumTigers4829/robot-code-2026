@@ -75,13 +75,13 @@ public class PhysicalVision implements VisionInterface {
         inputs.limelightTimestamps[limelight.getId()] = getTimestampSeconds(limelight);
         inputs.limelightAmbiguities[limelight.getId()] = getAmbiguity(limelight);
 
-      inputs.limelightCalculatedPoses[limelight.getId()] =
-          getPoseFromAprilTags(limelight).orElse(new Pose2d());
+        inputs.limelightCalculatedPoses[limelight.getId()] =
+            getPoseFromAprilTags(limelight).orElse(new Pose2d());
 
-      inputs.megatag1PoseEstimates[limelight.getId()] =
-          getMegaTag1PoseEstimate(limelight).pose().orElse(new Pose2d());
-      inputs.megatag2PoseEstimates[limelight.getId()] =
-          getMegaTag2PoseEstimate(limelight).pose().orElse(new Pose2d());
+        inputs.megatag1PoseEstimates[limelight.getId()] =
+            getMegaTag1PoseEstimate(limelight).pose().orElse(new Pose2d());
+        inputs.megatag2PoseEstimates[limelight.getId()] =
+            getMegaTag2PoseEstimate(limelight).pose().orElse(new Pose2d());
 
         PoseEstimate megaTag2 = getMegaTag2PoseEstimate(limelight);
         inputs.megatag2PoseEstimates[limelight.getId()] =
