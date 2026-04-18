@@ -4,12 +4,15 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.extras.logging.RuntimeLog;
 import frc.robot.extras.math.mathutils.MeasureMath;
@@ -27,10 +30,10 @@ import java.util.function.BiConsumer;
 public class SimGyro {
   /* The threshold of instantaneous angular acceleration at which the chassis is considered to
   experience an "impact." */
-  // private static final AngularAcceleration START_DRIFTING = RadiansPerSecondPerSecond.of(500);
+  private static final AngularAcceleration START_DRIFTING = RadiansPerSecondPerSecond.of(500);
   /* The amount of drift, in radians, that the gyro experiences as a result of each multiple of
   the angular acceleration threshold. */
-  // private static final Angle DRIFT_DUE_TO_IMPACT_COEFFICIENT = Radians.of(1);
+  private static final Angle DRIFT_DUE_TO_IMPACT_COEFFICIENT = Radians.of(1);
 
   private final SimEnvTiming timing;
   private BiConsumer<Pair<Angle, AngularVelocity>, XY<LinearAcceleration>> updateConsumer;
