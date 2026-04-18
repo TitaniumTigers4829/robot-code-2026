@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.HardwareConstants;
+import frc.robot.Constants.TrajectoryConstants;
 import frc.robot.extras.logging.Tracer;
 import frc.robot.extras.swerve.RepulsorFieldPlanner;
 import frc.robot.extras.swerve.setpointGen.SwerveSetpoint;
@@ -50,20 +51,20 @@ public class SwerveDrive extends SubsystemBase {
   private final SwerveModule[] swerveModules;
   private final PIDController xChoreoController =
       new PIDController(
-          DriveConstants.AUTO_TRANSLATION_P,
-          DriveConstants.AUTO_TRANSLATION_I,
-          DriveConstants.AUTO_TRANSLATION_D);
+          TrajectoryConstants.AUTO_TRANSLATION_P, 0, TrajectoryConstants.AUTO_TRANSLATION_D);
   private final PIDController yChoreoController =
       new PIDController(
-          DriveConstants.AUTO_TRANSLATION_P,
-          DriveConstants.AUTO_TRANSLATION_I,
-          DriveConstants.AUTO_TRANSLATION_D);
-  private final ProfiledPIDController rotationChoreoController =
-      new ProfiledPIDController(
-          DriveConstants.AUTO_THETA_P,
-          DriveConstants.AUTO_THETA_I,
-          DriveConstants.AUTO_THETA_D,
-          DriveConstants.AUTO_THETA_CONTROLLER_CONSTRAINTS);
+          TrajectoryConstants.AUTO_TRANSLATION_P, 0, TrajectoryConstants.AUTO_TRANSLATION_D);
+
+  private final PIDController rotationChoreoController =
+      new PIDController(TrajectoryConstants.AUTO_THETA_P, 0, TrajectoryConstants.AUTO_THETA_D);
+
+  // private final ProfiledPIDController rotationChoreoController =
+  //     new ProfiledPIDController(
+  //         TrajectoryConstants.AUTO_THETA_P,
+  //         0,
+  //         TrajectoryConstants.AUTO_THETA_D,
+  //         TrajectoryConstants.THETA_CONTROLLER_CONSTRAINTS);
 
   private Rotation2d rawGyroRotation;
   private final SwerveModulePosition[] lastModulePositions;
@@ -308,7 +309,7 @@ public class SwerveDrive extends SubsystemBase {
   public void followSwerveSample(SwerveSample sample) {
     xChoreoController.reset();
     yChoreoController.reset();
-    rotationChoreoController.reset(getOdometryRotation2d().getRadians());
+    rotationChoreoController.reset(); // getOdometryRotation2d().getRadians());
     // Use the summed forces in the drive method
     ChassisSpeeds chassisSpeeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -679,37 +680,34 @@ public class SwerveDrive extends SubsystemBase {
 
     ChassisSpeeds outputFieldRelative = feedback;
 
-    // if (nudgeSupplier != null) {
-    //   Translation2d nudge = nudgeSupplier.get();
-    //   if (nudge.getNorm() > .1) {
-    //     double nudgeScalar =
-    //         Math.min(error.getTranslation().getNorm() / 3, 1)
-    //             * Math.min(error.getTranslation().getNorm() / 3, 1)
-    //             * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
+    if (nudgeSupplier != null) {
+      Translation2d nudge = nudgeSupplier.get();
+      if (nudge.getNorm() > .1) {
+        double nudgeScalar =
+            Math.min(error.getTranslation().getNorm() / 3, 1)
+                * Math.min(error.getTranslation().getNorm() / 3, 1)
+                * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
 
-    //     if (AllianceFlipper.isRed()) {
-    //       nudge = new Translation2d(-nudge.getX(), -nudge.getY());
-    //     }
-    //     nudgeScalar *=
-    //         Math.abs(
-    //             nudge
-    //                 .getAngle()
-    //                 .minus(
-    //                     new Rotation2d(
-    //                         outputFieldRelative.vxMetersPerSecond,
-    //                         outputFieldRelative.vyMetersPerSecond))
-    //                 .getSin());
-    //     outputFieldRelative.vxMetersPerSecond += nudge.getX() * nudgeScalar;
-    //     outputFieldRelative.vyMetersPerSecond += nudge.getY() * nudgeScalar;
-    //   }
-    // }
+        if (AllianceFlipper.isRed()) {
+          nudge = new Translation2d(-nudge.getX(), -nudge.getY());
+        }
+        nudgeScalar *=
+            Math.abs(
+                nudge
+                    .getAngle()
+                    .minus(
+                        new Rotation2d(
+                            outputFieldRelative.vxMetersPerSecond,
+                            outputFieldRelative.vyMetersPerSecond))
+                    .getSin());
+        outputFieldRelative.vxMetersPerSecond += nudge.getX() * nudgeScalar;
+        outputFieldRelative.vyMetersPerSecond += nudge.getY() * nudgeScalar;
+      }
+    }
 
     ChassisSpeeds outputRobotRelative =
         ChassisSpeeds.fromFieldRelativeSpeeds(
             outputFieldRelative, poseEstimator.getEstimatedPosition().getRotation());
-
-    Logger.recordOutput("Repulsor/Speeds", outputRobotRelative);
-    // Logger.recordOutput(getName(), null);
 
     drive(outputRobotRelative.unaryMinus(), false);
   }

@@ -46,6 +46,7 @@ public class RepulsorFieldPlanner {
     }
   }
 
+  /*
   private static class TeardropObstacle extends Obstacle {
     final Translation2d loc;
     final double primaryMaxRange;
@@ -125,6 +126,7 @@ public class RepulsorFieldPlanner {
       return outwardsForce.plus(sidewaysForce);
     }
   }
+  */
 
   static class HorizontalObstacle extends Obstacle {
     final double y;

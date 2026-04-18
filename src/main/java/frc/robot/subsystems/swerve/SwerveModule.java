@@ -9,7 +9,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.extras.logging.LoggedTunableNumber;
 import frc.robot.extras.logging.Tracer;
@@ -181,6 +180,10 @@ public class SwerveModule {
     return moduleInterface.getDrivePositionRadians();
   }
 
+  public double getDistanceFromAllianceHub() {
+    return moduleInterface.getDistanceFromAllianceHub();
+  }
+
   /**
    * Gets the measured state of the module, which includes the drive velocity and turn rotation.
    *
@@ -216,6 +219,5 @@ public class SwerveModule {
     if (turnP.hasChanged(hashCode()) || turnD.hasChanged(hashCode())) {
       moduleInterface.setTurnPID(turnP.get(), 0, turnD.get());
     }
-    SmartDashboard.putNumber(moduleName + "offset", getPosition().angle.getRotations());
   }
 }

@@ -1,7 +1,7 @@
 package frc.robot.subsystems.adjustableHood;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class AdjustableHoodSubsystem extends SubsystemBase {
   private final AdjustableHoodInterface adjustableHoodInterface;
@@ -9,10 +9,6 @@ public class AdjustableHoodSubsystem extends SubsystemBase {
 
   public AdjustableHoodSubsystem(AdjustableHoodInterface adjustableHoodInterface) {
     this.adjustableHoodInterface = adjustableHoodInterface;
-  }
-
-  public void updateInputs() {
-    adjustableHoodInterface.updateInputs(inputs);
   }
 
   public void setHoodAngle(double angle) {
@@ -23,12 +19,30 @@ public class AdjustableHoodSubsystem extends SubsystemBase {
     adjustableHoodInterface.setSpeed(speed);
   }
 
+  public void setAngleWithoutDist(double rots) {
+    adjustableHoodInterface.setAngleWithoutDist(rots);
+  }
+
   public double getHoodAngle() {
     return adjustableHoodInterface.getHoodAngle();
   }
 
+  public void rezeroHood() {
+    adjustableHoodInterface.rezeroHood();
+  }
+
+  public void resetHoodPID() {
+    adjustableHoodInterface.resetHoodPID();
+  }
+
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("hoodAngle", getHoodAngle());
+    adjustableHoodInterface.updateInputs(inputs);
+    Logger.recordOutput("hoodAngle", inputs.hoodAngle);
+    Logger.recordOutput("hoodAbsPos", inputs.hoodAbsPos);
+    Logger.recordOutput("desired angle", inputs.desiredAngle);
+    // if (getHoodAngle() < 0 && inputs.desiredAngle < 0.01) {
+    //   setSpeed(0);
+    // }
   }
 }

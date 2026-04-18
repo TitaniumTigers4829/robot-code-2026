@@ -31,6 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
         flywheelI.initDefault(ShooterConstants.FLYWHEEL_I);
         flywheelD.initDefault(ShooterConstants.FLYWHEEL_D);
       }
+      default -> {}
     }
   }
 
@@ -39,16 +40,16 @@ public class ShooterSubsystem extends SubsystemBase {
     this.shooterInterface = shooterInterface;
   }
 
-  public double getFlywheelRPM() {
-    return shooterInterface.getFlywheelRPM();
+  public double getFlywheelRPS() {
+    return shooterInterface.getFlywheelRPS();
   }
 
   public double getVolts() {
     return shooterInterface.getVolts();
   }
 
-  public void setFlywheelRPM(double targetRPM) {
-    shooterInterface.setFlywheelRPM(targetRPM);
+  public void setSpeed(double targetRPM) {
+    shooterInterface.setSpeed(targetRPM);
   }
 
   public double getFlywheelVelocity() {
@@ -63,22 +64,52 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterInterface.openLoop(output);
   }
 
-  public void setPercentOutput(double output) {
-    shooterInterface.setPercentOutput(output);
+  public void stopShoot() {
+    shooterInterface.stopShoot();
   }
 
-  public boolean isTopAtSetpointRPM(double targetRPM) {
-    return Math.abs(targetRPM - inputs.flywheelRPM) < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
+  public void setPercentOutput(double distance) {
+    shooterInterface.setPercentOutput(distance);
   }
 
-  public void setSpeed(double speed) {
-    shooterInterface.setSpeed(speed);
+  public void setPercentOutput2(double distance) {
+    shooterInterface.setPercentOutput2(distance);
+  }
+
+  public boolean isAtSetpointRPM(double targetRPM) {
+    return Math.abs(targetRPM - inputs.flywheelRPS) < ShooterConstants.FLYWHEEL_ERROR_TOLERANCE;
+  }
+
+  public void passFuel() {
+    shooterInterface.passFuel();
+  }
+
+  public boolean isUpToSpeed() {
+    return this.shooterInterface.isReadyToShoot();
+  }
+
+  public void setKickerSpeed(double speed) {
+    this.shooterInterface.setKickerSpeed(speed);
+  }
+
+  public void setRollerSpeed(double speed) {
+    this.shooterInterface.setRollerSpeed(speed);
+  }
+
+  public boolean setIsAimingProperly(boolean isAimingProperly) {
+    return this.shooterInterface.setIsAimingProperly(isAimingProperly);
+  }
+
+  public void startingShoot() {
+    this.shooterInterface.startingShoot();
   }
 
   @Override
   public void periodic() {
     shooterInterface.updateInputs(inputs);
     Logger.processInputs("Shooter/", inputs);
+
+    // SmartDashboard.putNumber("currentRPS", inputs.flywheelRPS);
 
     // Update tunable numbers
     if (flywheelS.hasChanged(hashCode())

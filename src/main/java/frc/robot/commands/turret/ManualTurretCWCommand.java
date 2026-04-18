@@ -14,8 +14,6 @@ public class ManualTurretCWCommand extends Command {
   /** Creates a new ManualTurretCommand. */
   TurretSubsystem turretSubsystem;
 
-  double speed = TurretConstants.CW_MANUAL_SPEED;
-
   public ManualTurretCWCommand(TurretSubsystem turretSubsystem) {
     this.turretSubsystem = turretSubsystem;
     addRequirements(turretSubsystem);
@@ -28,7 +26,7 @@ public class ManualTurretCWCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    turretSubsystem.setSpeed(speed);
+    turretSubsystem.setSpeed(TurretConstants.CW_MANUAL_SPEED);
   }
 
   // Called once the command ends or is interrupted.

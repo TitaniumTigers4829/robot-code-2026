@@ -56,7 +56,6 @@ public class SimDriveTrain {
    *     drivetrain
    * @param timing the simulation environment timing
    */
-  @SuppressWarnings("unchecked")
   protected SimDriveTrain(SimDriveTrainConfig<?, ?> config, SimEnvTiming timing) {
     this.timing = timing;
     chassis.addFixture(

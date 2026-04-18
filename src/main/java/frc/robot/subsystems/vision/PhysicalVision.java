@@ -8,12 +8,14 @@ import com.titaniumtigers4829.utils.NTUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.extras.math.mathutils.GeomUtil;
 import frc.robot.extras.util.Pose2dMovingAverageFilter;
 import frc.robot.extras.util.ThreadManager;
 import frc.robot.subsystems.swerve.SwerveConstants.DriveConstants;
 import frc.robot.subsystems.vision.VisionConstants.Limelight;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
@@ -73,14 +75,13 @@ public class PhysicalVision implements VisionInterface {
         inputs.limelightTimestamps[limelight.getId()] = getTimestampSeconds(limelight);
         inputs.limelightAmbiguities[limelight.getId()] = getAmbiguity(limelight);
 
-        // Fix: Get pose safely - never return null Pose2d
-        Pose2d pose = getPoseFromAprilTags(limelight);
-        inputs.limelightCalculatedPoses[limelight.getId()] = pose != null ? pose : new Pose2d();
+      inputs.limelightCalculatedPoses[limelight.getId()] =
+          getPoseFromAprilTags(limelight).orElse(new Pose2d());
 
-        // Get MegaTag estimates safely
-        PoseEstimate megaTag1 = getMegaTag1PoseEstimate(limelight);
-        inputs.megatag1PoseEstimates[limelight.getId()] =
-            megaTag1 != null && megaTag1.pose().isPresent() ? megaTag1.pose().get() : new Pose2d();
+      inputs.megatag1PoseEstimates[limelight.getId()] =
+          getMegaTag1PoseEstimate(limelight).pose().orElse(new Pose2d());
+      inputs.megatag2PoseEstimates[limelight.getId()] =
+          getMegaTag2PoseEstimate(limelight).pose().orElse(new Pose2d());
 
         PoseEstimate megaTag2 = getMegaTag2PoseEstimate(limelight);
         inputs.megatag2PoseEstimates[limelight.getId()] =
@@ -102,31 +103,19 @@ public class PhysicalVision implements VisionInterface {
 
   @Override
   public boolean canSeeAprilTags(Limelight limelight) {
-    try {
-      // First checks if it can see an april tag, then checks if it is fully in frame
-      // as the limelight can see an april tag but not have it fully in frame, leading
-      // to inaccurate pose estimates
-      if (isLimelightConnected(limelight)) {
-        return Math.abs(TigerHelpers.getTX(limelight.getName())) <= limelight.getAccurateFOV();
-      }
-    } catch (Exception e) {
-      // Log error but don't crash
+    // First checks if it can see an april tag, then checks if it is fully in frame
+    // as the limelight can see an april tag but not have it fully in frame, leading
+    // to inaccurate pose estimates
+    if (isLimelightConnected(limelight) && getNumberOfAprilTags(limelight) > 0) {
+      return Math.abs(TigerHelpers.getTX(limelight.getName())) <= limelight.getAccurateFOV();
     }
     return false;
   }
 
-  @Override
-  public Pose2d getPoseFromAprilTags(Limelight limelight) {
-    try {
-      PoseEstimate estimate = limelightEstimates.get(limelight.getId());
-      if (estimate != null && estimate.pose().isPresent()) {
-        return estimate.pose().get();
-      }
-    } catch (Exception e) {
-      // Log error but don't crash
-    }
-    return new Pose2d(); // NEVER return null!
-  }
+  // @Override
+  // public Pose2d getPoseFromAprilTags(Limelight limelight) {
+  //   return limelightEstimates.get(limelight.getId()).pose().orElse(new Pose2d());
+  // }
 
   @Override
   public int getNumberOfAprilTags(Limelight limelight) {
@@ -174,25 +163,21 @@ public class PhysicalVision implements VisionInterface {
 
   @Override
   public double getAmbiguity(Limelight limelight) {
-    try {
-      // If no april tags are seen, return -1 for ambiguity
-      if (getNumberOfAprilTags(limelight) == 0) {
-        return -1;
-      }
-      PoseEstimate estimate = limelightEstimates.get(limelight.getId());
-      if (estimate != null
-          && estimate.rawFiducials() != null
-          && estimate.rawFiducials().isPresent()) {
-        var rawFiducials = estimate.rawFiducials().get();
-        int tagCount = getNumberOfAprilTags(limelight);
-        if (rawFiducials.length > 0 && tagCount > 0 && tagCount <= rawFiducials.length) {
-          return rawFiducials[tagCount - 1].ambiguity();
-        }
-      }
-    } catch (Exception e) {
-      // Log error but don't crash
+    if (getNumberOfAprilTags(limelight) == 0) {
+      return -1;
     }
-    return -1;
+
+    return limelightEstimates
+        .get(limelight.getId())
+        .rawFiducials()
+        .filter(arr -> arr.length > 0)
+        .map(arr -> arr[arr.length - 1].ambiguity())
+        .orElse(-1.0);
+  }
+
+  @Override
+  public Optional<Pose2d> getPoseFromAprilTags(Limelight limelight) {
+    return limelightEstimates.get(limelight.getId()).pose();
   }
 
   @Override
@@ -203,11 +188,7 @@ public class PhysicalVision implements VisionInterface {
 
   @Override
   public boolean isValidMeasurement(Limelight limelight) {
-    try {
-      return isValidPoseEstimate(limelight) && isConfident(limelight) && !isTeleporting(limelight);
-    } catch (Exception e) {
-      return false;
-    }
+    return isConfident(limelight) && !isTeleporting(limelight);
   }
 
   /**
@@ -216,36 +197,37 @@ public class PhysicalVision implements VisionInterface {
    * @param limelight A limelight (BACK, FRONT_LEFT, FRONT_RIGHT).
    */
   public void enabledPoseUpdate(Limelight limelight) {
-    try {
-      PoseEstimate megatag1Estimate = getMegaTag1PoseEstimate(limelight);
-      PoseEstimate megatag2Estimate = getMegaTag2PoseEstimate(limelight);
+    PoseEstimate megatag1Estimate = getMegaTag1PoseEstimate(limelight);
+    PoseEstimate megatag2Estimate = getMegaTag2PoseEstimate(limelight);
+    Optional<Pose2d> pose1Opt = megatag1Estimate.pose();
+    Optional<Pose2d> pose2Opt = megatag2Estimate.pose();
 
-      // Check if estimates are valid
-      boolean megatag1Valid = megatag1Estimate != null && megatag1Estimate.pose().isPresent();
-      boolean megatag2Valid = megatag2Estimate != null && megatag2Estimate.pose().isPresent();
+    if (pose1Opt.isEmpty() && pose2Opt.isEmpty()) {
+      limelightEstimates.set(limelight.getId(), new PoseEstimate());
+      isMegatag2[limelight.getId()] = false;
+      return;
+    }
 
-      if (megatag2Valid
-          && Math.abs(headingRateDegreesPerSecond) < VisionConstants.MEGA_TAG_2_MAX_HEADING_RATE
-          && (!megatag1Valid
-              || !isLargeDiscrepancyBetweenTwoPoses(
-                  limelight,
-                  VisionConstants.MEGA_TAG_TRANSLATION_DISCREPANCY_THRESHOLD,
-                  VisionConstants.MEGA_TAG_ROTATION_DISCREPANCY_THREASHOLD,
-                  megatag1Estimate.pose().get(),
-                  megatag2Estimate.pose().get())
-              || getLimelightAprilTagDistance(limelight)
-                  > VisionConstants.MEGA_TAG_2_DISTANCE_THRESHOLD)) {
-        limelightEstimates.set(limelight.getId(), megatag2Estimate);
-        isMegatag2[limelight.getId()] = true;
-      } else if (megatag1Valid && isWithinFieldBounds(megatag1Estimate.pose().get())) {
-        limelightEstimates.set(limelight.getId(), megatag1Estimate);
-        isMegatag2[limelight.getId()] = false;
-      } else {
-        limelightEstimates.set(limelight.getId(), new PoseEstimate());
-        isMegatag2[limelight.getId()] = false;
-      }
-    } catch (Exception e) {
-      // If anything fails, set empty estimate
+    Optional<Pose2d> pose1 = pose1Opt;
+    Optional<Pose2d> pose2 = pose2Opt;
+
+    if (pose1 != null
+        && pose2 != null
+        && Math.abs(headingRateDegreesPerSecond) < VisionConstants.MEGA_TAG_2_MAX_HEADING_RATE
+        && (!isLargeDiscrepancyBetweenTwoPoses(
+                limelight,
+                VisionConstants.MEGA_TAG_TRANSLATION_DISCREPANCY_THRESHOLD,
+                VisionConstants.MEGA_TAG_ROTATION_DISCREPANCY_THREASHOLD,
+                pose1,
+                pose2)
+            || getLimelightAprilTagDistance(limelight)
+                > VisionConstants.MEGA_TAG_2_DISTANCE_THRESHOLD)) {
+      limelightEstimates.set(limelight.getId(), megatag2Estimate);
+      isMegatag2[limelight.getId()] = true;
+    } else if (pose1 != null && isWithinFieldBounds(pose1)) {
+      limelightEstimates.set(limelight.getId(), megatag1Estimate);
+      isMegatag2[limelight.getId()] = false;
+    } else {
       limelightEstimates.set(limelight.getId(), new PoseEstimate());
       isMegatag2[limelight.getId()] = false;
     }
@@ -295,19 +277,15 @@ public class PhysicalVision implements VisionInterface {
    * @param limelight A limelight (BACK, FRONT_LEFT, FRONT_RIGHT).
    */
   public void checkAndUpdatePose(Limelight limelight) {
-    try {
-      // Megatag 2 uses the gyro orientation to solve for the rotation of the
-      // calculated pose. This creates a much more stable and accurate pose when
-      // translating, but when rotating but the pose will not be consistent due to
-      // latency between receiving and sending measurements.
-      TigerHelpers.setRobotOrientation(limelight.getName(), headingDegrees);
-      if (isLimelightConnected(limelight) && canSeeAprilTags(limelight)) {
-        updateIMUMode(limelight);
-        updatePoseEstimate(limelight);
-      } else {
-        limelightEstimates.set(limelight.getId(), new PoseEstimate());
-      }
-    } catch (Exception e) {
+    // Megatag 2 uses the gyro orientation to solve for the rotation of the
+    // calculated pose. This creates a much more stable and accurate pose when
+    // translating, but when rotating but the pose will not be consistent due to
+    // latency between receiving and sending measurements.
+    TigerHelpers.setRobotOrientation(limelight.getName(), headingDegrees);
+    if (isLimelightConnected(limelight)) {
+      updateIMUMode(limelight);
+      updatePoseEstimate(limelight);
+    } else {
       limelightEstimates.set(limelight.getId(), new PoseEstimate());
     }
   }
@@ -321,11 +299,8 @@ public class PhysicalVision implements VisionInterface {
    *     return null
    */
   public PoseEstimate getMegaTag1PoseEstimate(Limelight limelight) {
-    try {
-      return TigerHelpers.getBotPoseEstimate(limelight.getName(), Botpose.BLUE_MEGATAG1);
-    } catch (Exception e) {
-      return null;
-    }
+    PoseEstimate pose = TigerHelpers.getBotPoseEstimate(limelight.getName(), Botpose.BLUE_MEGATAG1);
+    return pose;
   }
 
   /**
@@ -337,11 +312,8 @@ public class PhysicalVision implements VisionInterface {
    *     return null
    */
   public PoseEstimate getMegaTag2PoseEstimate(Limelight limelight) {
-    try {
-      return TigerHelpers.getBotPoseEstimate(limelight.getName(), Botpose.BLUE_MEGATAG2);
-    } catch (Exception e) {
-      return null;
-    }
+    PoseEstimate pose = TigerHelpers.getBotPoseEstimate(limelight.getName(), Botpose.BLUE_MEGATAG2);
+    return pose;
   }
 
   /**
@@ -356,25 +328,6 @@ public class PhysicalVision implements VisionInterface {
     } catch (Exception e) {
       return false;
     }
-  }
-
-  private boolean isWithinFieldBounds(Pose2d poseEstimate) {
-    if (poseEstimate == null) return false;
-
-    double x = poseEstimate.getX();
-    double y = poseEstimate.getY();
-
-    // Field boundaries from 2026 constants
-    double fieldLength = FieldConstants.FIELD_LENGTH_METERS;
-    double fieldWidth = FieldConstants.FIELD_WIDTH_METERS;
-
-    // Robot buffer
-    double robotBuffer =
-        Math.max(DriveConstants.WHEEL_BASE / 2.0, DriveConstants.TRACK_WIDTH / 2.0);
-
-    // Simple boundary check
-    return (x > robotBuffer && x < fieldLength - robotBuffer)
-        && (y > robotBuffer && y < fieldWidth - robotBuffer);
   }
 
   /**
@@ -425,18 +378,25 @@ public class PhysicalVision implements VisionInterface {
    * @return True if the robot is teleporting, false otherwise
    */
   private synchronized boolean isTeleporting(Limelight limelight) {
-    try {
-      Pose2d currentPose = getPoseFromAprilTags(limelight);
-      Pose2d filteredPose = pose2dMovingAverageFilter.calculate(currentPose);
+    Optional<Pose2d> poseOpt = getPoseFromAprilTags(limelight);
 
-      return !GeomUtil.arePosesWithinThreshold(
-          VisionConstants.MAX_TRANSLATION_DELTA_METERS,
-          VisionConstants.MAX_ROTATION_DELTA_DEGREES,
-          currentPose,
-          filteredPose);
-    } catch (Exception e) {
-      return true; // Assume teleporting on error
+    if (poseOpt.isEmpty()) {
+      return false;
     }
+
+    Pose2d pose = poseOpt.get();
+
+    // jank fix its bc we changed the isValidMeasurement logic to not use isValidPoseEstimate i
+    // think
+    if (pose.getX() == 0 && pose.getY() == 0) {
+      return false;
+    }
+
+    return !GeomUtil.arePosesWithinThreshold(
+        VisionConstants.MAX_TRANSLATION_DELTA_METERS,
+        VisionConstants.MAX_ROTATION_DELTA_DEGREES,
+        pose,
+        pose2dMovingAverageFilter.calculate(pose));
   }
 
   /**
@@ -445,13 +405,22 @@ public class PhysicalVision implements VisionInterface {
    * @param limelight A limelight (BACK, FRONT_LEFT, FRONT_RIGHT).
    * @return True if the pose estimate exists within the field and the pose estimate is not null
    */
-  private boolean isValidPoseEstimate(Limelight limelight) {
-    try {
-      Pose2d pose = getPoseFromAprilTags(limelight);
-      return pose != null && pose != new Pose2d() && isWithinFieldBounds(pose);
-    } catch (Exception e) {
-      return false;
-    }
+  // private boolean isValidPoseEstimate(Limelight limelight) {
+  //   return getPoseFromAprilTags(limelight).map(this::isWithinFieldBounds).orElse(false);
+  // }
+
+  /**
+   * Checks whether the pose estimate is within the field
+   *
+   * @param poseEstimate The pose estimate to check
+   */
+  private boolean isWithinFieldBounds(Optional<Pose2d> poseEstimate) {
+    double minX = DriveConstants.TRACK_WIDTH / 2.0;
+    double maxX = FieldConstants.FIELD_LENGTH_METERS - DriveConstants.TRACK_WIDTH / 2.0;
+    double minY = DriveConstants.WHEEL_BASE / 2.0;
+    double maxY = FieldConstants.FIELD_WIDTH_METERS - DriveConstants.WHEEL_BASE / 2.0;
+    return (poseEstimate.get().getX() > minX && poseEstimate.get().getX() < maxX)
+        && (poseEstimate.get().getY() > minY && poseEstimate.get().getY() < maxY);
   }
 
   /**
@@ -470,12 +439,10 @@ public class PhysicalVision implements VisionInterface {
       Limelight limelight,
       double translationThresholdMeters,
       double rotationThresholdDegrees,
-      Pose2d pose1,
-      Pose2d pose2) {
-    if (pose1 == null || pose2 == null) return true;
-
+      Optional<Pose2d> pose1,
+      Optional<Pose2d> pose2) {
     return !GeomUtil.arePosesWithinThreshold(
-        translationThresholdMeters, rotationThresholdDegrees, pose1, pose2);
+        translationThresholdMeters, rotationThresholdDegrees, pose1.get(), pose2.get());
   }
 
   /**
@@ -485,8 +452,8 @@ public class PhysicalVision implements VisionInterface {
    * @return True if the limelight is confident in its pose estimate, false otherwise
    */
   private boolean isConfident(Limelight limelight) {
-    double ambiguity = getAmbiguity(limelight);
-    return ambiguity >= 0 && ambiguity <= VisionConstants.MAX_AMBIGUITY_THRESHOLD;
+    SmartDashboard.putNumber("ambiuity", getAmbiguity(limelight));
+    return getAmbiguity(limelight) <= VisionConstants.MAX_AMBIGUITY_THRESHOLD;
   }
 
   /**
