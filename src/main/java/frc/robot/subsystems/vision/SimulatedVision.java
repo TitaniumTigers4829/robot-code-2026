@@ -1,19 +1,20 @@
 package frc.robot.subsystems.vision;
 
-import com.titaniumtigers4829.utils.NTUtils;
+// import com.titaniumtigers4829.utils.NTUtils;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.networktables.NetworkTable;
+// import edu.wpi.first.networktables.NetworkTable;
 import frc.robot.subsystems.vision.VisionConstants.Limelight;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+// import java.util.ArrayList;
+// import java.util.Arrays;
+// import java.util.List;
 import java.util.function.Supplier;
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
+
+// import org.photonvision.targeting.PhotonPipelineResult;
+// import org.photonvision.targeting.PhotonTrackedTarget;
 
 /**
  *
@@ -25,21 +26,20 @@ import org.photonvision.targeting.PhotonTrackedTarget;
  * limelight tables.
  *
  * <p><b>See</b>: <a
- * href="https://github.com/PhotonVision/photonvision/blob/2a6fa1b6ac81f239c59d724da5339f608897c510/photonlib-java-examples/swervedriveposeestsim/src/main/java/frc/robot/Vision.java">PhotonVision
+ *
+ * <p>href="https://github.com/PhotonVision/photonvision/blob/2a6fa1b6ac81f239c59d724da5339f608897c510/photonlib-java-examples/swervedriveposeestsim/src/main/java/frc/robot/Vision.java">PhotonVision
  * example</a> for an example of odometry simulation using PhotonVision.
  *
  * @author @Ishan1522
  */
 public class SimulatedVision extends PhysicalVision {
   PhotonCameraSim shooterCameraSim;
-  private final VisionSystemSim visionSim;
 
   private final int kResWidth = 1280;
   private final int kResHeight = 800;
 
-  public SimulatedVision(Supplier<VisionSystemSim> visionSim) {
+  public SimulatedVision(Supplier<VisionSystemSim> pVisionSim) {
     super();
-    this.visionSim = visionSim.get();
     // this.robotSimulationPose = robotSimulationPose;
     // Create the vision system simulation which handles cameras and targets on the
     // field.
@@ -61,9 +61,8 @@ public class SimulatedVision extends PhysicalVision {
     // with visible
     // targets.
     // Instance variables
-    shooterCameraSim =
-        new PhotonCameraSim(getSimulationCamera(Limelight.FRONT_LEFT), cameraProperties);
-    visionSim
+    shooterCameraSim = new PhotonCameraSim(getSimulationCamera(Limelight.SIDE), cameraProperties);
+    pVisionSim
         .get()
         .addCamera(shooterCameraSim, VisionConstants.BACK_TRANSFORM); // check inverse things
 
@@ -80,13 +79,13 @@ public class SimulatedVision extends PhysicalVision {
   public void updateInputs(VisionInputs inputs) {
     // Abuse the updateInputs periodic call to update the sim
 
-    for (Limelight limelight : Limelight.values()) {
-      writeToTable(
-          getSimulationCamera(Limelight.FRONT_LEFT).getAllUnreadResults(),
-          getLimelightTable(Limelight.FRONT_LEFT),
-          Limelight.FRONT_LEFT);
-    }
-    super.updateInputs(inputs);
+    // for (Limelight limelight : Limelight.values()) {
+    //   writeToTable(
+    //       getSimulationCamera(Limelight.FRONT).getAllUnreadResults(),
+    //       getLimelightTable(Limelight.FRONT),
+    //       Limelight.SIDE);
+    // }
+    // super.updateInputs(inputs);
   }
 
   /**
@@ -96,6 +95,7 @@ public class SimulatedVision extends PhysicalVision {
    * @param table The Limelight table to write to
    * @param limelight The Limelight to write for
    */
+  /*
   private void writeToTable(
       List<PhotonPipelineResult> results, NetworkTable table, Limelight limelight) {
     // write to ll table
@@ -142,6 +142,7 @@ public class SimulatedVision extends PhysicalVision {
       }
     }
   }
+  */
 
   /**
    * Gets the PhotonCamera for the given Limelight
@@ -151,7 +152,7 @@ public class SimulatedVision extends PhysicalVision {
    */
   private PhotonCamera getSimulationCamera(Limelight limelight) {
     return switch (limelight) {
-      case FRONT_LEFT -> VisionConstants.BACK_CAMERA;
+      case SIDE -> VisionConstants.FRONT_CAMERA;
       default -> throw new IllegalArgumentException("Invalid limelight camera " + limelight);
     };
   }
@@ -162,13 +163,15 @@ public class SimulatedVision extends PhysicalVision {
    * @param limelight The Limelight to get the table for
    * @return The network table of the Limelight
    */
+  /*
   private NetworkTable getLimelightTable(Limelight limelight) {
     return switch (limelight) {
-      case FRONT_LEFT -> NTUtils.getLimelightNetworkTable(Limelight.FRONT_LEFT.getName());
-      case FRONT_RIGHT -> NTUtils.getLimelightNetworkTable(Limelight.FRONT_RIGHT.getName());
+      case SIDE -> NTUtils.getLimelightNetworkTable(Limelight.SIDE.getName());
+        // case SIDE -> NTUtils.getLimelightNetworkTable(Limelight.SIDE.getName());
       default -> throw new IllegalArgumentException("Invalid limelight " + limelight);
     };
   }
+  */
 
   @Override
   public void setOdometryInfo(double headingDegrees, double headingRateDegrees) {

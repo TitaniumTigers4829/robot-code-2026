@@ -20,19 +20,19 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   private static RobotType robotType = RobotType.COMP_ROBOT;
 
-  public static final boolean tuningMode = false;
+  public static final boolean tuningMode = true;
 
   /**
    * Gets if the robot type is valid, if not it will default to COMP_ROBOT
    *
    * @return the currently used RobotType
    */
-  @SuppressWarnings("resource")
   public static RobotType getRobot() {
     // if (RobotBase.isReal() && robotType == RobotType.SIM_ROBOT) {
-    //   new Alert("Invalid robot selected, using competition robot as default.", AlertType.kError)
-    //       .set(true);
-    //   robotType = RobotType.COMP_ROBOT;
+    // new Alert("Invalid robot selected, using competition robot as default.",
+    // AlertType.kError)
+    // .set(true);
+    // robotType = RobotType.COMP_ROBOT;
     // }
     return robotType;
   }
@@ -76,6 +76,7 @@ public final class Constants {
 
   public static final class HardwareConstants {
     public static final double LOOP_TIME_SECONDS = 0.02;
+    public static final double TIMEOUT_SECONDS = 0.05;
 
     public static final double RIO_SIGNAL_FREQUENCY = 50;
     public static final double CANIVORE_SIGNAL_FREQUENCY = 250;
@@ -109,54 +110,60 @@ public final class Constants {
 
     public static final double HUB_WALL_FROM_ALLIANCE_WALL_METERS = Units.inchesToMeters(158.6);
 
-    public static final Translation2d RED_HUB_CENTER =
+    public static final Translation2d BLUE_HUB_CENTER =
         new Translation2d(
             HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2), FIELD_WIDTH_METERS / 2);
-    public static final Translation2d BLUE_HUB_CENTER =
+    public static final Translation2d RED_HUB_CENTER =
         new Translation2d(
             FIELD_LENGTH_METERS - (HUB_WALL_FROM_ALLIANCE_WALL_METERS + (HUB_LENGTH_METERS / 2)),
             FIELD_WIDTH_METERS / 2);
 
-    // TODO: In addition to this, coordinates for all relevant game structures must be added (ex:
+    // TODO: In addition to this, coordinates for all relevant game structures must
+    // be added (ex:
     // blue outpost)
 
   }
 
   public static final class TrajectoryConstants {
-    public static final double MAX_SPEED = 5.0;
-    public static final double MAX_ACCELERATION = 3;
+    public static final double AUTO_TRANSLATION_P = 2;
+    public static final double AUTO_TRANSLATION_D = 0; // 0.2;
+    public static final double AUTO_THETA_P = 3; // 5
+    public static final double AUTO_THETA_D = 0; // 0.4;
 
-    public static final double AUTO_TRANSLATION_P = 1.5; // 1.7
-    public static final double AUTO_TRANSLATION_D = 0.2;
-    public static final double AUTO_THETA_P = 4.5; // 5
-    public static final double AUTO_THETA_D = 0.4;
-
-    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 2;
-    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = 2;
+    public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = 3.088;
+    public static final double MAX_ANGULAR_ACCELERATION = 10.174;
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS =
         new TrapezoidProfile.Constraints(
-            MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
-
-    public static final double X_TOLERANCE = 0.02;
-    public static final double Y_TOLERANCE = 0.02;
-    public static final double THETA_TOLERANCE = 1.25;
-
-    public static final double AUTO_ALIGN_TRANSLATIONAL_P = 3;
-    public static final double AUTO_ALIGN_TRANSLATIONAL_I = 0;
-    public static final double AUTO_ALIGN_TRANSLATIONAL_D = 0;
-
-    public static final double AUTO_ALIGN_ROTATIONAL_P = 3;
-    public static final double AUTO_ALIGN_ROTATIONAL_I = 0;
-    public static final double AUTO_ALIGN_ROTATIONAL_D = 0;
+            MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_ACCELERATION);
   }
 
   public static final class AutoConstants {
     // Different Pre-defined Auto Routines
-    public static final String Y_ONE_METER_AUTO = "Y-One-Meter-Test";
+    public static final String BLUE_LEFT_AUTO = "blue left auto";
+    public static final String BLUE_RIGHT_AUTO = "blue right auto";
+    public static final String RED_LEFT_AUTO = "red left auto";
+    public static final String RED_RIGHT_AUTO = "red right auto";
+    public static final String BLUE_DEPOT_AUTO = "blue depot auto";
+    public static final String RED_DEPOT_AUTO = "red depot auto";
+    public static final String BLUE_LEFT_U_AUTO = "blue left u auto";
 
-    public static final String Y_ONE_METER_TRAJECTORY = "MiscTrajectories/one_point_one_meter";
+    public static final String BLUE_DEPOT_TRAJ = "MiscTrajectories/blue_depot_auto";
+    public static final String RED_DEPOT_TRAJ = "MiscTrajectories/red_depot_auto";
+
+    public static final String BLUE_LEFT_FIRST_TRAJ = "MiscTrajectories/blue_neutral_left_auto";
+    public static final String BLUE_LEFT_SECOND_TRAJ = "MiscTrajectories/blue_second_sweep_left";
+    public static final String BLUE_RIGHT_FIRST_TRAJ = "MiscTrajectories/blue_neutral_right_auto";
+    public static final String BLUE_RIGHT_SECOND_TRAJ = "MiscTrajectories/blue_second_sweep_right";
+    public static final String RED_LEFT_FIRST_TRAJ = "MiscTrajectories/red_neutral_left_auto";
+    public static final String RED_LEFT_SECOND_TRAJ = "MiscTrajectories/red_second_sweep_left";
+    public static final String RED_RIGHT_FIRST_TRAJ = "MiscTrajectories/red_neutral_right_auto";
+    public static final String RED_RIGHT_SECOND_TRAJ = "MiscTrajectories/red_second_sweep_right";
+
+    public static final String BLUE_LEFT_U_FIRST_TRAJ = "MiscTrajectories/blue_left_u_sweep_auto";
+    public static final String BLUE_LEFT_U_SECOND_TRAJ =
+        "MiscTrajectories/blue_left_u_second_sweep";
   }
 
   public static final class JoystickConstants {

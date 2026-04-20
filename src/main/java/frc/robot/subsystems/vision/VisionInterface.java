@@ -2,6 +2,7 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.subsystems.vision.VisionConstants.Limelight;
+import java.util.Optional;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionInterface {
@@ -123,7 +124,7 @@ public interface VisionInterface {
    * @return the pose of the robot, if the limelight can't see any April Tags, it will return 0 for
    *     x, y, and theta
    */
-  default Pose2d getPoseFromAprilTags(Limelight limelight) {
+  default Optional<Pose2d> getPoseFromAprilTags(Limelight limelight) {
     return null;
   }
 

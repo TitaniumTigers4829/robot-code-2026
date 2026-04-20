@@ -10,10 +10,8 @@ import org.photonvision.PhotonCamera;
 
 public final class VisionConstants {
   public enum Limelight {
-    FRONT_LEFT(
-        FRONT_LEFT_LIMELIGHT_NUMBER, FRONT_LEFT_LIMELIGHT_NAME, LL4_FOV_MARGIN_OF_ERROR, true),
-    FRONT_RIGHT(
-        FRONT_RIGHT_LIMELIGHT_NUMBER, FRONT_RIGHT_LIMELIGHT_NAME, LL4_FOV_MARGIN_OF_ERROR, true);
+    FRONT(FRONT_LEFT_LIMELIGHT_NUMBER, FRONT_LIMELIGHT_NAME, LL4_FOV_MARGIN_OF_ERROR, true),
+    SIDE(SIDE_LIMELIGHT_NUMBER, SIDE_LIMELIGHT_NAME, LL4_FOV_MARGIN_OF_ERROR, true);
 
     private final int id;
     private final String name;
@@ -45,8 +43,8 @@ public final class VisionConstants {
 
     public static Limelight fromId(int id) {
       return switch (id) {
-        case 0 -> FRONT_LEFT;
-        case 1 -> FRONT_RIGHT;
+        case 0 -> FRONT;
+        case 1 -> SIDE;
         default -> throw new IllegalArgumentException("Invalid Limelight ID: " + id);
       };
     }
@@ -55,7 +53,7 @@ public final class VisionConstants {
   public static final Transform3d BACK_TRANSFORM =
       new Transform3d(new Translation3d(0.0, 0.0, 0.1865472012), new Rotation3d(0.0, 35, 180.0));
   // x->0.3119324724
-  public static final PhotonCamera BACK_CAMERA = new PhotonCamera(Limelight.FRONT_LEFT.getName());
+  public static final PhotonCamera FRONT_CAMERA = new PhotonCamera(Limelight.FRONT.getName());
   // public static final PhotonCamera ELEVATOR_CAMERA =
   //     new PhotonCamera(Limelight.FRONT_RIGHT.getName());
 
@@ -64,7 +62,7 @@ public final class VisionConstants {
   public static final int POSE_MOVING_AVERAGE_WINDOW_SIZE = 50;
 
   public static final AprilTagFieldLayout FIELD_LAYOUT =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
 
   public static final double VISION_X_POS_TRUST = 0.5; // meters
   public static final double VISION_Y_POS_TRUST = 0.5; // meters
@@ -78,7 +76,7 @@ public final class VisionConstants {
 
   public static final double MAX_TRANSLATION_DELTA_METERS = 0.8;
   public static final double MAX_ROTATION_DELTA_DEGREES = 50.0;
-  public static final double MAX_AMBIGUITY_THRESHOLD = .45;
+  public static final double MAX_AMBIGUITY_THRESHOLD = .7;
 
   public static final double MEGA_TAG_2_DISTANCE_THRESHOLD = 1.5;
   public static final double MEGA_TAG_2_MAX_HEADING_RATE = 100; // degrees/s
@@ -86,10 +84,10 @@ public final class VisionConstants {
   public static final double MEGA_TAG_TRANSLATION_DISCREPANCY_THRESHOLD = .5; // TODO: tune
   public static final double MEGA_TAG_ROTATION_DISCREPANCY_THREASHOLD = 45;
 
-  public static final String FRONT_LEFT_LIMELIGHT_NAME = "limelight-left";
+  public static final String FRONT_LIMELIGHT_NAME = "limelight-front";
   public static final int FRONT_LEFT_LIMELIGHT_NUMBER = 0;
-  public static final String FRONT_RIGHT_LIMELIGHT_NAME = "limelight-right";
-  public static final int FRONT_RIGHT_LIMELIGHT_NUMBER = 1;
+  public static final String SIDE_LIMELIGHT_NAME = "limelight-side";
+  public static final int SIDE_LIMELIGHT_NUMBER = 1;
 
   // TODO: these need to be changed, maybe to 10 and 0?
   public static final int DISABLED_THROTTLE = 175;
@@ -114,8 +112,8 @@ public final class VisionConstants {
     // {distance in meters, x std deviation, y std deviation, r (in degrees) std deviation}
     {0, 0.01, 0.01, Units.degreesToRadians(180000)}, // 0.5
     {1.5, 0.01, 0.01, Units.degreesToRadians(180000)}, // 0.7
-    {3, 0.03, 0.03, Units.degreesToRadians(180000)}, // 4
-    {4.5, 0.06, 0.06, Units.degreesToRadians(180000)}, // 30
+    {3, 0.03, 0.06, Units.degreesToRadians(180000)}, // 4
+    {4.5, 0.6, 0.12, Units.degreesToRadians(180000)}, // 30
     {8, 0.5, 0.5, Units.degreesToRadians(180000)}, // 90
     {10, 10.0, 10.0, Units.degreesToRadians(180000)} // 90
   };
