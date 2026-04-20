@@ -169,9 +169,9 @@ public class Robot extends LoggedRobot {
             swerveDrive,
             visionSubsystem,
             // Translation in the X direction
-            () -> driverLeftStick[0].getAsDouble() * 1,
+            () -> driverLeftStick[0].getAsDouble() * 0.05,
             // Translation in the Y direction
-            () -> driverLeftStick[1].getAsDouble() * 1,
+            () -> driverLeftStick[1].getAsDouble() * 0.05,
             // Rotation
             () -> JoystickUtil.modifyAxis(driverController::getRightX, 3),
             // Robot relative
@@ -238,11 +238,12 @@ public class Robot extends LoggedRobot {
         .rightTrigger()
         .whileTrue(
             new ShootWhileMove(
-                null,
+                swerveDrive,
                 turretSubsystem,
                 shooterSubsystem,
                 hoodSubsystem,
-                () -> operatorController.povDown().getAsBoolean()));
+                () -> operatorController.povDown().getAsBoolean(),
+                () -> false));
   }
 
   /** Configures the operator controller buttons and axes to control the robot */

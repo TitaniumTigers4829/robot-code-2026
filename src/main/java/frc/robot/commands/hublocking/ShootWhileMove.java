@@ -23,8 +23,9 @@ public class ShootWhileMove extends Command {
   private final TurretSubsystem turret;
   private final ShooterSubsystem shooter;
   private final AdjustableHoodSubsystem hood;
-  // private final SwerveDrive drive;
+  private final SwerveDrive drive;
   private final BooleanSupplier overridingHood;
+  private final BooleanSupplier useOneMotor;
 
   Pose2d robotPose;
   Translation2d targetPosition;
@@ -63,12 +64,14 @@ public class ShootWhileMove extends Command {
       TurretSubsystem turret,
       ShooterSubsystem shooter,
       AdjustableHoodSubsystem hood,
-      BooleanSupplier overridingHood) {
-    // this.drive = drive;
+      BooleanSupplier overridingHood,
+      BooleanSupplier useOneMotor) {
+    this.drive = drive;
     this.turret = turret;
     this.shooter = shooter;
     this.hood = hood;
     this.overridingHood = overridingHood;
+    this.useOneMotor = useOneMotor;
     addRequirements(turret, shooter, hood);
   }
 
@@ -78,7 +81,7 @@ public class ShootWhileMove extends Command {
       TurretSubsystem turret,
       ShooterSubsystem shooter,
       AdjustableHoodSubsystem hood) {
-    this(drive, turret, shooter, hood, () -> false);
+    this(drive, turret, shooter, hood, () -> false, () -> false);
   }
 
   @Override
@@ -90,21 +93,23 @@ public class ShootWhileMove extends Command {
     } else {
       targetPosition = FieldConstants.BLUE_HUB_CENTER;
     }
+
+    shooter.startingShoot();
   }
 
   @Override
   public void execute() {
     dampener = -0.5;
-    robotPose = new Pose2d(); // drive.getEstimatedPose();
+    robotPose = drive.getEstimatedPose();
     turretPose =
         robotPose.getTranslation().plus(turretOffsetPose.rotateBy(robotPose.getRotation()));
 
-    // fieldRelative =
-    //     ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), robotPose.getRotation());
-    fieldRelative = new ChassisSpeeds(0, 0, 0);
+    fieldRelative =
+        ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), robotPose.getRotation());
+    // fieldRelative = new ChassisSpeeds(0, 0, 0);
 
-    // velocityOmega = drive.getChassisSpeeds().omegaRadiansPerSecond;
-    velocityOmega = 0;
+    velocityOmega = drive.getChassisSpeeds().omegaRadiansPerSecond;
+    // velocityOmega = 0;
 
     iterativeDistance = turretPose.getDistance(targetPosition);
 
@@ -153,11 +158,11 @@ public class ShootWhileMove extends Command {
     SmartDashboard.putBoolean("aiming properly", isAimingProperly);
 
     if (isAimingProperly) {
-      shooter.setPercentOutput(distance);
+      shooter.setPercentOutput(distance, useOneMotor.getAsBoolean());
     } else {
       shooter.stopShoot();
     }
-    shooter.setPercentOutput(distance);
+    shooter.setPercentOutput(distance, useOneMotor.getAsBoolean());
 
     if (this.overridingHood.getAsBoolean()) {
       shooter.setRollerSpeed(0);
