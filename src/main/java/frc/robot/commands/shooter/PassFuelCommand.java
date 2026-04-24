@@ -1,14 +1,12 @@
 package frc.robot.commands.shooter;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.extras.math.interpolation.SingleLinearInterpolator;
 import frc.robot.subsystems.adjustableHood.AdjustableHoodSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
@@ -43,20 +41,20 @@ public class PassFuelCommand extends Command {
   double dampener;
   boolean isAimingProperly = false;
 
-  public SingleLinearInterpolator timeInAirLookupTable =
-      new SingleLinearInterpolator(
-          new double[][] {
-            {1.5, 1.025},
-            {2.0, 1.14},
-            // {2.5, 1.24},
-            {3.0, 1.3},
-            {3.5, 1.37},
-            {4.0, 1.4},
-            {4.5, 1.42},
-            {5.0, 1.45},
-            {6, 2},
-            {10, 3}
-          });
+  // public SingleLinearInterpolator timeInAirLookupTable =
+  //     new SingleLinearInterpolator(
+  //         new double[][] {
+  //           {1.5, 1.025},
+  //           {2.0, 1.14},
+  //           // {2.5, 1.24},
+  //           {3.0, 1.3},
+  //           {3.5, 1.37},
+  //           {4.0, 1.4},
+  //           {4.5, 1.42},
+  //           {5.0, 1.45},
+  //           {6, 2},
+  //           {10, 3}
+  //         });
 
   public PassFuelCommand(
       SwerveDrive drive,
@@ -102,59 +100,62 @@ public class PassFuelCommand extends Command {
 
     iterativeDistance = turretPose.getDistance(targetPosition);
 
-    for (int i = 0; i < 20; i++) {
-      tAir = timeInAirLookupTable.getLookupValue(iterativeDistance);
+    // for (int i = 0; i < 20; i++) {
+    //   tAir = timeInAirLookupTable.getLookupValue(iterativeDistance);
 
-      velocityXOffset = fieldRelative.vxMetersPerSecond * tAir * dampener;
-      velocityYOffset = fieldRelative.vyMetersPerSecond * tAir * dampener;
+    //   velocityXOffset = fieldRelative.vxMetersPerSecond * tAir * dampener;
+    //   velocityYOffset = fieldRelative.vyMetersPerSecond * tAir * dampener;
 
-      omegaXOffset =
-          -velocityOmega * turretOffsetPose.rotateBy(robotPose.getRotation()).getY() * tAir;
-      omegaYOffset =
-          velocityOmega * turretOffsetPose.rotateBy(robotPose.getRotation()).getX() * tAir;
+    //   omegaXOffset =
+    //       -velocityOmega * turretOffsetPose.rotateBy(robotPose.getRotation()).getY() * tAir;
+    //   omegaYOffset =
+    //       velocityOmega * turretOffsetPose.rotateBy(robotPose.getRotation()).getX() * tAir;
 
-      offsettedTarget =
-          new Pose2d(
-              targetPosition.getX() - velocityXOffset - omegaXOffset,
-              targetPosition.getY() - velocityYOffset - omegaYOffset,
-              new Rotation2d());
+    //   offsettedTarget =
+    //       new Pose2d(
+    //           targetPosition.getX() - velocityXOffset - omegaXOffset,
+    //           targetPosition.getY() - velocityYOffset - omegaYOffset,
+    //           new Rotation2d());
 
-      iterativeDistance = offsettedTarget.getTranslation().getDistance(turretPose);
-    }
+    //   iterativeDistance = offsettedTarget.getTranslation().getDistance(turretPose);
+    // }
 
-    distance = offsettedTarget.getTranslation().getDistance(turretPose);
+    // distance = offsettedTarget.getTranslation().getDistance(turretPose);
 
-    deltaX = offsettedTarget.getX() - turretPose.getX();
-    deltaY = offsettedTarget.getY() - turretPose.getY();
+    // deltaX = offsettedTarget.getX() - turretPose.getX();
+    // deltaY = offsettedTarget.getY() - turretPose.getY();
 
-    double turretAngleRad = Math.atan2(deltaY, deltaX) - robotPose.getRotation().getRadians();
-    // Wrap to [-pi, pi]
-    turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));
-    double desiredHeading = turretAngleRad / (2.0 * Math.PI);
+    // double turretAngleRad = Math.atan2(deltaY, deltaX) - robotPose.getRotation().getRadians();
+    // // Wrap to [-pi, pi]
+    // turretAngleRad = Math.atan2(Math.sin(turretAngleRad), Math.cos(turretAngleRad));
+    // double desiredHeading = turretAngleRad / (2.0 * Math.PI);
 
-    desiredHeading -= 0.25; // .25 is because we zero it facing left instead of forward
+    // desiredHeading -= 0.25; // .25 is because we zero it facing left instead of forward
 
-    turret.setTurretAngle(desiredHeading);
-    if (Math.abs(desiredHeading * TurretConstants.CANCODER_TO_TURRET - turret.getTurretAngle())
-        < .1) {
-      isAimingProperly = true;
-    } else {
-      isAimingProperly = false;
-    }
+    // // turret.setTurretAngle(desiredHeading);
+    // // if (Math.abs(desiredHeading * TurretConstants.CANCODER_TO_TURRET -
+    // turret.getTurretAngle())
+    // //     < .1) {
+    // //   isAimingProperly = true;
+    // // } else {
+    // //   isAimingProperly = false;
+    // // }
 
-    if (isAimingProperly) {
-      shooter.setPercentOutput(distance, false);
-    } else {
-      shooter.stopShoot();
-    }
-    shooter.setPercentOutput(distance, false);
+    // // if (isAimingProperly) {
+    // //   shooter.setPercentOutput(distance, false);
+    // // } else {
+    // //   shooter.stopShoot();
+    // // }
+    shooter.passFuel();
 
-    if (this.overridingHood.getAsBoolean()) {
-      shooter.setRollerSpeed(0);
-      shooter.stopShoot();
-    } else {
-      hood.setHoodAngle(distance);
-    }
+    // if (this.overridingHood.getAsBoolean()) {
+    //   shooter.setRollerSpeed(0);
+    //   shooter.stopShoot();
+    // } else {
+
+    // hood.setAngleWithoutDist(0.5);
+
+    //   }
   }
 
   @Override
@@ -165,6 +166,6 @@ public class PassFuelCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     shooter.stopShoot();
-    hood.setAngleWithoutDist(0);
+    // hood.setAngleWithoutDist(0);
   }
 }

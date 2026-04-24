@@ -24,6 +24,7 @@ import frc.robot.commands.intake.ReverseKickerAndRollers;
 // import frc.robot.commands.intake.ReverseSpindexerCommand;
 import frc.robot.commands.shooter.HoodUpCommand;
 import frc.robot.commands.shooter.ManualHoodDown;
+import frc.robot.commands.shooter.ManualHoodUp;
 import frc.robot.commands.shooter.PassFuelCommand;
 import frc.robot.commands.turret.ManualTurretCCWCommand;
 import frc.robot.commands.turret.ManualTurretCWCommand;
@@ -169,9 +170,9 @@ public class Robot extends LoggedRobot {
             swerveDrive,
             visionSubsystem,
             // Translation in the X direction
-            () -> driverLeftStick[0].getAsDouble() * 0.05,
+            () -> driverLeftStick[0].getAsDouble() * 0.25,
             // Translation in the Y direction
-            () -> driverLeftStick[1].getAsDouble() * 0.05,
+            () -> driverLeftStick[1].getAsDouble() * 0.25,
             // Rotation
             () -> JoystickUtil.modifyAxis(driverController::getRightX, 3),
             // Robot relative
@@ -261,7 +262,7 @@ public class Robot extends LoggedRobot {
 
     operatorController.rightTrigger().whileTrue(new IntakeCommand(intakeSubsystem));
 
-    operatorController.povUp().whileTrue(new InstantCommand(() -> intakeSubsystem.zeroAngle()));
+    operatorController.povUp().whileTrue(new ManualHoodUp(hoodSubsystem));
 
     operatorController.povDown().whileTrue(new ManualHoodDown(hoodSubsystem));
 
